@@ -24,10 +24,7 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Search from "@/components/ui/Search";
 import { useCallback, useState } from "react";
-import {
-    testeCheckinResponses,
-    testeCredenciaisResponse,
-} from "../../../../../../config/datasTeste";
+import { testeCheckinResponses } from "../../../../../../config/datasTeste";
 import { useSearchParams } from "next/navigation";
 import Modal from "@/components/ui/modal/Modal";
 import { useDataContext } from "@/contexts/DataContext";

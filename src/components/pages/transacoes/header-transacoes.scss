@@ -1,0 +1,109 @@
+@use "@/styles/variables" as *;
+
+.transacoes {
+    &__header {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    &__infos {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+
+        @media all and (max-width: 30em) {
+            justify-content: center;
+        }
+    }
+
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.75rem;
+        color: $text-primary;
+        font-family: $montserrat;
+        font-weight: 600;
+
+        i {
+            display: flex;
+            color: $brand-primary;
+        }
+    }
+
+    &__button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background-color: transparent;
+        color: $text-secondary;
+        border: 1px solid $border-color;
+        padding: 0.75rem 1.5rem;
+        border-radius: $radius-md;
+        font-family: $montserrat;
+        font-weight: 600;
+        cursor: pointer;
+        transition: $transition-default;
+
+        i svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        &:hover {
+            background-color: $bg-secondary;
+            color: $text-primary;
+        }
+    }
+
+    &__abas {
+        display: flex;
+        gap: 0.5rem;
+        border-bottom: 2px solid $bg-secondary;
+
+        @media all and (max-width: 770px) {
+            justify-content: center;
+        }
+    }
+
+    &__aba {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        color: $text-secondary;
+        font-family: $montserrat;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        // margin-bottom: -2px;
+        background: none;
+        cursor: pointer;
+        transition: $transition-default;
+
+        i svg {
+            width: 1.15rem;
+            height: 1.15rem;
+        }
+
+        &:hover {
+            color: $text-primary;
+        }
+
+        &--active {
+            color: $brand-primary;
+            border-bottom-color: $brand-primary;
+            background-color: color-mix(
+                in srgb,
+                $brand-primary 5%,
+                transparent
+            );
+            border-top-left-radius: $radius-sm;
+            border-top-right-radius: $radius-sm;
+        }
+    }
+}

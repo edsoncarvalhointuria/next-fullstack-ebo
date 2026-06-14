@@ -1,0 +1,30 @@
+@use "@/styles/variables" as *;
+
+.grafico-rosca {
+    width: 5rem;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    // background: conic-gradient(
+    //     var(--cor-frequencia) calc(var(--porcentagem) * 1%),
+    //     #e5e7eb 0
+    // );
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        width: 3.8rem;
+        aspect-ratio: 1/1;
+        background: $bg-primary;
+        border-radius: 50%;
+    }
+
+    &__texto {
+        position: relative;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: $text-primary;
+    }
+}

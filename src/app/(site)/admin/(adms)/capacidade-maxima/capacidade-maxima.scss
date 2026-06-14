@@ -1,0 +1,140 @@
+@use "@/styles/variables" as *;
+
+.capacidade-maxima {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding: 4rem 2rem;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+
+    &__header {
+        width: 100%;
+        max-width: 500px;
+    }
+
+    &__card {
+        background-color: $bg-primary;
+        border: 1px solid $border-color;
+        border-radius: $radius-lg;
+        padding: 3rem 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+    }
+
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.25rem;
+        color: $text-secondary;
+        font-family: $montserrat;
+        font-weight: 600;
+        margin: 0;
+
+        i {
+            display: flex;
+            color: $brand-primary;
+        }
+    }
+
+    &__numero {
+        font-size: 5.5rem;
+        font-weight: 800;
+        color: $text-primary;
+        font-family: $montserrat;
+        margin: 0;
+        line-height: 1;
+    }
+
+    &__edicao {
+        width: 100%;
+        max-width: 500px;
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            background-color: $bg-primary;
+            border: 1px solid $border-color;
+            border-radius: $radius-lg;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+        }
+    }
+
+    &__input {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        input[type="number"] {
+            width: 100%;
+            padding: 1rem;
+            font-size: 2rem;
+            font-family: $montserrat;
+            font-weight: 700;
+            color: $text-primary;
+            background-color: $bg-secondary;
+            border: 2px solid $border-color;
+            border-radius: $radius-md;
+            text-align: center;
+            transition: $transition-default;
+
+            -moz-appearance: textfield;
+            appearance: textfield;
+            &::-webkit-outer-spin-button,
+            &::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+            &:focus {
+                outline: none;
+                border-color: $brand-primary;
+                background-color: transparent;
+                box-shadow: 0 0 0 4px
+                    color-mix(in srgb, $brand-primary 15%, transparent);
+            }
+        }
+
+        &-aviso {
+            margin: 0;
+            font-size: 0.85rem;
+            color: $text-secondary;
+            font-family: $montserrat;
+            line-height: 1.5;
+            text-align: center;
+        }
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        padding: 1rem;
+        background-color: $brand-primary;
+        color: #fafafa;
+        border: none;
+        border-radius: $radius-md;
+        font-size: 1.125rem;
+        font-family: $montserrat;
+        font-weight: 600;
+        cursor: pointer;
+        transition: $transition-default;
+        box-shadow: 0 4px 12px
+            color-mix(in srgb, $brand-primary 25%, transparent);
+
+        &:hover {
+            transform: translateY(-2px);
+            opacity: 0.95;
+            box-shadow: 0 6px 16px
+                color-mix(in srgb, $brand-primary 35%, transparent);
+        }
+    }
+}

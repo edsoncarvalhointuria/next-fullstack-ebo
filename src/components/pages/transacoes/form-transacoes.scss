@@ -1,0 +1,80 @@
+@use "@/styles/variables" as *;
+
+.transacoes {
+    &__form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        &__comprador {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+
+            h2 {
+                font-family: $montserrat;
+                font-size: 1.1rem;
+                color: $brand-primary;
+                font-weight: bold;
+                padding-bottom: 0.5rem;
+            }
+        }
+
+        &__acompanhantes {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        &__acompanhante {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1.25rem;
+            background-color: $bg-secondary;
+            border: 1px solid color-mix(in srgb, $border-color 50%, transparent);
+            border-radius: $radius-md;
+
+            h3 {
+                font-family: $montserrat;
+                font-size: 0.95rem;
+                font-weight: 600;
+                color: $text-secondary;
+
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+
+                &::before {
+                    content: "";
+                    display: block;
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 50%;
+                    background-color: $accent-color;
+                }
+            }
+            input {
+                background-color: $bg-primary !important;
+            }
+        }
+
+        &__pgmt {
+            display: flex;
+            flex-direction: column;
+            background-color: color-mix(
+                in srgb,
+                $brand-primary 5%,
+                transparent
+            );
+            padding: 1.25rem;
+            border-radius: $radius-md;
+            border-left: 4px solid $brand-primary;
+        }
+    }
+}

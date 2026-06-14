@@ -1,0 +1,151 @@
+@use "@/styles/variables" as *;
+
+.perguntas-frequentes {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+
+        @media all and (max-width: 670px) {
+            justify-content: center;
+        }
+
+        h1 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.75rem;
+            color: $text-primary;
+            font-family: $montserrat;
+            font-weight: 600;
+
+            i {
+                display: flex;
+                color: $accent-color;
+            }
+        }
+
+        &-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap-reverse;
+
+            @media all and (max-width: 670px) {
+                justify-content: center;
+            }
+        }
+    }
+
+    button.perguntas-frequentes__reordenar {
+        background-color: transparent;
+        color: $text-secondary;
+        border: 1px solid $border-color;
+        box-shadow: none;
+
+        &:hover {
+            color: $text-primary;
+            background-color: $bg-secondary;
+            border-color: $text-secondary;
+        }
+    }
+
+    // &__body {
+    // }
+
+    &__lista {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__question {
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    &__answer {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        p {
+            margin: 0;
+            color: $text-secondary;
+            line-height: 1.6;
+            font-family: $montserrat;
+            font-size: 1rem;
+        }
+
+        &-btns {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 0.75rem;
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+            border-top: 1px dashed $border-color;
+        }
+
+        &-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: $radius-md;
+            background-color: $bg-secondary;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: $transition-default;
+
+            i {
+                display: flex;
+
+                svg {
+                    width: 1.15rem;
+                    height: 1.15rem;
+                }
+            }
+
+            &--edit {
+                color: $text-secondary;
+
+                &:hover,
+                &:active {
+                    color: $brand-primary;
+                    background-color: color-mix(
+                        in srgb,
+                        $brand-primary 15%,
+                        transparent
+                    );
+                }
+            }
+
+            &--del {
+                color: $text-secondary;
+
+                &:hover,
+                &:active {
+                    color: $vermelho;
+                    background-color: color-mix(
+                        in srgb,
+                        $vermelho 15%,
+                        transparent
+                    );
+                }
+            }
+        }
+    }
+}

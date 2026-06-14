@@ -1,0 +1,224 @@
+@use "@/styles/variables" as *;
+
+.menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    z-index: 100;
+    pointer-events: none;
+
+    &__container {
+        position: relative;
+        height: 100%;
+        display: flex;
+        pointer-events: auto;
+    }
+
+    &__btn {
+        position: absolute;
+        top: 1rem;
+        right: -1.9rem;
+        width: 1.9rem;
+        height: 3rem;
+        background-color: $brand-primary;
+        color: #fafafa;
+        border: none;
+        border-radius: 2px 50% 50% 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.15);
+        transition: $transition-default;
+
+        &--close {
+            opacity: 0.3;
+        }
+
+        &:hover {
+            opacity: 0.9;
+        }
+
+        i {
+            display: flex;
+            margin-right: 7px;
+        }
+    }
+
+    &__opcoes {
+        height: 100%;
+        max-width: 90vw;
+        background-color: $bg-primary;
+        border-right: 1px solid $border-color;
+        box-shadow: 10px 0 25px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 2rem 1.5rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex-shrink: 0;
+        & > * {
+            flex-shrink: 0;
+        }
+    }
+
+    &__lista {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        flex-grow: 1;
+        justify-content: center;
+
+        &-item {
+            flex-shrink: 0;
+            display: flex;
+            &__link {
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                padding: 0.75rem 1rem;
+                border-radius: $radius-md;
+                color: $text-secondary;
+                text-decoration: none;
+                font-weight: 500;
+                width: 100%;
+                transition: $transition-default;
+                text-wrap: nowrap;
+                @media all and (max-width: 420px) {
+                    text-wrap: wrap;
+                    flex-shrink: initial;
+                }
+
+                &:hover {
+                    color: $text-primary;
+                    background-color: color-mix(
+                        in srgb,
+                        $text-secondary 10%,
+                        transparent
+                    );
+                }
+
+                i {
+                    display: flex;
+                    color: $accent-color;
+
+                    svg {
+                        flex-shrink: 0;
+                    }
+                }
+
+                &--active {
+                    color: $text-primary;
+                    background-color: color-mix(
+                        in srgb,
+                        $brand-primary 10%,
+                        transparent
+                    );
+                    font-weight: 600;
+
+                    i {
+                        color: $brand-primary;
+                    }
+                }
+            }
+        }
+
+        &-drop {
+            display: flex;
+            flex-direction: column;
+
+            &-btn {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                padding: 0.75rem 1rem;
+                border-radius: $radius-md;
+                color: $text-secondary;
+                background-color: transparent;
+                border: none;
+                width: 100%;
+                font-weight: 500;
+                cursor: pointer;
+                transition: $transition-default;
+
+                &:hover {
+                    color: $text-primary;
+                    background-color: color-mix(
+                        in srgb,
+                        $text-secondary 10%,
+                        transparent
+                    );
+
+                    i:first-child {
+                        transition: $transition-default;
+                        transform: rotate(180deg);
+                    }
+                }
+
+                i:first-child {
+                    display: flex;
+                    color: $accent-color;
+                }
+
+                span {
+                    flex-grow: 1;
+                    text-align: left;
+                }
+
+                i:last-child {
+                    display: flex;
+                    color: $text-secondary;
+                }
+                &--active {
+                    span {
+                        color: $text-primary;
+                        font-weight: 600;
+                    }
+
+                    i:first-child {
+                        color: $brand-primary;
+                    }
+                }
+            }
+
+            &__opcoes {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                padding-left: 1.5rem;
+                margin-top: 0.25rem;
+            }
+        }
+    }
+
+    &__sair {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-radius: $radius-md;
+        color: #ef4444;
+        background-color: transparent;
+        border: none;
+        width: 100%;
+        font-family: $montserrat;
+        font-weight: 600;
+        cursor: pointer;
+        transition: $transition-default;
+        margin-top: 2rem;
+
+        &:hover {
+            background-color: color-mix(in srgb, #ef4444 10%, transparent);
+        }
+
+        i {
+            display: flex;
+        }
+    }
+}

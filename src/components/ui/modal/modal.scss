@@ -1,0 +1,322 @@
+@use "@/styles/variables" as *;
+
+.modal {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 750px;
+    max-height: 90vh;
+    background-color: $bg-primary;
+    border: 1px solid $border-color;
+    border-radius: $radius-lg;
+    box-shadow:
+        0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    cursor: default;
+
+    &__overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid $border-color;
+        background-color: $bg-primary;
+        z-index: 10;
+
+        &__title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+
+            font-size: 1.25rem;
+            font-family: $montserrat;
+            font-weight: 700;
+            color: $text-primary;
+
+            i {
+                display: flex;
+                color: $brand-primary;
+                svg {
+                    width: 1.5rem;
+                    height: 1.5rem;
+                }
+            }
+        }
+
+        button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: $text-secondary;
+            cursor: pointer;
+            transition: $transition-default;
+            padding: 0.25rem;
+            border-radius: 50%;
+            i {
+                transition: $transition-default;
+                display: inline-block;
+            }
+
+            &:hover {
+                color: $vermelho;
+                background-color: color-mix(
+                    in srgb,
+                    $vermelho 10%,
+                    transparent
+                );
+                i {
+                    transform: rotate(90deg);
+                }
+            }
+
+            svg {
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+        }
+    }
+
+    &__body {
+        padding: 1.5rem;
+        overflow-y: auto;
+        scrollbar-width: thin;
+
+        // &::-webkit-scrollbar {
+        //     width: 6px;
+        // }
+        // &::-webkit-scrollbar-track {
+        //     background: transparent;
+        // }
+        // &::-webkit-scrollbar-thumb {
+        //     background-color: $border-color;
+        //     border-radius: 10px;
+        // }
+    }
+
+    &__deletar {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        padding-top: 0.5rem;
+
+        &__container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        &__title {
+            font-family: $montserrat;
+            font-size: 1.15rem;
+            color: $text-primary;
+            font-weight: 500;
+            line-height: 1.6;
+
+            span {
+                font-weight: 700;
+                color: $vermelho;
+            }
+
+            strong {
+                font-weight: 700;
+                color: $vermelho;
+            }
+        }
+
+        &__message {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.25rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        &__buttons {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid $border-color;
+        }
+
+        &__info {
+            font-family: $montserrat;
+            font-size: 0.9rem;
+            color: $text-secondary;
+            line-height: 1.5;
+            background-color: $bg-secondary;
+            padding: 0.85rem 1.25rem;
+            border-radius: $radius-md;
+            border: 1px dashed $border-color;
+            width: 100%;
+
+            b,
+            strong {
+                color: $text-primary;
+                font-weight: 600;
+            }
+        }
+
+        &__button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.85rem 1.5rem;
+            border-radius: $radius-md;
+            font-family: $montserrat;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: $transition-default;
+            border: none;
+
+            &--cancelar {
+                background-color: transparent;
+                color: $text-secondary;
+                border: 1px solid $border-color;
+
+                &:hover {
+                    background-color: color-mix(
+                        in srgb,
+                        $text-secondary 10%,
+                        transparent
+                    );
+                    color: $text-primary;
+                }
+            }
+
+            &--sim {
+                background-color: $vermelho;
+                color: #ffffff;
+
+                &:hover {
+                    background-color: color-mix(in srgb, $vermelho, #000 15%);
+                    transform: scale(1.03);
+                    box-shadow: 0 4px 12px
+                        color-mix(in srgb, $vermelho 20%, transparent);
+                }
+
+                &:active {
+                    transform: scale(0.99);
+                }
+            }
+        }
+    }
+
+    &__form {
+        &-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+
+            form {
+                display: flex;
+                flex-direction: column;
+                gap: 1.25rem;
+                width: 100%;
+            }
+        }
+
+        &__submit {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid $border-color;
+        }
+
+        &__btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.85rem 1.5rem;
+            border-radius: $radius-md;
+            font-family: $montserrat;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: $transition-default;
+            border: none;
+            background-color: $brand-primary;
+            color: $accent-text;
+
+            i {
+                display: flex;
+                svg {
+                    width: 1.25rem;
+                    height: 1.25rem;
+                }
+            }
+
+            &:hover {
+                background-color: color-mix(in srgb, $brand-primary, #000 15%);
+                transform: scale(1.03);
+            }
+
+            &:active {
+                transform: scale(0.99);
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .modal {
+        max-width: 100%;
+        max-height: 100dvh;
+
+        &__deletar {
+            &__buttons {
+                flex-direction: column-reverse;
+                gap: 0.75rem;
+            }
+
+            &__button {
+                width: 100%;
+                padding: 1rem;
+            }
+        }
+        &__form {
+            &__submit {
+                flex-direction: column-reverse;
+                gap: 0.75rem;
+            }
+
+            &__btn {
+                width: 100%;
+                padding: 1rem;
+            }
+        }
+    }
+}
+@media (max-width: 30em) {
+    .modal {
+        border-radius: 0;
+        &__overlay {
+            padding: 0;
+        }
+    }
+}

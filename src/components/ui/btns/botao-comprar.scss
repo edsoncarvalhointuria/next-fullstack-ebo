@@ -1,0 +1,31 @@
+@use "@/styles/variables" as v;
+
+.btn-comprar {
+    // margin-top: 1rem;
+    display: inline-block;
+    padding: 1.2rem 3.5rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    background-color: #fafafa;
+    color: #09090b;
+    border: 2px solid transparent;
+    border-radius: 2rem;
+    transition: v.$transition-default;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+
+    @media all and (max-width: 30em) {
+        padding: 0.9rem 1.2rem;
+        font-size: 1rem;
+    }
+
+    &:hover {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #ffffff;
+        border-color: #ffffff;
+        backdrop-filter: blur(10px);
+    }
+}

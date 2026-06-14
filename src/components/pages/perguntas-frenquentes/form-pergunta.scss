@@ -1,0 +1,62 @@
+@use "@/styles/variables" as *;
+
+.perguntas-frequentes {
+    &__form {
+        &-container {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            @media all and (max-width: 30em) {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        &-data {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background-color: $bg-secondary;
+            border-radius: $radius-md;
+            border: 1px dashed $border-color;
+            font-size: 0.85rem;
+            color: $text-secondary;
+            width: fit-content;
+
+            i {
+                display: flex;
+                color: $brand-primary;
+                svg {
+                    width: 1.15rem;
+                    height: 1.15rem;
+                }
+            }
+
+            strong {
+                color: $text-primary;
+                font-family: $montserrat;
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .perguntas-frequentes {
+        &__form {
+            &__submit {
+                flex-direction: column-reverse;
+                gap: 0.75rem;
+            }
+
+            &__btn {
+                width: 100%;
+                padding: 1rem;
+            }
+        }
+    }
+}

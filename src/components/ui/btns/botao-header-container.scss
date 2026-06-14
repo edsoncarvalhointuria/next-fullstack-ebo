@@ -1,0 +1,10 @@
+.botao-header-container {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap-reverse;
+
+    @media all and (max-width: 670px) {
+        justify-content: center;
+    }
+}

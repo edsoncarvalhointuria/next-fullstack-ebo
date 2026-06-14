@@ -1,0 +1,788 @@
+@use "@/styles/variables" as *;
+
+$grid-template: 2.5fr 1.5fr 1.5fr 1.5fr 50px;
+$break-point: 879px;
+
+.transacoes {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+
+    &__lista {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        background-color: $bg-primary;
+        border: 1px solid $border-color;
+        border-radius: $radius-lg;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    }
+
+    &__filtros {
+        display: flex;
+        align-items: flex-end;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px dashed $border-color;
+    }
+
+    &__filtro {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        &-search {
+            flex-grow: 1;
+            min-width: 280px;
+        }
+
+        &-drop {
+            min-width: 220px;
+        }
+
+        &-title {
+            font-size: 0.85rem;
+            color: $text-secondary;
+            font-weight: 600;
+            font-family: $montserrat;
+        }
+
+        @media all and (max-width: 771px) {
+            width: 100%;
+            min-width: auto;
+        }
+    }
+
+    &__table {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        overflow-x: auto;
+
+        &-header {
+            display: grid;
+            grid-template-columns: $grid-template;
+            padding: 1rem;
+            background-color: $bg-secondary;
+            border-radius: $radius-md;
+            margin-bottom: 0.5rem;
+            min-width: 800px;
+
+            &__opcao {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: $text-secondary;
+                font-family: $montserrat;
+                font-weight: 700;
+                font-size: 0.9rem;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+
+                i svg {
+                    width: 1.1rem;
+                    height: 1.1rem;
+                }
+            }
+        }
+
+        &-body {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 800px;
+        }
+
+        &-container {
+            display: flex;
+            flex-direction: column;
+            background-color: $bg-primary;
+            border: 1px solid $border-color;
+            border-radius: $radius-md;
+            overflow: hidden;
+
+            &--is-open {
+                margin-bottom: 1rem;
+            }
+
+            &__drop {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+                overflow: hidden;
+                &--container {
+                    border-top: 1px dashed $border-color;
+                    background-color: $bg-secondary;
+                    padding: 0.5rem;
+                    overflow: hidden;
+                }
+
+                &__cards {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 1rem;
+                }
+
+                &__card {
+                    background-color: $bg-primary;
+                    border: 1px solid $border-color;
+                    border-radius: $radius-md;
+                    padding: 1.25rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                    align-items: center;
+                    flex: 1;
+                    position: relative;
+
+                    &-container {
+                        padding-bottom: 0.75rem;
+                        border-bottom: 1px solid $border-color;
+                        margin-bottom: 0.5rem;
+                        width: 100%;
+
+                        // display: flex;
+                        // justify-content: space-between;
+                        // flex-wrap: wrap;
+                        // align-items: center;
+
+                        display: grid;
+                        grid-template-columns: auto auto;
+                        justify-items: center;
+                        gap: 0.5rem;
+                        @media all and (max-width: 30em) {
+                            gap: 1rem;
+                        }
+                    }
+                }
+
+                &__tipo-ingresso,
+                &__tipo-igreja {
+                    font-size: 0.8rem;
+                    color: $brand-primary;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    grid-row: 1;
+
+                    i {
+                        height: 20px;
+                        width: 20px;
+                    }
+                }
+
+                &__nome {
+                    font-size: 1.1rem;
+                    font-family: $montserrat;
+                    font-weight: 600;
+                    color: $text-primary;
+                    text-align: center;
+                    grid-column: span 2;
+                }
+
+                &__checkins {
+                    display: flex;
+                    gap: 1.5rem;
+                    flex-wrap: wrap;
+                    justify-content: center;
+                }
+
+                &__checkin {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.3rem;
+                    padding: 0.75rem 1.25rem;
+                    background-color: $bg-secondary;
+                    border: 1px solid $border-color;
+                    border-radius: $radius-md;
+                    color: $text-primary;
+
+                    i {
+                        color: color-mix(in srgb, $verde 80%, transparent);
+                        svg {
+                            width: 1.1rem;
+                            height: 1.1rem;
+                        }
+                    }
+
+                    p {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                    }
+                    span {
+                        font-weight: 500;
+                    }
+                }
+
+                &__checkins-vazio,
+                &__vazio {
+                    p {
+                        padding: 2rem;
+                        font-size: 0.9rem;
+                        color: $text-secondary;
+                        font-family: $montserrat;
+                        font-style: italic;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        justify-content: center;
+
+                        i svg {
+                            width: 1.1rem;
+                            height: 1.1rem;
+                        }
+                    }
+                }
+            }
+            &__buttons {
+                display: flex;
+                justify-content: flex-end;
+                gap: 1rem;
+
+                a {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    padding: 0.75rem 1.25rem;
+                    border-radius: $radius-md;
+                    background-color: $bg-primary;
+                    color: $text-primary;
+                    text-decoration: none;
+                    font-family: $montserrat;
+                    font-weight: 600;
+                    font-size: 0.9rem;
+                    border: 1px solid $border-color;
+                    transition: $transition-default;
+
+                    i svg {
+                        transition: $transition-default;
+                        width: 1.1rem;
+                        height: 1.1rem;
+                        color: $brand-primary;
+                    }
+
+                    &:hover {
+                        background-color: $brand-primary;
+                        color: #fff;
+                        border-color: $brand-primary;
+
+                        i svg {
+                            color: #fff;
+                        }
+                    }
+                }
+            }
+        }
+
+        &-row {
+            display: grid;
+            grid-template-columns: $grid-template;
+            padding: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            align-items: center;
+
+            &:hover {
+                background-color: color-mix(
+                    in srgb,
+                    $bg-secondary 50%,
+                    transparent
+                );
+            }
+        }
+
+        &-item {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0.25rem;
+
+            p {
+                font-family: $montserrat;
+            }
+
+            &__comprador {
+                &-nome {
+                    font-weight: 600;
+                    color: $text-primary;
+                    font-size: 1rem;
+                }
+                &-email {
+                    color: $text-secondary;
+                    font-size: 0.7rem;
+                    overflow-wrap: anywhere;
+                    // overflow: hidden;
+                    // text-wrap: pretty;
+                    // text-overflow: ellipsis;
+                    // max-width: 90%;
+                }
+                &-cpf {
+                    line-height: 1;
+                    color: $text-secondary;
+                    font-size: 0.8rem;
+                }
+            }
+
+            &__pagamento {
+                &-tipo {
+                    color: $text-secondary;
+                    font-size: 0.85rem;
+                    text-transform: uppercase;
+                }
+
+                &-valor {
+                    font-weight: 700;
+                    color: $text-primary;
+                    font-size: 1rem;
+                }
+            }
+
+            &__status {
+                p {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    padding: 0.4rem 0.8rem;
+                    border-radius: 20px;
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                    width: fit-content;
+
+                    i svg {
+                        width: 1rem;
+                        height: 1rem;
+                    }
+                }
+
+                &--aprovado p {
+                    background-color: color-mix(
+                        in srgb,
+                        $verde 15%,
+                        transparent
+                    );
+                    color: $verde;
+                }
+
+                &--pendente p {
+                    background-color: color-mix(
+                        in srgb,
+                        $amarelo 15%,
+                        transparent
+                    );
+                    color: $amarelo;
+                }
+
+                &--cancelado p {
+                    background-color: color-mix(
+                        in srgb,
+                        $vermelho 15%,
+                        transparent
+                    );
+                    color: $vermelho;
+                }
+            }
+
+            &__data {
+                color: $text-primary;
+                font-size: 0.95rem;
+                font-weight: 600;
+                text-transform: capitalize;
+
+                &-hora {
+                    color: $text-secondary;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                }
+            }
+
+            &__acao {
+                align-items: flex-end;
+                color: $text-secondary;
+            }
+        }
+    }
+
+    &__graficos {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+
+        &__reset {
+            position: fixed;
+            top: 0rem;
+            right: 50%;
+            gap: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: $radius-sm;
+            padding: 1rem;
+            margin: 0.7rem;
+            z-index: 10;
+            color: $brand-primary;
+            cursor: pointer;
+            transform: translate(50%);
+            transition: $transition-default;
+            background-color: $accent-color;
+
+            i {
+                display: flex;
+                flex-shrink: 0;
+                svg {
+                    width: 1.15rem;
+                    height: 1.15rem;
+                }
+            }
+
+            span {
+                flex-shrink: 0;
+            }
+
+            &:hover {
+                color: $vermelho;
+                border-color: color-mix(in srgb, $vermelho 20%, transparent);
+                transform: translate(50%) scale(1.05);
+            }
+        }
+        &__graficos {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 1.5rem;
+
+            &__grafico {
+                background-color: $bg-primary;
+                border: 1px solid $border-color;
+                border-radius: $radius-lg;
+                padding: 1.5rem;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                min-height: 200px;
+                position: relative;
+
+                &:nth-child(1) {
+                    grid-column: span 6;
+                    padding: 1rem 0.5rem;
+
+                    & > div {
+                        margin-top: 1.5rem;
+                    }
+                }
+
+                &:nth-child(3),
+                &:nth-child(4) {
+                    grid-column: span 5;
+                    overflow-y: auto;
+                    max-height: 700px;
+                    aspect-ratio: 1/1;
+
+                    & > div {
+                        margin-top: 1.5rem;
+                    }
+
+                    &::-webkit-scrollbar {
+                        width: 6px;
+                    }
+                    &::-webkit-scrollbar-track {
+                        background: transparent;
+                    }
+                    &::-webkit-scrollbar-thumb {
+                        background-color: $border-color;
+                        border-radius: $radius-md;
+                    }
+                    &::-webkit-scrollbar-thumb:hover {
+                        background-color: $text-secondary;
+                    }
+                }
+
+                &__title {
+                    font-size: 0.85rem;
+                    position: absolute;
+                    margin: 1rem;
+                    top: 0;
+                    left: 0;
+                    font-weight: 700;
+                    color: $text-secondary;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                }
+
+                &--pie {
+                    padding: 0;
+                    border: none;
+                    box-shadow: none;
+                    background: transparent;
+                }
+            }
+            &__pie {
+                grid-column: span 4;
+                background-color: $bg-primary;
+                border: 1px solid $border-color;
+                border-radius: $radius-lg;
+                padding: 1.5rem 0;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+
+                &-opcs {
+                    display: inline-flex;
+                    background-color: $bg-secondary;
+                    border-radius: $radius-md;
+                    padding: 0.35rem;
+                    align-self: center;
+                }
+
+                &-opc {
+                    input[type="radio"] {
+                        display: none;
+                    }
+
+                    label {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 0.5rem 1.5rem;
+                        border-radius: $radius-sm;
+                        cursor: pointer;
+                        color: $text-secondary;
+                        transition: $transition-default;
+
+                        i {
+                            display: flex;
+                            svg {
+                                width: 1.25rem;
+                                height: 1.25rem;
+                            }
+                        }
+                    }
+
+                    label:has(+ input[type="radio"]:checked) {
+                        background-color: $bg-primary;
+                        color: $brand-primary;
+                        box-shadow: 0 2px 6px
+                            color-mix(in srgb, $text-primary 10%, transparent);
+                    }
+
+                    label:hover:has(+ input[type="radio"]:not(:checked)) {
+                        color: $text-primary;
+                    }
+                }
+            }
+
+            @media (max-width: 1024px) {
+                &__grafico {
+                    &:nth-child(1) {
+                        grid-column: 1/-1;
+                    }
+                }
+                &__pie {
+                    grid-column: 1/-1;
+                }
+                &__grafico:nth-child(3),
+                &__grafico:nth-child(4) {
+                    grid-column: span 5;
+                }
+            }
+
+            @media (max-width: 768px) {
+                &__grafico:nth-child(3),
+                &__grafico:nth-child(4) {
+                    grid-column: span 10;
+                    max-height: none;
+                    height: 100%;
+                    aspect-ratio: initial;
+                    overflow-y: visible;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        .transacoes {
+            &__form {
+                form {
+                    gap: 1.5rem;
+                }
+
+                &__acomponhante {
+                    padding: 1rem;
+                }
+            }
+        }
+    }
+}
+@media (max-width: $break-point) {
+    .transacoes {
+        &__lista {
+            @media all and (max-width: 30em) {
+                padding: 0.8rem;
+                // border: none;
+            }
+        }
+        &__table {
+            min-width: 100%;
+            overflow-x: hidden;
+
+            &-header {
+                display: none;
+            }
+
+            &-body {
+                min-width: 100%;
+
+                @media all and (max-width: 30em) {
+                    gap: 1.5rem;
+                }
+            }
+
+            &-row {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+                position: relative;
+                padding: 1.25rem;
+                align-items: flex-start;
+            }
+
+            &-item {
+                &__status {
+                    position: absolute;
+                    top: 1.25rem;
+                    right: 1.25rem;
+
+                    @media all and (max-width: 30em) {
+                        p {
+                            padding: 0.2rem;
+                        }
+                        span {
+                            display: none;
+                        }
+                    }
+                }
+
+                &__comprador {
+                    padding-right: 10px;
+                    flex-direction: column-reverse;
+
+                    &-nome {
+                        font-size: 1.1rem;
+                        @media all and (max-width: 30em) {
+                            font-size: 0.85rem;
+                        }
+                    }
+                }
+
+                &__data {
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 0.5rem;
+
+                    @media all and (max-width: 30em) {
+                        font-size: 0.85rem;
+                    }
+
+                    &-hora {
+                        &::before {
+                            text-transform: lowercase;
+                            content: "às ";
+                            margin-right: 0.25rem;
+                        }
+                    }
+                }
+
+                &__pagamento {
+                    flex-direction: row-reverse;
+                    align-items: center;
+                    gap: 0.5rem;
+                    margin-top: 0.5rem;
+                    padding-top: 0.5rem;
+                    border-top: 1px dashed
+                        color-mix(in srgb, $border-color 60%, transparent);
+                    width: 100%;
+
+                    @media all and (max-width: 30em) {
+                        border-bottom: 1px dashed
+                            color-mix(in srgb, $border-color 60%, transparent);
+                        align-items: center;
+                        justify-content: center;
+                        margin: 0.5rem 0;
+                        padding: 0.5rem 0;
+                    }
+
+                    &-valor {
+                        font-size: 1.2rem;
+                    }
+                }
+
+                &__acao {
+                    position: absolute;
+                    bottom: 1.25rem;
+                    right: 1.25rem;
+                }
+            }
+
+            &-container {
+                -webkit-tap-highlight-color: transparent;
+                &__drop {
+                    &__cards {
+                        grid-template-columns: 1fr;
+                        display: grid;
+                    }
+
+                    &__buttons {
+                        flex-direction: column;
+
+                        a {
+                            width: 100%;
+                            justify-content: center;
+                        }
+                    }
+
+                    &__checkins {
+                        @media all and (max-width: 30em) {
+                            gap: 0.5rem;
+                        }
+                    }
+
+                    &__checkin {
+                        @media all and (max-width: 30em) {
+                            padding: 0.75rem;
+
+                            p {
+                                font-size: 0.8rem;
+                            }
+                        }
+                    }
+                }
+                &__buttons {
+                    @media all and (max-width: 30em) {
+                        gap: 0.5rem;
+                        justify-content: center;
+
+                        a {
+                            padding: 0.75rem;
+                            span {
+                                span {
+                                    display: none;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

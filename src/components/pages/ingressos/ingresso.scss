@@ -1,0 +1,135 @@
+@use "@/styles/variables" as *;
+
+.ingressos {
+    &__ingresso {
+        background-color: $bg-secondary;
+        border: 1px solid color-mix(in srgb, $text-primary 10%, transparent);
+        border-radius: 16px;
+        position: relative;
+        overflow: hidden;
+        // transition:
+        //     transform 0.3s ease,
+        //     box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+
+        &:hover {
+            // transform: translateY(-5px);
+            box-shadow: 0 10px 40px
+                color-mix(in srgb, $text-primary 5%, transparent);
+        }
+
+        &-circle {
+            position: absolute;
+            top: 50%;
+            right: -15px;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            background-color: $bg-primary;
+            border-radius: 50%;
+            border-left: 1px solid
+                color-mix(in srgb, $text-primary 10%, transparent);
+            z-index: 2;
+
+            &::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: -100vw;
+                width: 30px;
+                height: 30px;
+                background-color: $bg-primary;
+                border-radius: 50%;
+                border-right: 1px solid
+                    color-mix(in srgb, $text-primary 10%, transparent);
+                transform: translateX(15px);
+            }
+        }
+
+        &-infos {
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        &-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: $text-primary;
+            text-transform: capitalize;
+            margin-bottom: 1.5rem;
+        }
+
+        &-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px dashed
+                color-mix(in srgb, $text-primary 15%, transparent);
+            padding-bottom: 2rem;
+
+            p {
+                font-size: 0.95rem;
+                color: $text-secondary;
+                margin-top: 0.5rem;
+
+                span {
+                    font-weight: 700;
+                    color: $text-primary;
+                }
+            }
+        }
+
+        &-desc {
+            font-size: 1rem;
+            line-height: 1.6;
+            font-weight: 400;
+            color: $text-secondary;
+        }
+
+        &-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        &-price {
+            font-size: 2.5rem;
+            font-family: $montserrat;
+            font-weight: 700;
+            color: $text-primary;
+        }
+
+        &-obs {
+            font-size: 0.85rem;
+            color: $text-secondary;
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+        &-comprar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 1.5rem;
+            background-color: $text-primary;
+            color: $bg-primary;
+            font-family: $montserrat;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-decoration: none;
+            letter-spacing: 1px;
+            transition: opacity 0.3s ease;
+
+            &:hover {
+                opacity: 0.9;
+            }
+        }
+    }
+}

@@ -1,0 +1,56 @@
+@use "@/styles/variables" as *;
+
+.search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    // max-width: 350px;
+
+    input[type="search"] {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 3rem;
+        border: 1px solid $border-color;
+        border-radius: $radius-md;
+        background-color: transparent;
+        color: $text-primary;
+        font-family: $montserrat;
+        font-size: 0.95rem;
+        transition: $transition-default;
+
+        &:focus {
+            outline: none;
+            border-color: $brand-primary;
+            box-shadow: 0 0 0 1px $brand-primary;
+
+            & + i {
+                animation: lupa ease 2s infinite;
+            }
+        }
+    }
+
+    i {
+        position: absolute;
+        left: 0.8rem;
+        color: $text-secondary;
+        display: flex;
+    }
+}
+
+@keyframes lupa {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+        transform: translate(2px, -2px) rotate(2deg);
+    }
+    50% {
+        transform: translate(-1px, 2px) rotate(-3deg);
+    }
+    75% {
+        transform: translate(-2px, -1px) rotate(2deg);
+    }
+    100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+}

@@ -1,0 +1,243 @@
+@use "@/styles/variables" as *;
+
+.lista-dados {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: $bg-primary;
+    border: 1px solid $border-color;
+    border-radius: $radius-lg;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+
+    @media all and (max-width: 30em) {
+        padding: 1rem;
+    }
+
+    @media all and (max-width: 320px) {
+        padding: 0;
+        border: none;
+    }
+
+    &__filtros {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+
+        &-filtro {
+            display: flex;
+            align-items: center;
+            @media all and (max-width: 30em) {
+                width: 100%;
+            }
+        }
+    }
+
+    &__lista {
+        width: 100%;
+        overflow-x: auto;
+
+        &--mobile {
+            display: grid;
+            gap: 1rem;
+        }
+
+        &__table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            min-width: 600px;
+
+            th {
+                padding: 1rem;
+                border-bottom: 2px solid $border-color;
+                color: $text-secondary;
+            }
+
+            td {
+                padding: 1rem;
+                border-bottom: 1px solid $border-color;
+                vertical-align: middle;
+            }
+        }
+
+        &__coluna {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            justify-content: center;
+
+            i {
+                display: flex;
+            }
+        }
+
+        &__item {
+            transition: $transition-default;
+            text-align: center;
+
+            &:hover {
+                background-color: color-mix(
+                    in srgb,
+                    $text-secondary 5%,
+                    transparent
+                );
+            }
+
+            &-nome {
+                margin: 0;
+                font-weight: 500;
+                color: $text-primary;
+                text-transform: uppercase;
+            }
+
+            &-boolean {
+                display: flex;
+                justify-content: center;
+
+                &--ativo {
+                    color: $verde;
+                }
+                &--inativo {
+                    color: $vermelho;
+                }
+            }
+
+            &-acoes {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                justify-content: center;
+
+                button {
+                    background-color: transparent;
+                    text-decoration: none;
+                    border: none;
+                    cursor: pointer;
+                    padding: 0.5rem;
+                    border-radius: $radius-sm;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all ease-out 0.4s;
+
+                    i svg {
+                        width: 100%;
+                        height: auto;
+                    }
+                }
+            }
+        }
+
+        &--vazio {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            gap: 1rem;
+            color: $text-secondary;
+            opacity: 0.7;
+
+            @media all and (max-width: 30em) {
+                text-align: center;
+            }
+
+            i {
+                display: flex;
+
+                svg {
+                    width: 4rem;
+                    height: 4rem;
+                }
+            }
+
+            p {
+                margin: 0;
+                font-weight: 500;
+                font-size: 1.125rem;
+            }
+        }
+
+        &__card {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            background-color: $bg-primary;
+            border: 1px solid $border-color;
+            border-radius: $radius-lg;
+            padding: 1.25rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+            transition: $transition-default;
+
+            &--ativo {
+                border-left: 4px solid $verde;
+            }
+
+            &--inativo {
+                border-left: 4px solid $vermelho;
+            }
+
+            h3 {
+                margin: 0;
+                font-family: $montserrat;
+                font-size: 1.125rem;
+                font-weight: 700;
+                color: $text-primary;
+                text-transform: uppercase;
+            }
+
+            &-ativo,
+            &-inativo {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.35rem;
+                padding: 0.25rem 0.75rem;
+                border-radius: 999px;
+                font-family: $montserrat;
+                font-weight: 600;
+                font-size: 0.85rem;
+                width: max-content;
+                margin: 0;
+
+                i {
+                    display: flex;
+                    svg {
+                        width: 1rem;
+                        height: 1rem;
+                    }
+                }
+            }
+
+            &-ativo {
+                color: $verde;
+                background-color: color-mix(in srgb, $verde 15%, transparent);
+            }
+
+            &-inativo {
+                color: $vermelho;
+                background-color: color-mix(
+                    in srgb,
+                    $vermelho 15%,
+                    transparent
+                );
+            }
+
+            &-buttons {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 0.75rem;
+                margin-top: 0.5rem;
+                padding-top: 1rem;
+                border-top: 1px solid $border-color;
+            }
+        }
+    }
+}

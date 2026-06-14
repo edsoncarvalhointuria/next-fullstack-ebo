@@ -301,9 +301,12 @@
             }
 
             @media (max-width: 1024px) {
-                &__grafico:nth-child(2),
-                &__grafico:nth-child(3) {
-                    grid-column: span 10;
+                &__grafico {
+                    &:nth-child(3),
+                    &:nth-child(2),
+                    &:nth-child(1) {
+                        grid-column: span 10;
+                    }
                 }
             }
         }

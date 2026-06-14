@@ -23,7 +23,7 @@ import { mascaraCpfCnpj } from "@/lib/mascaras";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Search from "@/components/ui/Search";
-import { useCallback, useState } from "react";
+import { Suspense, useCallback, useState } from "react";
 import { testeCheckinResponses } from "../../../../../../config/datasTeste";
 import { useSearchParams } from "next/navigation";
 import Modal from "@/components/ui/modal/Modal";
@@ -187,7 +187,7 @@ const ModalCheckin = () => {
 };
 
 export default function Checkin() {
-    const [pesquisa, setPesquisa] = useState("");
+    const [_, setPesquisa] = useState("");
 
     const methods = useForm<FormCheckin>({ resolver: zodResolver(schema) });
     const {
@@ -341,8 +341,9 @@ export default function Checkin() {
                     </div>
                 </section>
             </MotionMain>
-
-            <ModalCheckin />
+            <Suspense>
+                <ModalCheckin />
+            </Suspense>
         </>
     );
 }

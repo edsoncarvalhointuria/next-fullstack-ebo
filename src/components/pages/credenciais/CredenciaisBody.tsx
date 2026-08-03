@@ -1,33 +1,16 @@
 "use client";
 
 import Dropdown, { ItemDropdownDefault } from "@/components/ui/Dropdown";
-import {
-    memo,
-    ReactNode,
-    useCallback,
-    useDeferredValue,
-    useMemo,
-    useState,
-} from "react";
+import { memo, ReactNode, useCallback, useDeferredValue, useMemo, useState } from "react";
 import Search from "@/components/ui/Search";
 import { ListaVazia } from "../config-site/ListaDados";
 import Link from "next/link";
 import Whatsapp from "@/components/ui/icons/Whatsapp";
 import Gmail from "@/components/ui/icons/Gmail";
 import { Box, Church, Ticket, Tickets, Users } from "lucide-react";
-import {
-    Card,
-    CardCustom,
-    CardCustomProps,
-    CardOpcaoProps,
-    CardProps,
-} from "@/components/ui/Card";
+import { Card, CardCustom, CardCustomProps, CardOpcaoProps, CardProps } from "@/components/ui/Card";
 import { BaseCardsContainer } from "../config-site/BaseConfig";
-import {
-    ChartBarPorCargos,
-    ChartFaturamento,
-    ChartPieCustom,
-} from "../transacoes/ChartsTransacoes";
+import { ChartBarPorCargos, ChartFaturamento, ChartPieCustom } from "../transacoes/ChartsTransacoes";
 import useResize from "@/hooks/useResize";
 import { useSearchParams } from "next/navigation";
 import GraficoRosca from "@/components/ui/GraficoRosca";
@@ -54,20 +37,12 @@ const CredencialCard = ({
         >
             <p className="credenciais__credencial__card__cargo">{nome_cargo}</p>
             <h3 className="credenciais__credencial__card__nome">{nome}</h3>
-            <p className={"credenciais__credencial__card__congregacao"}>
-                {nome_congregacao || nome_outra_congregacao}
-            </p>
+            <p className={"credenciais__credencial__card__congregacao"}>{nome_congregacao || nome_outra_congregacao}</p>
         </div>
     );
 };
 const Crendecial = memo(
-    ({
-        comprador,
-        lista,
-    }: {
-        comprador: CredencialResponse | undefined;
-        lista: CredencialResponse[] | undefined;
-    }) => {
+    ({ comprador, lista }: { comprador: CredencialResponse | undefined; lista: CredencialResponse[] | undefined }) => {
         return (
             <div className="credenciais__credencial">
                 <div className="credenciais__credencial__header">
@@ -78,13 +53,7 @@ const Crendecial = memo(
                         </h2>
 
                         <p className="credenciais__credencial__tipo">
-                            <i>
-                                {comprador?.tipo_ingresso === "individual" ? (
-                                    <Ticket />
-                                ) : (
-                                    <Tickets />
-                                )}
-                            </i>
+                            <i>{comprador?.tipo_ingresso === "individual" ? <Ticket /> : <Tickets />}</i>
                             <span>{comprador?.tipo_ingresso}</span>
                         </p>
                     </div>
@@ -128,9 +97,7 @@ const Crendecial = memo(
 export function FiltrosCredenciais({
     children,
 }: {
-    children: (
-        listaAtualizada: [string, CredencialResponse[] | undefined][],
-    ) => ReactNode;
+    children: (listaAtualizada: [string, CredencialResponse[] | undefined][]) => ReactNode;
 }) {
     const {
         ingressos,
@@ -155,15 +122,12 @@ export function FiltrosCredenciais({
     const credenciaisMemo = useMemo(() => {
         let c = credenciaisResponse;
 
-        if (drops.cargo.id !== "todos")
-            c = c.filter((v) => v.id_cargo === drops.cargo.id);
+        if (drops.cargo.id !== "todos") c = c.filter((v) => v.id_cargo === drops.cargo.id);
         if (drops.congregacao.id !== "todos") {
-            if (drops.congregacao.id === "outra")
-                c = c.filter((v) => v.is_outra_congregacao);
+            if (drops.congregacao.id === "outra") c = c.filter((v) => v.is_outra_congregacao);
             else c = c.filter((v) => v.id_congregacao === drops.congregacao.id);
         }
-        if (drops.ingresso.id !== "todos")
-            c = c.filter((v) => v.tipo_ingresso === drops.ingresso.nome);
+        if (drops.ingresso.id !== "todos") c = c.filter((v) => v.tipo_ingresso === drops.ingresso.nome);
         if (p)
             c = c.filter(
                 (v) =>
@@ -181,10 +145,7 @@ export function FiltrosCredenciais({
         let casal = 0;
         responseTransacoes.forEach((v) => {
             const { credenciais } = v;
-            if (credenciais.length)
-                credenciais[0].tipo_ingresso === "individual"
-                    ? ++individual
-                    : ++casal;
+            if (credenciais.length) credenciais[0].tipo_ingresso === "individual" ? ++individual : ++casal;
         });
         const c: CardProps[] = [
             {
@@ -219,16 +180,11 @@ export function FiltrosCredenciais({
             <section className="credenciais__lista">
                 <div className="credenciais__filtros">
                     <div className="credenciais__filtro credenciais__filtro--search">
-                        <Search
-                            onSearch={setPesquisa}
-                            placeholder="Pesquisar Credenciais"
-                        />
+                        <Search onSearch={setPesquisa} placeholder="Pesquisar Credenciais" />
                     </div>
                     <div className="credenciais__filtros__drops">
                         <div className="credenciais__filtro">
-                            <p className="credenciais__filtro__title">
-                                Tipo Ingresso
-                            </p>
+                            <p className="credenciais__filtro__title">Tipo Ingresso</p>
                             <Dropdown
                                 lista={ingressosMemo}
                                 currentValue={drops.ingresso}
@@ -238,17 +194,10 @@ export function FiltrosCredenciais({
                         </div>
                         <div className="credenciais__filtro">
                             <p className="credenciais__filtro__title">Cargo</p>
-                            <Dropdown
-                                lista={cargos}
-                                currentValue={drops.cargo}
-                                idObj="cargo"
-                                onSelected={addDrops}
-                            />
+                            <Dropdown lista={cargos} currentValue={drops.cargo} idObj="cargo" onSelected={addDrops} />
                         </div>
                         <div className="credenciais__filtro">
-                            <p className="credenciais__filtro__title">
-                                Congregação
-                            </p>
+                            <p className="credenciais__filtro__title">Congregação</p>
                             <Dropdown
                                 lista={congregacoes}
                                 currentValue={drops.congregacao}
@@ -273,13 +222,7 @@ export function ListaCredenciais() {
                     {lista.length > 0 ? (
                         lista.map(([id, lista]) => {
                             const comprador = lista?.[0];
-                            return (
-                                <Crendecial
-                                    key={id}
-                                    comprador={comprador}
-                                    lista={lista}
-                                />
-                            );
+                            return <Crendecial key={id} comprador={comprador} lista={lista} />;
                         })
                     ) : (
                         <ListaVazia />
@@ -309,12 +252,7 @@ export function GraficosCredenciais() {
             },
             {
                 icon: <Box />,
-                children: (
-                    <GraficoRosca
-                        cor="var(--chart-3)"
-                        porcentagem={cardsCredenciais.lotacaoPercentual * 100}
-                    />
-                ),
+                children: <GraficoRosca cor="var(--chart-3)" porcentagem={cardsCredenciais.lotacaoPercentual * 100} />,
                 title: "Capacidade Atingida",
                 className: "card--center",
             },
@@ -328,28 +266,18 @@ export function GraficosCredenciais() {
         return c;
     }, [cardsCredenciais]);
 
-    console.log(listaGraficosCredenciais.inscricoes);
+    // console.log(listaGraficosCredenciais.inscricoes);
     return (
         <div className="credenciais__graficos">
             <BaseCardsContainer>
                 {cards.map((v, i) =>
-                    !("number" in v) ? (
-                        <CardCustom {...v} key={`card-${i}`} />
-                    ) : (
-                        <Card {...v} key={`card-${i}`} />
-                    ),
+                    !("number" in v) ? <CardCustom {...v} key={`card-${i}`} /> : <Card {...v} key={`card-${i}`} />,
                 )}
             </BaseCardsContainer>
-            <motion.div
-                initial={{ display: "none" }}
-                animate={{ display: "block" }}
-                transition={{ delay: 1 }}
-            >
+            <motion.div initial={{ display: "none" }} animate={{ display: "block" }} transition={{ delay: 1 }}>
                 <div className="credenciais__graficos__graficos">
                     <div className="credenciais__graficos__graficos__grafico">
-                        <h3 className="credenciais__graficos__graficos__grafico__title">
-                            Credencias Por Congregação
-                        </h3>
+                        <h3 className="credenciais__graficos__graficos__grafico__title">Credencias Por Congregação</h3>
                         <ChartBarPorCargos
                             isMobile={isMobile}
                             data={listaGraficosCredenciais.congregacoes}
@@ -359,17 +287,11 @@ export function GraficosCredenciais() {
                         />
                     </div>
                     <div className="credenciais__graficos__graficos__grafico">
-                        <ChartPieCustom
-                            isMobile={isMobile}
-                            data={listaGraficosCredenciais.cargos}
-                            type="qtd"
-                        />
+                        <ChartPieCustom isMobile={isMobile} data={listaGraficosCredenciais.cargos} type="qtd" />
                     </div>
 
                     <div className="credenciais__graficos__graficos__grafico">
-                        <h3 className="credenciais__graficos__graficos__grafico__title">
-                            Ingressos Vendidos Por Dia
-                        </h3>
+                        <h3 className="credenciais__graficos__graficos__grafico__title">Ingressos Vendidos Por Dia</h3>
                         <ChartFaturamento
                             data={listaGraficosCredenciais.inscricoes}
                             isMobile={isMobile}

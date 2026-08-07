@@ -31,8 +31,6 @@ import { Card, CardOpcao, CardOpcaoProps, CardProps } from "@/components/ui/Card
 import { BaseCardsContainer } from "../config-site/BaseConfig";
 import { ChartBarPorCargos, ChartFaturamento, ChartPiePagamentos } from "./ChartsTransacoes";
 import useResize from "@/hooks/useResize";
-import { useSearchParams } from "next/navigation";
-import { useDataContext } from "@/contexts/DataContext";
 import { ListaVazia } from "../config-site/ListaVazia";
 
 interface TableHeaderItem {
@@ -314,7 +312,12 @@ export function ListaTransacoes({ responseTransacoes }: { responseTransacoes: Tr
                 );
             });
 
-        return c;
+        return c.sort((a, b) => {
+            const dataA = new Date(a.data_compra).getTime();
+            const dataB = new Date(b.data_compra).getTime();
+
+            return dataB - dataA;
+        });
     }, [p, drops, responseTransacoes]);
 
     return (
@@ -558,6 +561,7 @@ export function GraficosTransacoes({
                                 isMobile={isMobile}
                                 areaKeyName="arrecadado"
                                 bars={bars}
+                                isRadius={false}
                             />
                         ) : (
                             <ListaVazia />

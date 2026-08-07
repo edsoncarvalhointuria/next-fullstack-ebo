@@ -11,9 +11,7 @@ import { Card, CardCustom, CardCustomProps, CardOpcaoProps, CardProps } from "@/
 import { BaseCardsContainer } from "../config-site/BaseConfig";
 import { ChartBarPorCargos, ChartFaturamento, ChartPieCustom } from "../transacoes/ChartsTransacoes";
 import useResize from "@/hooks/useResize";
-import { useSearchParams } from "next/navigation";
 import GraficoRosca from "@/components/ui/GraficoRosca";
-import { useDataContext } from "@/contexts/DataContext";
 import { motion } from "framer-motion";
 import { ListaVazia } from "../config-site/ListaVazia";
 
@@ -121,11 +119,12 @@ export function FiltrosCredenciais({
         setDrops((v) => ({ ...v, [id]: value }));
     }, []);
 
-    console.log(credenciaisResponse);
-
-    const ingressosMemo = useMemo(() => {
-        return ingressos.map((v) => ({ ...v, nome: v.nome_tipo }));
-    }, [ingressos]);
+    const dropMemo = useMemo(() => {
+        const ingressosMemo = [{ id: "todos", nome: "Todos" }, ...ingressos.map((v) => ({ ...v, nome: v.nome_tipo }))];
+        const cargosMemo = [{ id: "todos", nome: "Todos" }, ...cargos];
+        const congregacoesMemo = [{ id: "todos", nome: "Todos" }, ...congregacoes];
+        return { ingressosMemo, cargosMemo, congregacoesMemo };
+    }, [ingressos, cargos, congregacoes]);
     const credenciaisMemo = useMemo(() => {
         let c = credenciaisResponse;
 
@@ -192,7 +191,7 @@ export function FiltrosCredenciais({
                         <div className="credenciais__filtro">
                             <p className="credenciais__filtro__title">Tipo Ingresso</p>
                             <Dropdown
-                                lista={ingressosMemo}
+                                lista={dropMemo.ingressosMemo}
                                 currentValue={drops.ingresso}
                                 idObj="ingresso"
                                 onSelected={addDrops}
@@ -200,12 +199,17 @@ export function FiltrosCredenciais({
                         </div>
                         <div className="credenciais__filtro">
                             <p className="credenciais__filtro__title">Cargo</p>
-                            <Dropdown lista={cargos} currentValue={drops.cargo} idObj="cargo" onSelected={addDrops} />
+                            <Dropdown
+                                lista={dropMemo.cargosMemo}
+                                currentValue={drops.cargo}
+                                idObj="cargo"
+                                onSelected={addDrops}
+                            />
                         </div>
                         <div className="credenciais__filtro">
                             <p className="credenciais__filtro__title">Congregação</p>
                             <Dropdown
-                                lista={congregacoes}
+                                lista={dropMemo.congregacoesMemo}
                                 currentValue={drops.congregacao}
                                 idObj="congregacao"
                                 onSelected={addDrops}
@@ -251,8 +255,6 @@ export function GraficosCredenciais({
     listaGraficosCredenciais: GraficosCrendenciaisResponse;
     cardsCredenciais?: MetricasCardsCredenciais;
 }) {
-    console.log("aaa", listaGraficosCredenciais);
-
     const isMobile = useResize(480);
     const cards = useMemo(() => {
         const c: (CardOpcaoProps | CardProps | CardCustomProps)[] = [
@@ -280,7 +282,6 @@ export function GraficosCredenciais({
         return c;
     }, [cardsCredenciais]);
 
-    // console.log(listaGraficosCredenciais.inscricoes);
     return (
         <div className="credenciais__graficos">
             <BaseCardsContainer>
@@ -298,7 +299,9 @@ export function GraficosCredenciais({
                             {listaGraficosCredenciais.congregacoes.length ? (
                                 <ChartBarPorCargos
                                     isMobile={isMobile}
-                                    data={listaGraficosCredenciais.congregacoes}
+                                    data={listaGraficosCredenciais.congregacoes.sort(
+                                        (a, b) => b.quantidadeCredenciais - a.quantidadeCredenciais,
+                                    )}
                                     onClick={() => undefined}
                                     keyName="quantidadeCredenciais"
                                     dataKey="quantidadeCredenciais"
@@ -321,6 +324,7 @@ export function GraficosCredenciais({
                             </h3>
                             {listaGraficosCredenciais.inscricoes.length ? (
                                 <ChartFaturamento
+                                    isRadius={false}
                                     data={listaGraficosCredenciais.inscricoes}
                                     isMobile={isMobile}
                                     areaKeyName="quantidadeTotal"

@@ -5,7 +5,6 @@ import useResize from "@/hooks/useResize";
 import { ChartContainer, ChartPie, ToolTipPersonalizado } from "@/components/charts/Charts";
 import { toCurrency } from "@/lib/toCurrency";
 import { ChartArea, ChartPieIcon, UsersRound } from "lucide-react";
-import { useDataContext } from "@/contexts/DataContext";
 import { useMemo } from "react";
 import { ListaVazia } from "../config-site/ListaVazia";
 
@@ -203,7 +202,7 @@ export default function ChartsLista({
                 </h2>
 
                 {credenciaisPorCongregacao.length ? (
-                    <BarPorCongregacao data={credenciaisPorCongregacao} />
+                    <BarPorCongregacao data={credenciaisPorCongregacao.sort((a, b) => b.inscritos - a.inscritos)} />
                 ) : (
                     <ListaVazia />
                 )}

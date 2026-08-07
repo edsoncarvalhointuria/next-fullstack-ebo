@@ -111,11 +111,13 @@ export function ChartFaturamento({
     data,
     areaKeyName,
     bars,
+    isRadius = true,
 }: {
     isMobile: boolean;
     data: any[];
     bars: any[];
     areaKeyName: string;
+    isRadius?: boolean;
 }) {
     return (
         <ChartContainer>
@@ -193,7 +195,7 @@ export function ChartFaturamento({
                         yAxisId={"direita"}
                         {...v}
                         key={`${i}-bar`}
-                        radius={[4, 4, 4, 4]}
+                        radius={isRadius ? [4, 4, 4, 4] : undefined}
                         barSize={25}
                         opacity={0.5}
                         activeBar={{

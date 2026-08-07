@@ -8,8 +8,6 @@ export default function CardsAdmin({
     transacoesPorStatus: CardsTransacaoStatus;
     transacoesPorIngresso: TransacaoPorIngresso;
 }) {
-    console.log("aaa");
-
     const cards: (CardOpcaoProps | CardProps)[] = [
         {
             icon: <TicketCheck />,

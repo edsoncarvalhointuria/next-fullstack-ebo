@@ -1,10 +1,27 @@
+import { TableNames, TAGS_CACHE } from "@/constants/Tables";
 import { createClient } from "@supabase/supabase-js";
 import MercadoPagoConfig, { Payment } from "mercadopago";
+import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 const client = new MercadoPagoConfig({
     accessToken: process.env.MP_ACCESS_TOKEN!,
 });
+
+const TAGS_PARA_REMOVER: TableNames[] = [
+    "vw_transacoes_por_status",
+    "vw_transacoes_por_ingresso",
+    "vw_transacoes_arrecadacao",
+    "vw_transacao_response",
+    "vw_metricas_cards_credenciais",
+    "vw_graficos_transacoes",
+    "vw_grafico_credenciais_igrejas",
+    "vw_grafico_credenciais_cargos",
+    "vw_credencial_response",
+    "vw_credenciais_por_congregacao",
+    "facttransacao",
+    "dimcomprador",
+];
 
 export async function POST(request: NextRequest) {
     const body = await request.json();
@@ -42,18 +59,18 @@ export async function POST(request: NextRequest) {
                     .from("facttransacao")
                     .update({ status_pagamento: "aprovado", id_pagamento_mp: data.id!, metodo_pagamento: method })
                     .eq("id", idTransacao),
+                supabase.from("cachecredencial").delete().eq("id_transacao", idTransacao),
             ]);
 
-            if (credencial.error || transacao.error) throw new Error(`${transacao.error}\n${credencial.error}`);
+            if (credencial.error || transacao.error) console.log(`${transacao.error}\n${credencial.error}`);
         } else if (isErro) {
-            await Promise.all([
-                supabase
-                    .from("facttransacao")
-                    .update({ status_pagamento: "cancelado", metodo_pagamento: method })
-                    .eq("id", idTransacao),
-                supabase.from("dimcredencial").delete().eq("id_transacao", idTransacao),
-            ]);
+            await supabase.rpc("fn_cancelar_venda", {
+                transacao_id: idTransacao,
+                p_metodo_pagamento: method,
+            });
         }
+
+        TAGS_PARA_REMOVER.forEach((v) => revalidateTag(TAGS_CACHE[v], { expire: 0 }));
     }
     return NextResponse.json({ received: true }, { status: 200 });
 }

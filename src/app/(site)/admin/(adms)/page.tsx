@@ -6,7 +6,6 @@ import BotaoAdd from "@/components/ui/btns/BotaoAdd";
 import ModalBase from "@/components/ui/modal/ModalBase";
 import CardsAdmin from "@/components/pages/admin/CardsAdmin";
 import { getItens } from "@/actions/handlerItens";
-import DropdownSkeleton from "@/components/ui/DropdownSkeleton";
 import WrapperForm from "@/components/pages/transacoes/WrapperForm";
 
 export default async function AdminHome() {
@@ -35,7 +34,7 @@ export default async function AdminHome() {
                         Olá, <strong>Edson</strong>. Seja bem-vindo(a)!
                     </h1>
 
-                    <BotaoAdd title="Adicionar nova venda manual?" />
+                    <BotaoAdd title="Adicionar Venda Manual" />
                 </section>
                 <CardsAdmin transacoesPorIngresso={transacoesPorIngresso} transacoesPorStatus={transacoesPorStatus} />
                 <ChartsLista

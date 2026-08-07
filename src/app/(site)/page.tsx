@@ -4,7 +4,7 @@ import Acordeao from "@/components/ui/Acordeao";
 import { Map, MapPin } from "lucide-react";
 import "./home.scss";
 import Final from "@/components/pages/home/Final";
-import { testePerguntas } from "../../../config/datasTeste";
+import { createClient } from "@supabase/supabase-js";
 
 const dias = [
     { img: "/dia1ebo.png", dia: 1, nome: "Pr. Eberson Tobias" },
@@ -13,7 +13,10 @@ const dias = [
     // { img: "/dia4ebo.png", dia: 4, nome: "Pr. Sérgio Pereira" },
 ];
 
-export default function Home() {
+export default async function Home() {
+    const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_BROWSER_API_KEY!);
+    const perguntas = (await supabase.from("dimfaq").select("*").eq("is_ativo", true)).data;
+
     return (
         <main className="home">
             <Hero>
@@ -67,9 +70,16 @@ export default function Home() {
                 <h2 className="home-faq__title">Dúvidas</h2>
 
                 <div className="home-faq__lista">
-                    {testePerguntas.map((v, i) => (
-                        <Acordeao className="home-faq__acordeao" pergunta={v.pergunta} resposta={v.resposta} key={i} />
-                    ))}
+                    {perguntas
+                        ?.sort((a, b) => a.ordem - b.ordem)
+                        .map((v, i) => (
+                            <Acordeao
+                                className="home-faq__acordeao"
+                                pergunta={v.pergunta}
+                                resposta={v.resposta}
+                                key={i}
+                            />
+                        ))}
                 </div>
             </section>
         </main>

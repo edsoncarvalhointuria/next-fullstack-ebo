@@ -135,7 +135,7 @@ SELECT
 FROM facttransacao ft
 INNER JOIN dimcomprador comp ON comp.cpf_cnpj = ft.id_comprador
 INNER JOIN dimingresso ing ON ing.id = ft.id_ingresso
-INNER JOIN dimcredencial credencial ON ft.id = credencial.id_transacao
+LEFT JOIN dimcredencial credencial ON ft.id = credencial.id_transacao
 GROUP BY 
     ft.id, 
     ft.data_hora_pedido, 
@@ -211,7 +211,7 @@ SELECT
     cong.nome AS titular_congregacao
 FROM
     facttransacao ft
-INNER JOIN dimcredencial dc ON dc.id_transacao = ft.id
+LEFT JOIN dimcredencial dc ON dc.id_transacao = ft.id
     INNER JOIN dimcargo cargo ON cargo.id = dc.id_cargo
     INNER JOIN  dimcongregacao cong ON cong.id = dc.id_congregacao
 WHERE dc.is_titular = TRUE
@@ -258,7 +258,7 @@ GROUP BY cong.nome;
 CREATE OR REPLACE VIEW vw_transacoes_arrecadacao AS
 SELECT
     TO_CHAR(DATE(data_hora_pedido), 'DD/MM') AS name,
-    SUM(valor_pedido) AS arrecadado,
+    SUM(valor_pedido) FILTER (WHERE status_pagamento = 'aprovado') AS arrecadado,
     COUNT(id) AS vendas
 FROM
     facttransacao
@@ -340,6 +340,7 @@ CREATE OR REPLACE FUNCTION fn_registrar_venda(
     id_transacao UUID,
     valor_pedido DECIMAL(10,2),
     id_ingresso INT,
+    quantidade_pessoas INT,
     id_pagamento_mp VARCHAR(200),
     id_ebo INT,
     status_pagamento enum_status_pagamento,
@@ -349,6 +350,18 @@ CREATE OR REPLACE FUNCTION fn_registrar_venda(
 LANGUAGE plpgsql
 AS $$
 BEGIN
+
+    UPDATE dimcapacidade
+    SET ocupacao = ocupacao + quantidade_pessoas
+    WHERE (ocupacao + quantidade_pessoas) <= quantidade;
+
+    IF NOT FOUND THEN
+        RETURN jsonb_build_object(
+            'success', false, 
+            'code', 'ESGOTADO',
+            'erro', 'Não há vagas suficientes para esta quantidade.'
+        );
+    END IF;
 
     INSERT INTO dimcomprador(cpf_cnpj, nome, email, whatsapp)
     VALUES (p_cpf_cnpj, nome, email, whatsapp)
@@ -374,6 +387,7 @@ BEGIN
 EXCEPTION WHEN OTHERS THEN
     RETURN jsonb_build_object(
         'success', false,
+        'code', 'INTERNO',
         'erro', SQLERRM
     );
 
@@ -381,4 +395,82 @@ END;
 $$;
 
 
+CREATE OR REPLACE FUNCTION fn_cancelar_venda(
+    transacao_id UUID,
+    p_metodo_pagamento enum_metodo_pagamento
+) RETURNS void
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    quantidade INT;
+BEGIN
 
+    SELECT
+        ing.quantidade_pessoas
+    INTO 
+        quantidade
+    FROM
+        facttransacao ft
+    INNER JOIN dimingresso ing ON ft.id_ingresso = ing.id
+    WHERE ft.id = transacao_id;
+
+    IF FOUND THEN
+
+        UPDATE
+            dimcapacidade
+        SET ocupacao = ocupacao - quantidade;
+
+        UPDATE
+            facttransacao
+        SET metodo_pagamento = p_metodo_pagamento,
+            status_pagamento = 'cancelado'
+        WHERE id = transacao_id;
+
+        DELETE 
+        FROM dimcredencial
+        WHERE id_transacao = transacao_id;
+
+        DELETE
+        FROM cachecredencial
+        WHERE id_transacao = transacao_id;
+
+    END IF;
+
+END;
+$$;
+
+
+CREATE OR REPLACE FUNCTION fn_limpar_dados()
+RETURNS void
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_registro RECORD;
+BEGIN
+
+    FOR v_registro IN 
+        SELECT 
+            ft.id,
+            ing.quantidade_pessoas 
+        FROM 
+            facttransacao ft
+        INNER JOIN dimingresso ing ON ft.id_ingresso = ing.id
+        WHERE ft.status_pagamento = 'pendente' 
+          AND ft.data_hora_pedido < NOW() - INTERVAL '1 hours'
+    LOOP
+        UPDATE 
+            dimcapacidade
+        SET 
+            ocupacao = ocupacao - v_registro.quantidade_pessoas
+
+        UPDATE 
+            facttransacao 
+        SET 
+            status_pagamento = 'cancelado' 
+        WHERE id = v_registro.id;
+
+        DELETE FROM cachecredencial WHERE id_transacao = v_registro.id;
+        DELETE FROM dimcredencial WHERE id_transacao = v_registro.id;
+    END LOOP;
+END;
+$$;

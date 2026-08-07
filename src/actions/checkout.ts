@@ -82,6 +82,7 @@ export async function salvarMercadoPago(form: FormCheckout & { tipoIngresso: str
             id_transacao,
             valor_pedido,
             id_ingresso: tipoIngresso,
+            quantidade_pessoas: ingresso.quantidade_pessoas,
             id_pagamento_mp: String(Date.now()),
             id_ebo,
             status_pagamento: "pendente",
@@ -91,14 +92,14 @@ export async function salvarMercadoPago(form: FormCheckout & { tipoIngresso: str
         console.log("error", error);
         console.log("data", data);
 
-        if (error || !data.success) throw new Error(`${error}\n${data}`);
+        if (error || !data.success) throw new Error(`deu ruim`);
 
         const client = new MercadoPagoConfig({
             accessToken: process.env.MP_ACCESS_TOKEN!,
         });
         const preference = new Preference(client);
         const dataExpirar = new Date();
-        dataExpirar.setHours(dataExpirar.getHours() + 2);
+        dataExpirar.setHours(dataExpirar.getHours() + 1);
         const resposta = await preference.create({
             body: {
                 items: [

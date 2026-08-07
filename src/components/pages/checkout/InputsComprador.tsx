@@ -46,7 +46,7 @@ export const getInputsComprador = <T,>(
         },
         {
             type: "select",
-            lista: [{ id: "outra", nome: "outra" }, ...congregacoes],
+            lista: congregacoes,
             nameForm: "congregacao" as keyof T,
             label: "Sua Congregação",
             isOutraCongregacao: true,
@@ -79,8 +79,13 @@ export const getInputsComprador = <T,>(
     ];
 };
 
-export default function InputsComprador() {
-    const { congregacoes, cargos } = useDataContext();
+export default function InputsComprador({
+    cargos,
+    congregacoes,
+}: {
+    cargos: CargosInterface[];
+    congregacoes: CongregacaoInterface[];
+}) {
     const { register, control } = useFormContext<FormCheckout>();
     const { errors } = useFormState({ control });
 
@@ -99,23 +104,12 @@ export default function InputsComprador() {
             />
         ) : v.isOutraCongregacao ? (
             <ContainerInput key={i + v.nameForm}>
-                <SelectInput
-                    {...v}
-                    control={control}
-                    messageError={errors?.[v.nameForm]?.message}
-                />
+                <SelectInput {...v} control={control} messageError={errors?.[v.nameForm]?.message} />
 
-                <OutraCongregacao
-                    messageError={errors?.["nomeOutraCongregacao"]?.message}
-                />
+                <OutraCongregacao messageError={errors?.["nomeOutraCongregacao"]?.message} />
             </ContainerInput>
         ) : (
-            <SelectInput
-                {...v}
-                control={control}
-                key={i + v.nameForm}
-                messageError={errors?.[v.nameForm]?.message}
-            />
+            <SelectInput {...v} control={control} key={i + v.nameForm} messageError={errors?.[v.nameForm]?.message} />
         );
     });
 }

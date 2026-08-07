@@ -2,26 +2,24 @@
 
 import BotaoAba from "@/components/ui/btns/BotaoAba";
 import { ChartColumn, Rows3 } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
-export default function HeaderButtonsTransacoes() {
-    const params = useSearchParams();
-    const mode = params.get("mode");
-
+export default function HeaderButtonsTransacoes({ caminho }: { caminho: string }) {
+    const pathname = usePathname();
     return (
         <div className="transacoes__abas">
             <BotaoAba
                 icon={<Rows3 />}
-                mode="lista"
+                mode={`${caminho}/lista`}
                 title="Lista"
-                isActive={mode !== "graficos"}
+                isActive={pathname !== `/admin/${caminho}/graficos`}
             />
 
             <BotaoAba
                 icon={<ChartColumn />}
-                mode="graficos"
+                mode={`${caminho}/graficos`}
                 title="Gráficos"
-                isActive={mode === "graficos"}
+                isActive={pathname === `/admin/${caminho}/graficos`}
             />
         </div>
     );

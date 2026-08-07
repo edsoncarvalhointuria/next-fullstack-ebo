@@ -17,10 +17,10 @@ function BotaoAba({
     return (
         <Link
             title="abrir aba lista"
-            href={`?mode=${mode}`}
+            href={`/admin/${mode}`}
             className={`transacoes__aba ${isActive ? "transacoes__aba--active" : ""}`}
         >
-            <i>{icon}</i>
+            <i aria-hidden="true">{icon}</i>
             <span>{title}</span>
         </Link>
     );

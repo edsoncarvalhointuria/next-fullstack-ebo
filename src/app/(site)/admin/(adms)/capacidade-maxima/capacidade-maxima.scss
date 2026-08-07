@@ -100,8 +100,7 @@
                 outline: none;
                 border-color: $brand-primary;
                 background-color: transparent;
-                box-shadow: 0 0 0 4px
-                    color-mix(in srgb, $brand-primary 15%, transparent);
+                box-shadow: 0 0 0 4px color-mix(in srgb, $brand-primary 15%, transparent);
             }
         }
 
@@ -115,7 +114,7 @@
         }
     }
 
-    button[type="submit"] {
+    button[type="button"] {
         width: 100%;
         padding: 1rem;
         background-color: $brand-primary;
@@ -127,14 +126,12 @@
         font-weight: 600;
         cursor: pointer;
         transition: $transition-default;
-        box-shadow: 0 4px 12px
-            color-mix(in srgb, $brand-primary 25%, transparent);
+        box-shadow: 0 4px 12px color-mix(in srgb, $brand-primary 25%, transparent);
 
         &:hover {
             transform: translateY(-2px);
             opacity: 0.95;
-            box-shadow: 0 6px 16px
-                color-mix(in srgb, $brand-primary 35%, transparent);
+            box-shadow: 0 6px 16px color-mix(in srgb, $brand-primary 35%, transparent);
         }
     }
 }

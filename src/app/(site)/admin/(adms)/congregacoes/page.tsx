@@ -1,15 +1,17 @@
-"use client";
-
 import { Church } from "lucide-react";
 import BaseConfig from "@/components/pages/config-site/BaseConfig";
 import { Suspense } from "react";
 import ModalBase from "@/components/ui/modal/ModalBase";
 import FormDados from "@/components/pages/config-site/FormDados";
 import DeletarConfig from "@/components/pages/config-site/DeletarConfig";
-import { useDataContext } from "@/contexts/DataContext";
+import { getItens } from "@/actions/handlerItens";
+import { ItensListaDados } from "@/components/pages/config-site/ListaDados";
 
-export default function Cargos() {
-    const { congregacoes, addCongregacao } = useDataContext();
+export default async function Congregacoes() {
+    const table = "dimcongregacao";
+    const link = "/admin/congregacoes";
+    const { data } = await getItens(table);
+    const congregacoes = data as ItensListaDados[];
     return (
         <>
             <BaseConfig
@@ -21,23 +23,11 @@ export default function Cargos() {
             />
 
             <Suspense>
-                <ModalBase
-                    keyName="form"
-                    title="Cargos"
-                    icon={<Church size={34} />}
-                >
-                    <FormDados
-                        onSave={addCongregacao}
-                        lista={congregacoes}
-                        link="/admin/congregacoes"
-                    />
+                <ModalBase keyName="form" title="Congregações" icon={<Church size={34} />}>
+                    <FormDados link={link} table={table} />
                 </ModalBase>
 
-                <DeletarConfig
-                    icon={<Church size={34} />}
-                    lista={congregacoes}
-                    onConfirm={addCongregacao}
-                />
+                <DeletarConfig icon={<Church size={34} />} table={table} link={link} />
             </Suspense>
         </>
     );

@@ -155,11 +155,7 @@ $cor-pessoas: #8b5cf6;
 
             i {
                 display: flex;
-                background-color: color-mix(
-                    in srgb,
-                    $cor-ingresso 15%,
-                    transparent
-                );
+                background-color: color-mix(in srgb, $cor-ingresso 15%, transparent);
                 color: $accent-color;
                 color: $cor-ingresso;
                 border-radius: $radius-md;
@@ -198,8 +194,7 @@ $cor-pessoas: #8b5cf6;
             gap: 0.25rem;
             padding-top: 1rem;
             border-top: 1px solid $border-color;
-            border-top: 2px dashed
-                color-mix(in srgb, $text-secondary 30%, transparent);
+            border-top: 2px dashed color-mix(in srgb, $text-secondary 30%, transparent);
         }
 
         &-price {
@@ -263,63 +258,47 @@ $cor-pessoas: #8b5cf6;
             align-items: center;
         }
     }
-
-    &__pagamento {
-        &--pix {
-            svg {
-                fill: $text-secondary;
-                height: 24px;
-                width: 24px;
-            }
-            input[type="radio"]:checked + label {
-                border-color: $cor-pix;
-                background-color: color-mix(in srgb, $cor-pix 10%, transparent);
-                color: $text-primary;
-                i svg {
-                    stroke: color-mix(in srgb, $cor-pix 10%, transparent);
-                    fill: $cor-pix;
-                }
+}
+.forms__input__radio.checkout__pagamento {
+    &--pix {
+        svg {
+            fill: $text-secondary;
+            height: 24px;
+            width: 24px;
+        }
+        input[type="radio"]:checked + label {
+            border-color: $cor-pix;
+            background-color: color-mix(in srgb, $cor-pix 10%, transparent);
+            color: $text-primary;
+            i svg {
+                stroke: color-mix(in srgb, $cor-pix 10%, transparent);
+                fill: $cor-pix;
             }
         }
-        &--boleto {
-            input[type="radio"]:checked + label {
-                border-color: $cor-boleto;
-                background-color: color-mix(
-                    in srgb,
-                    $cor-boleto 10%,
-                    transparent
-                );
-                color: $text-primary;
+    }
+    &--boleto {
+        input[type="radio"]:checked + label {
+            border-color: $cor-boleto;
+            background-color: color-mix(in srgb, $cor-boleto 10%, transparent);
+            color: $text-primary;
 
-                i svg {
-                    stroke: $cor-boleto;
-                    color: $cor-boleto;
-                }
-            }
-        }
-
-        &--cartao {
-            input[type="radio"]:checked + label {
-                border-color: $cor-cartao;
-                background-color: color-mix(
-                    in srgb,
-                    $cor-cartao 10%,
-                    transparent
-                );
-                color: $text-primary;
-
-                i svg {
-                    stroke: $cor-cartao;
-                    color: $cor-cartao;
-                }
+            i svg {
+                stroke: $cor-boleto;
+                color: $cor-boleto;
             }
         }
     }
 
-    &__loading {
-        position: fixed;
-        inset: 0;
-        overflow: hidden;
-        max-height: 100dvh;
+    &--cartao {
+        input[type="radio"]:checked + label {
+            border-color: $cor-cartao;
+            background-color: color-mix(in srgb, $cor-cartao 10%, transparent);
+            color: $text-primary;
+
+            i svg {
+                stroke: $cor-cartao;
+                color: $cor-cartao;
+            }
+        }
     }
 }

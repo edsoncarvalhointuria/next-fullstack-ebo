@@ -4,6 +4,7 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    min-height: 100vh;
     padding: 2rem;
     width: 100%;
     max-width: 1400px;
@@ -13,7 +14,7 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
         gap: 2rem;
-        align-items: start;
+        // align-items: start;
     }
 
     &__ingresso {

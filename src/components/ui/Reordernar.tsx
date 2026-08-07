@@ -15,25 +15,13 @@ interface ReordenarProps<T> {
     onSave: (novaLista: T[]) => void;
 }
 
-export default function Reordernar<T extends ReordenarItem>({
-    lista,
-    onSave,
-    keyName,
-}: ReordenarProps<T>) {
+export default function Reordenar<T extends ReordenarItem>({ lista, onSave, keyName }: ReordenarProps<T>) {
     const [listaOrdernada, setListaOrdenada] = useState(lista);
     return (
         <div className="reordenar">
-            <Reorder.Group
-                className="reordenar__ul"
-                onReorder={setListaOrdenada}
-                values={listaOrdernada}
-            >
+            <Reorder.Group className="reordenar__ul" onReorder={setListaOrdenada} values={listaOrdernada}>
                 {listaOrdernada.map((v, i) => (
-                    <Reorder.Item
-                        value={v}
-                        key={v.id}
-                        className="reordenar__li"
-                    >
+                    <Reorder.Item value={v} key={v.id} className="reordenar__li">
                         <span className="reordenar__li-numero">{i + 1} - </span>
                         <p className="reordenar__li-text">{`${v[keyName]}`}</p>
                         <span className="reordenar__li-icon">
@@ -44,10 +32,7 @@ export default function Reordernar<T extends ReordenarItem>({
             </Reorder.Group>
 
             <div className="reordenar__salvar">
-                <button
-                    className="reordenar__btn"
-                    onClick={() => onSave(listaOrdernada)}
-                >
+                <button className="reordenar__btn" onClick={() => onSave(listaOrdernada)}>
                     <i>
                         <Save />
                     </i>

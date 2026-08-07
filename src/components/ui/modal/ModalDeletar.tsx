@@ -1,22 +1,20 @@
 import { ReactNode, useCallback } from "react";
 import ModalBase, { ModalBaseProps } from "./ModalBase";
-import { useSearchParams } from "next/navigation";
 import "./modal.scss";
 
 interface ModalDeletarProps extends Omit<ModalBaseProps, "children"> {
     text?: string | ReactNode;
     onConfirm: () => void;
+    isLoading: boolean;
 }
 export default function ModalDeletar(props: ModalDeletarProps) {
     return (
         <ModalBase {...props}>
             {(closeModal) => (
-                <div className="modal__deletar">
+                <div className={`modal__deletar ${props.isLoading ? "modal__deletar--is-loading" : ""}`}>
                     <div className="modal__deletar__container">
                         {typeof props.text === "string" ? (
-                            <h3 className="modal__deletar__title">
-                                {props.text}
-                            </h3>
+                            <h3 className="modal__deletar__title">{props.text}</h3>
                         ) : (
                             props.text
                         )}
@@ -31,10 +29,8 @@ export default function ModalDeletar(props: ModalDeletarProps) {
                         </button>
                         <button
                             className="modal__deletar__button modal__deletar__button--sim"
-                            onClick={() => {
-                                props.onConfirm();
-                                closeModal();
-                            }}
+                            onClick={props.onConfirm}
+                            disabled={props.isLoading}
                         >
                             Sim, deletar
                         </button>
@@ -50,8 +46,8 @@ export function ModalDeletarText({ text }: { text: string | ReactNode }) {
         <div className="modal__deletar__message">
             <h3 className="modal__deletar__title">{text}</h3>
             <p className="modal__deletar__info">
-                Dica: Se quiser apenas esconder esta pergunta, você pode{" "}
-                <b>desativá-la</b> na tela de edição em vez de excluir.
+                Dica: Se quiser apenas esconder esta pergunta, você pode <b>desativá-la</b> na tela de edição em vez de
+                excluir.
             </p>
         </div>
     );

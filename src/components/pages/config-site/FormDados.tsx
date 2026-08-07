@@ -5,10 +5,21 @@ import TextInput from "@/components/forms/TextInput";
 import useGetSearchId from "@/hooks/useGetSearchId";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Send } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { ItensListaDados } from "./ListaDados";
+import { createClientCookies } from "@/supabase/server";
+import { addItem, getItemById, updateItem } from "@/actions/handlerItens";
+import { TableNames } from "@/constants/Tables";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import FormErrorP from "./FormErrorP";
+
+interface FormProps {
+    link: string;
+    table: TableNames;
+}
 
 const schema = z.object({
     is_ativo: z.boolean(),
@@ -16,16 +27,12 @@ const schema = z.object({
 });
 
 type FormDados = z.infer<typeof schema>;
-export default function FormDados({
-    lista,
-    onSave,
-    link,
-}: {
-    lista: ItensListaDados[];
-    onSave: (lista: ItensListaDados[] | ItensListaDados) => void;
-    link: string;
-}) {
+export default function FormDados({ link, table }: FormProps) {
+    const [isLoading, setIsLoading] = useState(false);
+    const [isError, setIsError] = useState(false);
+
     const id = useGetSearchId();
+    const router = useRouter();
 
     const methods = useForm<FormDados>({
         resolver: zodResolver(schema),
@@ -38,39 +45,45 @@ export default function FormDados({
         formState: { errors },
     } = methods;
 
-    const onSubmit = (v: FormDados) => {
+    const onSubmit = async (v: FormDados) => {
+        setIsLoading(true);
         if (id) {
-            const index = lista.findIndex((v) => String(v.id) === id);
-            if (index !== -1) {
-                const list = [...lista];
-                const item = list.splice(index, 1);
+            const { success, error } = await updateItem(table, v, id);
 
-                onSave([...list, { ...item[0], ...v, id: Date.now() }]);
+            if (error) {
+                setIsLoading(false);
+                return setIsError(true);
             }
-        } else {
-            onSave({ ...v, id: Date.now() });
+
+            if (success) return router.push(link);
         }
 
-        console.log(v);
-
-        window.history.pushState(null, "", link);
+        const { success, error } = await addItem(table, v);
+        if (error) {
+            setIsLoading(false);
+            return setIsError(true);
+        }
+        if (success) return router.push(link);
     };
 
     useEffect(() => {
         if (!id) return;
+        setIsLoading(true);
 
-        const item = lista.find((v) => String(v.id) === id);
-        if (item) setValues({ nome: item.nome, is_ativo: item.is_ativo });
+        getItemById(table, id)
+            .then((v) => {
+                if (!v) return;
+                const { nome, is_ativo } = v;
+                setValues({ nome, is_ativo });
+            })
+            .catch((err) => console.log("deu erro", err))
+            .finally(() => setIsLoading(false));
     }, [id]);
     return (
-        <div className="base-config__form">
+        <div className={`base-config__form ${isLoading ? "base-config__form--is-loading" : ""} `}>
+            {isError && <FormErrorP />}
             <form onSubmit={handleSubmit(onSubmit)}>
-                <CheckInput
-                    label="Ativo?"
-                    register={register}
-                    nameForm="is_ativo"
-                    isRequired={false}
-                />
+                <CheckInput label="Ativo?" register={register} nameForm="is_ativo" isRequired={false} />
                 <TextInput
                     register={register}
                     label="Nome"
@@ -80,8 +93,8 @@ export default function FormDados({
                 />
 
                 <div className="base-config__form__submit">
-                    <button className="base-config__form__btn">
-                        <i>
+                    <button className="base-config__form__btn" disabled={isLoading}>
+                        <i aria-hidden="true">
                             <Send />
                         </i>
                         <span>Salvar</span>

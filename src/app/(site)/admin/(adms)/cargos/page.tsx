@@ -1,22 +1,19 @@
-"use client";
-import "./cargos.scss";
-import {
-    Calculator,
-    CirclePlus,
-    IdCard,
-    IdCardLanyard,
-    UserRoundCheck,
-    UserRoundX,
-} from "lucide-react";
+import { IdCard, IdCardLanyard } from "lucide-react";
 import BaseConfig from "@/components/pages/config-site/BaseConfig";
 import { Suspense } from "react";
 import ModalBase from "@/components/ui/modal/ModalBase";
 import FormDados from "@/components/pages/config-site/FormDados";
 import DeletarConfig from "@/components/pages/config-site/DeletarConfig";
-import { useDataContext } from "@/contexts/DataContext";
+import { ItensListaDados } from "@/components/pages/config-site/ListaDados";
+import { getItens } from "@/actions/handlerItens";
+import "./cargos.scss";
 
-export default function Cargos() {
-    const { cargos, addCargo } = useDataContext();
+export default async function Cargos() {
+    const link = "/admin/cargos";
+    const table = "dimcargo";
+    const { data } = await getItens("dimcargo");
+    const cargos = data as ItensListaDados[];
+
     return (
         <>
             <BaseConfig
@@ -28,23 +25,11 @@ export default function Cargos() {
             />
 
             <Suspense>
-                <ModalBase
-                    keyName="form"
-                    title="Cargos"
-                    icon={<IdCardLanyard size={34} />}
-                >
-                    <FormDados
-                        onSave={addCargo}
-                        link="/admin/cargos"
-                        lista={cargos}
-                    />
+                <ModalBase keyName="form" title="Cargos" icon={<IdCardLanyard size={34} />}>
+                    <FormDados link={link} table={table} />
                 </ModalBase>
 
-                <DeletarConfig
-                    onConfirm={addCargo}
-                    icon={<IdCardLanyard />}
-                    lista={cargos}
-                />
+                <DeletarConfig icon={<IdCardLanyard />} link={link} table={table} />
             </Suspense>
         </>
     );

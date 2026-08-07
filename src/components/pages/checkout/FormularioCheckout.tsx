@@ -8,6 +8,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import InputsComprador from "./InputsComprador";
 import InputsAcompanhantes from "./InputsAcompanhantes";
 import InputsPagamento from "./InputsPagamento";
+import { salvarMercadoPago } from "@/actions/checkout";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const opcoesP = ["pix", "boleto", "cartao"];
 const schema = z
@@ -47,17 +50,13 @@ const schema = z
                         }),
                     })
                     .superRefine((dados, ctx) => {
-                        const isOutraCongregacao =
-                            dados.congregacao.toLocaleLowerCase() === "outra";
-                        const isNome =
-                            !dados.nomeOutraCongregacao?.trim() ||
-                            dados.nomeOutraCongregacao.length < 3;
+                        const isOutraCongregacao = dados.congregacao.toLocaleLowerCase() === "outra";
+                        const isNome = !dados.nomeOutraCongregacao?.trim() || dados.nomeOutraCongregacao.length < 3;
 
                         if (isOutraCongregacao && isNome)
                             ctx.addIssue({
                                 code: "custom",
-                                message:
-                                    "Por favor, digite o nome da sua congregação.",
+                                message: "Por favor, digite o nome da sua congregação.",
                                 path: ["nomeOutraCongregacao"],
                             });
                     }),
@@ -69,9 +68,7 @@ const schema = z
         cpf_cnpj: z.string().refine(
             (v) => {
                 const valorLimpo = v.replace(/\D/g, "");
-                const isOk =
-                    v !== "" &&
-                    (valorLimpo.length === 11 || valorLimpo.length === 14);
+                const isOk = v !== "" && (valorLimpo.length === 11 || valorLimpo.length === 14);
 
                 if (isOk) return true;
                 return false;
@@ -82,10 +79,7 @@ const schema = z
         ),
         nomeTitular: z
             .string()
-            .refine(
-                (v) => v === "" || v.length > 4,
-                "Por favor, preencha o nome completo",
-            )
+            .refine((v) => v === "" || v.length > 4, "Por favor, preencha o nome completo")
             .optional(),
         numeroCartao: z
             .string()
@@ -106,11 +100,8 @@ const schema = z
         termos: z.literal(true, { error: "Por favor, aceite os termos" }),
     })
     .superRefine((dados, ctx) => {
-        const isOutraCongregacao =
-            dados.congregacao.toLocaleLowerCase() === "outra";
-        const isNome =
-            !dados.nomeOutraCongregacao?.trim() ||
-            dados.nomeOutraCongregacao.length < 3;
+        const isOutraCongregacao = dados.congregacao.toLocaleLowerCase() === "outra";
+        const isNome = !dados.nomeOutraCongregacao?.trim() || dados.nomeOutraCongregacao.length < 3;
 
         if (isOutraCongregacao && isNome)
             ctx.addIssue({
@@ -120,8 +111,7 @@ const schema = z
             });
     })
     .superRefine((dados, ctx) => {
-        const { opcaoPagamento, numeroCartao, nomeTitular, dataValidade, cvv } =
-            dados;
+        const { opcaoPagamento, numeroCartao, nomeTitular, dataValidade, cvv } = dados;
         const isErro = !numeroCartao || !nomeTitular || !dataValidade || !cvv;
         if (opcaoPagamento === "cartao" && isErro) {
             const obj = {
@@ -137,24 +127,18 @@ const schema = z
     });
 export type FormCheckout = z.infer<typeof schema>;
 
-const ResumoPedido = ({
-    ingresso,
-    isTopo,
-}: {
-    ingresso: IngressosInterface;
-    isTopo: boolean;
-}) => (
+const ResumoPedido = ({ ingresso, isTopo }: { ingresso: IngressosInterface; isTopo: boolean }) => (
     <div className={`checkout__resumo ${isTopo ? "is-top" : "is-down"}`}>
         <div className="checkout__resumo-infos">
             <h2 className="checkout__resumo-title">
-                <i>
+                <i aria-hidden="true">
                     <Ticket size={24} />
                 </i>
                 <span>{ingresso.nome_tipo}</span>
             </h2>
 
             <p className="checkout__resumo-qtd">
-                <i>
+                <i aria-hidden="true">
                     <Users size={24} />
                 </i>
                 <span>{ingresso.quantidade_pessoas}</span>
@@ -167,25 +151,35 @@ const ResumoPedido = ({
             <h3 className="checkout__resumo-price">
                 <strong>{toCurrency(ingresso.preco)}</strong>
             </h3>
-            {ingresso.observacao && (
-                <p className="checkout__resumo-obs">{ingresso.observacao}</p>
-            )}
+            {ingresso.observacao && <p className="checkout__resumo-obs">{ingresso.observacao}</p>}
         </div>
     </div>
 );
 
 export default function FormularioCheckout({
     ingresso,
+    cargos,
+    congregacoes,
 }: {
     ingresso: IngressosInterface;
+    cargos: CargosInterface[];
+    congregacoes: CongregacaoInterface[];
 }) {
+    const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
     const methods = useForm<FormCheckout>({
         resolver: zodResolver(schema),
     });
     const { handleSubmit } = methods;
 
-    const onSubmit = (v: FormCheckout) => {
-        console.log(v);
+    const onSubmit = async (v: FormCheckout) => {
+        setIsLoading(true);
+        const { success, link } = await salvarMercadoPago({ ...v, tipoIngresso: ingresso.id });
+
+        if (success) router.push(link!);
+        else console.log("deu ruim");
+
+        setIsLoading(false);
     };
 
     return (
@@ -195,13 +189,15 @@ export default function FormularioCheckout({
 
                 <div className="checkout__form-inputs">
                     <div className="checkout__form-comprador">
-                        <InputsComprador />
+                        <InputsComprador cargos={cargos} congregacoes={congregacoes} />
                     </div>
 
                     {ingresso.quantidade_pessoas > 1 && (
                         <div className="checkout__form-acompanhantes">
                             <InputsAcompanhantes
                                 qtd={ingresso.quantidade_pessoas - 1}
+                                cargos={cargos}
+                                congregacoes={congregacoes}
                             />
                         </div>
                     )}

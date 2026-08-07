@@ -10,7 +10,7 @@ const dias = [
     { img: "/dia1ebo.png", dia: 1, nome: "Pr. Eberson Tobias" },
     { img: "/dia2ebo.png", dia: 2, nome: "Pr. André Bueno" },
     { img: "/dia3ebo.png", dia: 3, nome: "Pr. Carlos Roberto" },
-    { img: "/dia4ebo.png", dia: 4, nome: "Pr. Sérgio Pereira" },
+    // { img: "/dia4ebo.png", dia: 4, nome: "Pr. Sérgio Pereira" },
 ];
 
 export default function Home() {
@@ -18,13 +18,7 @@ export default function Home() {
         <main className="home">
             <Hero>
                 <div className="home-hero__video">
-                    <video
-                        src="/ebo-video.mp4"
-                        muted
-                        autoPlay
-                        loop
-                        playsInline
-                    ></video>
+                    <video src="/ebo-video.mp4" muted autoPlay loop playsInline></video>
                 </div>
             </Hero>
 
@@ -39,8 +33,7 @@ export default function Home() {
 
                 <address className="home-endereco__infos">
                     <p className="home-endereco__endereco">
-                        R. José Ramos Fernandes, 420 - Jardim Vale das Virtudes,
-                        São Paulo - SP, 05796-070
+                        R. José Ramos Fernandes, 420 - Jardim Vale das Virtudes, São Paulo - SP, 05796-070
                     </p>
 
                     <div className="home-endereco__btns">
@@ -50,7 +43,7 @@ export default function Home() {
                             href="https://maps.app.goo.gl/MqFZ8GpSp3JEmuZL7"
                             rel="noopener noreferrer"
                         >
-                            <i>
+                            <i aria-hidden="true">
                                 <MapPin size={24} />
                             </i>
                             <span>Google Maps</span>
@@ -61,7 +54,7 @@ export default function Home() {
                             rel="noopener noreferrer"
                             href="https://ul.waze.com/ul?place=ChIJTz8kz5ZTzpQRk2cZxo7bzr4&ll=-23.64924530%2C-46.77358880&navigate=yes&utm_campaign=default&utm_source=waze_website&utm_medium=lm_share_location"
                         >
-                            <i>
+                            <i aria-hidden="true">
                                 <Map size={24} />
                             </i>
                             <span>Waze</span>
@@ -75,12 +68,7 @@ export default function Home() {
 
                 <div className="home-faq__lista">
                     {testePerguntas.map((v, i) => (
-                        <Acordeao
-                            className="home-faq__acordeao"
-                            pergunta={v.pergunta}
-                            resposta={v.resposta}
-                            key={i}
-                        />
+                        <Acordeao className="home-faq__acordeao" pergunta={v.pergunta} resposta={v.resposta} key={i} />
                     ))}
                 </div>
             </section>

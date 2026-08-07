@@ -81,11 +81,7 @@
             text-align: center;
 
             &:hover {
-                background-color: color-mix(
-                    in srgb,
-                    $text-secondary 5%,
-                    transparent
-                );
+                background-color: color-mix(in srgb, $text-secondary 5%, transparent);
             }
 
             &-nome {
@@ -130,36 +126,6 @@
                         height: auto;
                     }
                 }
-            }
-        }
-
-        &--vazio {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 4rem 2rem;
-            gap: 1rem;
-            color: $text-secondary;
-            opacity: 0.7;
-
-            @media all and (max-width: 30em) {
-                text-align: center;
-            }
-
-            i {
-                display: flex;
-
-                svg {
-                    width: 4rem;
-                    height: 4rem;
-                }
-            }
-
-            p {
-                margin: 0;
-                font-weight: 500;
-                font-size: 1.125rem;
             }
         }
 
@@ -222,11 +188,7 @@
 
             &-inativo {
                 color: $vermelho;
-                background-color: color-mix(
-                    in srgb,
-                    $vermelho 15%,
-                    transparent
-                );
+                background-color: color-mix(in srgb, $vermelho 15%, transparent);
             }
 
             &-buttons {

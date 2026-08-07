@@ -1,6 +1,25 @@
 type TypeStatusPedido = "pendente" | "aprovado" | "cancelado";
 type TypeMetodosPagamento = "pix" | "boleto" | "cartao" | "dinheiro";
 
+interface CardsTransacaoStatus {
+    totalArrecadado: number;
+    totalTransacoes: number;
+    pendente: {
+        name: string;
+        value: number;
+        fill: string;
+    };
+    aprovado: {
+        name: string;
+        value: number;
+        fill: string;
+    };
+    cancelado: {
+        name: string;
+        value: number;
+        fill: string;
+    };
+}
 interface TransacaoInterface {
     id: string;
     id_comprador: number | string;
@@ -26,6 +45,7 @@ interface TransacaoResponseCrendencial {
 interface TransacaoResponse {
     id_transacao: string;
     data_compra: string;
+
     comprador: {
         nome: string;
         cpf: string;

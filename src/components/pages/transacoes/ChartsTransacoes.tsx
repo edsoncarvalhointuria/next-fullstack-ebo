@@ -1,7 +1,4 @@
-import {
-    ChartContainer,
-    ToolTipPersonalizado,
-} from "@/components/charts/Charts";
+import { ChartContainer, ToolTipPersonalizado } from "@/components/charts/Charts";
 import {
     Area,
     Bar,
@@ -58,14 +55,7 @@ const renderShape = ({
 
     return (
         <g>
-            <text
-                style={{ textTransform: "capitalize" }}
-                x={cx}
-                y={cy}
-                dy={8}
-                textAnchor="middle"
-                fill={fill}
-            >
+            <text style={{ textTransform: "capitalize" }} x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
                 {payload.name}
             </text>
             <Sector
@@ -86,11 +76,7 @@ const renderShape = ({
                 outerRadius={(outerRadius ?? 0) + 10}
                 fill={fill}
             />
-            <path
-                d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`}
-                stroke={fill}
-                fill="none"
-            />
+            <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
             <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
             <text
                 x={ex + (cos >= 0 ? 1 : -1) * 12}
@@ -99,9 +85,7 @@ const renderShape = ({
                 fill={fill}
                 style={{ fontFamily: "var(--font-serif)", textAlign: "center" }}
             >
-                {dataKey === "arrecadado"
-                    ? toCurrency(value)
-                    : `${value} vendas`}
+                {dataKey === "arrecadado" ? toCurrency(value) : `${value} vendas`}
             </text>
             <text
                 x={ex + (cos >= 0 ? 1 : -1) * 12}
@@ -138,16 +122,8 @@ export function ChartFaturamento({
             <ComposedChart data={data}>
                 <defs>
                     <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                        <stop
-                            offset="5%"
-                            stopColor="var(--brand-primary)"
-                            stopOpacity={0.5}
-                        />
-                        <stop
-                            offset="95%"
-                            stopColor="var(--brand-primary)"
-                            stopOpacity={0.05}
-                        />
+                        <stop offset="5%" stopColor="var(--brand-primary)" stopOpacity={0.5} />
+                        <stop offset="95%" stopColor="var(--brand-primary)" stopOpacity={0.05} />
                     </linearGradient>
                 </defs>
 
@@ -176,19 +152,12 @@ export function ChartFaturamento({
                                     fontFamily: "var(--font-serif)",
                                 }}
                             >
-                                {areaKeyName === "arrecadado"
-                                    ? toCurrency(payload.value)
-                                    : payload.value}
+                                {areaKeyName === "arrecadado" ? toCurrency(payload.value) : payload.value}
                             </text>
                         );
                     }}
                 />
-                <YAxis
-                    hide
-                    yAxisId={"direita"}
-                    orientation={"right"}
-                    domain={[0, (dataMax) => dataMax * 1.05]}
-                />
+                <YAxis hide yAxisId={"direita"} orientation={"right"} domain={[0, (dataMax) => dataMax * 1.05]} />
                 <XAxis
                     dataKey="name"
                     angle={-45}
@@ -201,9 +170,7 @@ export function ChartFaturamento({
                     }}
                 />
                 <Legend
-                    formatter={(v) => (
-                        <span style={{ textTransform: "capitalize" }}>{v}</span>
-                    )}
+                    formatter={(v) => <span style={{ textTransform: "capitalize" }}>{v}</span>}
                     content={LengendOrdenada}
                 />
 
@@ -265,24 +232,12 @@ export function ChartFaturamento({
     );
 }
 
-export function ChartPieCustom({
-    data,
-    isMobile,
-    type,
-}: {
-    data: any[];
-    type: string;
-    isMobile: boolean;
-}) {
+export function ChartPieCustom({ data, isMobile, type }: { data: any[]; type: string; isMobile: boolean }) {
     return (
         <ChartContainer>
             <PieChart data={data}>
                 <Tooltip active content={() => null} defaultIndex={0} />
-                <Legend
-                    formatter={(v) => (
-                        <span style={{ textTransform: "capitalize" }}>{v}</span>
-                    )}
-                />
+                <Legend formatter={(v) => <span style={{ textTransform: "capitalize" }}>{v}</span>} />
                 <Pie
                     dataKey={type}
                     nameKey="name"
@@ -300,13 +255,7 @@ export function ChartPieCustom({
     );
 }
 
-export function ChartPiePagamentos({
-    data,
-    isMobile,
-}: {
-    data: any[];
-    isMobile: boolean;
-}) {
+export function ChartPiePagamentos({ data, isMobile }: { data: any[]; isMobile: boolean }) {
     const [type, setType] = useState<"qtd" | "arrecadado">("qtd");
 
     return (
@@ -371,9 +320,7 @@ export function ChartBarPorCargos({
                 layout="vertical"
                 data={data}
                 margin={
-                    isMobile
-                        ? { top: 0, left: 0, right: 0, bottom: 0 }
-                        : { top: 10, right: 30, left: 10, bottom: 0 }
+                    isMobile ? { top: 0, left: 0, right: 0, bottom: 0 } : { top: 10, right: 30, left: 10, bottom: 0 }
                 }
             >
                 <XAxis type="number" hide />
@@ -406,10 +353,7 @@ export function ChartBarPorCargos({
                     }}
                 />
 
-                <Tooltip
-                    content={ToolTipPersonalizado}
-                    cursor={{ fill: "var(--bg-secondary)" }}
-                />
+                <Tooltip content={ToolTipPersonalizado} cursor={{ fill: "var(--bg-secondary)" }} />
 
                 <Bar
                     dataKey={dataKey || "inscritos"}

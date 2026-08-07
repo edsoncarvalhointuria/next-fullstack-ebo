@@ -28,24 +28,16 @@ export function Dia({ img, nome, dia }: DiaProps) {
                 <h2 className="home-dia__title">Dia {dia}</h2>
                 <p className="home-dia__subtitle">{nome}</p>
                 <div className="home-dia__theme__infos">
-                    <p className="home-dia__theme">
-                        Tema: O obreiro e os desafios da atualidade.
-                    </p>
-                    <span className="home-dia__versicle">2 Timoteo 4:5</span>
+                    <p className="home-dia__theme">Tema: Mãos à Obra</p>
+                    <span className="home-dia__versicle">1 CORÍNTIOS 14:12</span>
                 </div>
             </div>
 
             <div className="home-dia__imgs">
-                <motion.div
-                    className="home-dia__img home-dia__img-placeholder"
-                    style={{ x: xSombra1, y: ySombra1 }}
-                >
+                <motion.div className="home-dia__img home-dia__img-placeholder" style={{ x: xSombra1, y: ySombra1 }}>
                     <img src={img} alt={`imagem ${nome}`} />
                 </motion.div>
-                <motion.div
-                    className="home-dia__img home-dia__img-placeholder"
-                    style={{ x: xSombra2, y: ySombra2 }}
-                >
+                <motion.div className="home-dia__img home-dia__img-placeholder" style={{ x: xSombra2, y: ySombra2 }}>
                     <img src={img} alt={`imagem ${nome}`} />
                 </motion.div>
                 <div className="home-dia__img">

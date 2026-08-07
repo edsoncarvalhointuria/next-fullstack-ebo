@@ -1,12 +1,6 @@
 "use client";
 
-import {
-    ReactNode,
-    useCallback,
-    useDeferredValue,
-    useMemo,
-    useState,
-} from "react";
+import { ReactNode, useCallback, useDeferredValue, useMemo, useState } from "react";
 import Search from "@/components/ui/Search";
 import Dropdown, { ItemDropdownDefault } from "@/components/ui/Dropdown";
 import { AnimatePresence, motion, Variants } from "framer-motion";
@@ -33,21 +27,13 @@ import {
 } from "lucide-react";
 import { toCurrency } from "@/lib/toCurrency";
 import Link from "next/link";
-import {
-    Card,
-    CardOpcao,
-    CardOpcaoProps,
-    CardProps,
-} from "@/components/ui/Card";
+import { Card, CardOpcao, CardOpcaoProps, CardProps } from "@/components/ui/Card";
 import { BaseCardsContainer } from "../config-site/BaseConfig";
-import {
-    ChartBarPorCargos,
-    ChartFaturamento,
-    ChartPiePagamentos,
-} from "./ChartsTransacoes";
+import { ChartBarPorCargos, ChartFaturamento, ChartPiePagamentos } from "./ChartsTransacoes";
 import useResize from "@/hooks/useResize";
 import { useSearchParams } from "next/navigation";
 import { useDataContext } from "@/contexts/DataContext";
+import { ListaVazia } from "../config-site/ListaVazia";
 
 interface TableHeaderItem {
     icon?: ReactNode;
@@ -140,9 +126,7 @@ const TableDropCard = ({
                     <span>{nome_congregacao || nome_outra_congregacao}</span>
                 </p>
 
-                <h3 className="transacoes__table-container__drop__nome">
-                    {nome_titular}
-                </h3>
+                <h3 className="transacoes__table-container__drop__nome">{nome_titular}</h3>
 
                 <p className="transacoes__table-container__drop__tipo-ingresso">
                     <i>
@@ -178,35 +162,22 @@ const TableDropVazio = () => {
         </div>
     );
 };
-const TableItem = ({
-    comprador,
-    pagamento,
-    credenciais,
-    data_compra,
-}: TransacaoResponse) => {
+const TableItem = ({ comprador, pagamento, credenciais, data_compra }: TransacaoResponse) => {
     const [isOpen, setIsOpen] = useState(false);
     const alterarIsOpen = () => setIsOpen((v) => !v);
     return (
-        <div
-            className={`transacoes__table-container ${isOpen ? "transacoes__table-container--is-open" : ""}`}
-        >
+        <div className={`transacoes__table-container ${isOpen ? "transacoes__table-container--is-open" : ""}`}>
             <div className="transacoes__table-row" onClick={alterarIsOpen}>
                 <div className="transacoes__table-item transacoes__table-item__comprador">
-                    <p className="transacoes__table-item__comprador-nome">
-                        {comprador.nome}
-                    </p>
-                    <p className="transacoes__table-item__comprador-email">
-                        {comprador.email}
-                    </p>
+                    <p className="transacoes__table-item__comprador-nome">{comprador.nome}</p>
+                    <p className="transacoes__table-item__comprador-email">{comprador.email}</p>
                     <p className="transacoes__table-item__comprador-cpf">
                         <strong>{comprador.cpf}</strong>
                     </p>
                 </div>
 
                 <div className="transacoes__table-item transacoes__table-item__pagamento">
-                    <p className="transacoes__table-item__pagamento-valor">
-                        {toCurrency(pagamento.valor_total)}
-                    </p>
+                    <p className="transacoes__table-item__pagamento-valor">{toCurrency(pagamento.valor_total)}</p>
                     <p className="transacoes__table-item__pagamento-tipo">
                         <strong>{pagamento.metodo_pagamento}</strong>
                     </p>
@@ -271,31 +242,17 @@ const TableItem = ({
                             exit={"exit"}
                             transition={{ ease: "linear" }}
                         >
-                            <div
-                                className="transacoes__table-container__drop"
-                                onClick={(e) => e.stopPropagation()}
-                            >
+                            <div className="transacoes__table-container__drop" onClick={(e) => e.stopPropagation()}>
                                 {credenciais.length > 0 ? (
                                     <>
                                         <div className="transacoes__table-container__drop__cards">
                                             {credenciais.map((v) => (
-                                                <TableDropCard
-                                                    {...v}
-                                                    key={v.id_credencial}
-                                                />
+                                                <TableDropCard {...v} key={v.id_credencial} />
                                             ))}
                                         </div>
                                         <div className="transacoes__table-container__buttons">
-                                            <TableButton
-                                                link="#"
-                                                title="Credenciais"
-                                                icon={<IdCard />}
-                                            />
-                                            <TableButton
-                                                link="#"
-                                                title="Checkin"
-                                                icon={<TicketCheck />}
-                                            />
+                                            <TableButton link="#" title="Credenciais" icon={<IdCard />} />
+                                            <TableButton link="#" title="Checkin" icon={<TicketCheck />} />
                                         </div>
                                     </>
                                 ) : (
@@ -327,13 +284,9 @@ const headerItens = [
     { icon: <HandCoins />, title: "Pagamento" },
     { icon: <FileSearchCorner />, title: "Status" },
     { icon: <CalendarCheck />, title: "Data" },
-    {},
 ];
 
-export function ListaTransacoes() {
-    const {
-        responsesMemo: { responseTransacoes },
-    } = useDataContext();
+export function ListaTransacoes({ responseTransacoes }: { responseTransacoes: TransacaoResponse[] }) {
     const [pesquisa, setPesquisa] = useState("");
     const [drops, setDrops] = useState({
         pgmt: { id: "todos", nome: "todos" },
@@ -348,10 +301,8 @@ export function ListaTransacoes() {
     const transacoesMemo = useMemo(() => {
         let c = responseTransacoes;
 
-        if (drops.pgmt.id !== "todos")
-            c = c.filter((v) => v.pagamento.metodo_pagamento === drops.pgmt.id);
-        if (drops.stts.id !== "todos")
-            c = c.filter((v) => v.pagamento.status === drops.stts.id);
+        if (drops.pgmt.id !== "todos") c = c.filter((v) => v.pagamento.metodo_pagamento === drops.pgmt.id);
+        if (drops.stts.id !== "todos") c = c.filter((v) => v.pagamento.status === drops.stts.id);
         if (p)
             c = c.filter((v) => {
                 const { cpf, email } = v.comprador;
@@ -359,9 +310,7 @@ export function ListaTransacoes() {
                 return (
                     cpf.toLowerCase().includes(p) ||
                     email.toLowerCase().includes(p) ||
-                    v.credenciais.find((v) =>
-                        v.nome_titular.toLowerCase().includes(p),
-                    )
+                    v.credenciais.find((v) => v.nome_titular.toLowerCase().includes(p))
                 );
             });
 
@@ -369,65 +318,59 @@ export function ListaTransacoes() {
     }, [p, drops, responseTransacoes]);
 
     return (
-        <>
-            <section className="transacoes__lista">
-                <div className="transacoes__filtros">
-                    <div className="transacoes__filtro transacoes__filtro-search">
-                        <Search onSearch={setPesquisa} />
-                    </div>
-                    <div className="transacoes__filtro transacoes__filtro-drop">
-                        <p className="transacoes__filtro-title">
-                            Método de Pagamento
-                        </p>
-                        <Dropdown
-                            lista={metodosPagamento}
-                            currentValue={drops.pgmt}
-                            onSelected={addDrops}
-                            placeholder="Método de Pagamento"
-                            idObj="pgmt"
-                        />
-                    </div>
-                    <div className="transacoes__filtro transacoes__filtro-drop">
-                        <p className="transacoes__filtro-title">
-                            Status Pedido
-                        </p>
-                        <Dropdown
-                            lista={statusPedido}
-                            currentValue={drops.stts}
-                            idObj="stts"
-                            onSelected={addDrops}
-                            placeholder="Status Pedido"
-                        />
-                    </div>
+        <section className="transacoes__lista">
+            <div className="transacoes__filtros">
+                <div className="transacoes__filtro transacoes__filtro-search">
+                    <Search onSearch={setPesquisa} />
+                </div>
+                <div className="transacoes__filtro transacoes__filtro-drop">
+                    <p className="transacoes__filtro-title">Método de Pagamento</p>
+                    <Dropdown
+                        lista={metodosPagamento}
+                        currentValue={drops.pgmt}
+                        onSelected={addDrops}
+                        placeholder="Método de Pagamento"
+                        idObj="pgmt"
+                    />
+                </div>
+                <div className="transacoes__filtro transacoes__filtro-drop">
+                    <p className="transacoes__filtro-title">Status Pedido</p>
+                    <Dropdown
+                        lista={statusPedido}
+                        currentValue={drops.stts}
+                        idObj="stts"
+                        onSelected={addDrops}
+                        placeholder="Status Pedido"
+                    />
+                </div>
+            </div>
+
+            <div className="transacoes__table">
+                <div className="transacoes__table-header">
+                    {headerItens.map((v, i) => (
+                        <TableHeaderItem key={`${v.title}-${i}`} {...v} />
+                    ))}
                 </div>
 
-                <div className="transacoes__table">
-                    <div className="transacoes__table-header">
-                        {headerItens.map((v, i) => (
-                            <TableHeaderItem key={`${v.title}-${i}`} {...v} />
-                        ))}
-                    </div>
-
-                    <div className="transacoes__table-body">
-                        {transacoesMemo.map((v) => (
-                            <TableItem {...v} key={v.id_transacao} />
-                        ))}
-                    </div>
+                <div className="transacoes__table-body">
+                    {transacoesMemo.length ? (
+                        transacoesMemo.map((v) => <TableItem {...v} key={v.id_transacao} />)
+                    ) : (
+                        <ListaVazia />
+                    )}
                 </div>
-            </section>
-        </>
+            </div>
+        </section>
     );
 }
 
-export function GraficosTransacoes() {
-    const {
-        responsesMemo: {
-            listaGraficosTransacoes,
-            transacoesPorStatus,
-            totalArrecadado,
-            totalTransacoes,
-        },
-    } = useDataContext();
+export function GraficosTransacoes({
+    listaGraficosTransacoes,
+    transacoesPorStatus,
+}: {
+    listaGraficosTransacoes: GraficosTransacoes[];
+    transacoesPorStatus: CardsTransacaoStatus;
+}) {
     const [filter, setFilter] = useState<{
         cargo: null | string;
         congregacao: null | string;
@@ -449,9 +392,7 @@ export function GraficosTransacoes() {
         if (filter.cargo) l = l.filter((v) => v.titular_cargo === filter.cargo);
         if (filter.congregacao)
             l = l.filter((v) =>
-                filter.congregacao === "outra"
-                    ? !v.titular_congregacao
-                    : v.titular_congregacao === filter.congregacao,
+                filter.congregacao === "outra" ? !v.titular_congregacao : v.titular_congregacao === filter.congregacao,
             );
 
         l.forEach((v) => {
@@ -505,10 +446,7 @@ export function GraficosTransacoes() {
 
                 faturamento.arrecadado += v.valor;
                 faturamento.aprovado++;
-            } else
-                v.status === "cancelado"
-                    ? faturamento.cancelado++
-                    : faturamento.pendente++;
+            } else v.status === "cancelado" ? faturamento.cancelado++ : faturamento.pendente++;
 
             listaMap.set("metodo", metodo);
             listaMap.set("congregacao", congregacao);
@@ -529,12 +467,12 @@ export function GraficosTransacoes() {
     }, [filter]);
     const cards = useMemo(() => {
         const dados = {
-            total_arrecadado: totalArrecadado,
-            total_transacoes: totalTransacoes,
+            total_arrecadado: transacoesPorStatus.totalArrecadado,
+            total_transacoes: transacoesPorStatus.totalTransacoes,
             aprovados: transacoesPorStatus.aprovado.value,
             cancelados: transacoesPorStatus.cancelado.value,
             pendentes: transacoesPorStatus.pendente.value,
-            ticket: totalArrecadado / totalTransacoes,
+            ticket: transacoesPorStatus.totalArrecadado / transacoesPorStatus.totalTransacoes || 0,
         };
 
         const c: (CardOpcaoProps | CardProps)[] = [
@@ -586,16 +524,12 @@ export function GraficosTransacoes() {
         ];
 
         return c;
-    }, [totalTransacoes]);
+    }, []);
     return (
         <div className="transacoes__graficos">
             <BaseCardsContainer>
                 {cards.map((v, i) =>
-                    "opcoes" in v ? (
-                        <CardOpcao {...v} key={`card-${i}`} />
-                    ) : (
-                        <Card key={`card-${i}`} {...v} />
-                    ),
+                    "opcoes" in v ? <CardOpcao {...v} key={`card-${i}`} /> : <Card key={`card-${i}`} {...v} />,
                 )}
             </BaseCardsContainer>
 
@@ -604,74 +538,64 @@ export function GraficosTransacoes() {
                     className="transacoes__graficos__reset"
                     type="button"
                     title="Remover Filtro"
-                    onClick={() =>
-                        setFilter({ cargo: null, congregacao: null })
-                    }
+                    onClick={() => setFilter({ cargo: null, congregacao: null })}
                 >
-                    <i>
+                    <i aria-hidden="true">
                         <ListRestart />
                     </i>
                     <span>Remover Filtro</span>
                 </button>
             )}
 
-            <motion.div
-                initial={{ display: "none" }}
-                animate={{ display: "block" }}
-                transition={{ delay: 1 }}
-            >
+            <motion.div initial={{ display: "none" }} animate={{ display: "block" }} transition={{ delay: 1 }}>
                 <div className="transacoes__graficos__graficos">
                     <div className="transacoes__graficos__graficos__grafico">
-                        <h3 className="transacoes__graficos__graficos__grafico__title">
-                            Faturamento Diário
-                        </h3>
+                        <h3 className="transacoes__graficos__graficos__grafico__title">Faturamento Diário</h3>
 
-                        <ChartFaturamento
-                            data={listaMemo.faturamento}
-                            isMobile={isMobile}
-                            areaKeyName="arrecadado"
-                            bars={bars}
-                        />
+                        {listaMemo.faturamento.length ? (
+                            <ChartFaturamento
+                                data={listaMemo.faturamento}
+                                isMobile={isMobile}
+                                areaKeyName="arrecadado"
+                                bars={bars}
+                            />
+                        ) : (
+                            <ListaVazia />
+                        )}
                     </div>
 
-                    <ChartPiePagamentos
-                        data={listaMemo.metodos}
-                        isMobile={isMobile}
-                    />
+                    <ChartPiePagamentos data={listaMemo.metodos} isMobile={isMobile} />
 
                     <div className="transacoes__graficos__graficos__grafico">
-                        <h3 className="transacoes__graficos__graficos__grafico__title">
-                            Vendas por Cargos
-                        </h3>
+                        <h3 className="transacoes__graficos__graficos__grafico__title">Vendas por Cargos</h3>
 
-                        <ChartBarPorCargos
-                            data={listaMemo.cargo}
-                            onClick={addFilter}
-                            keyName="cargo"
-                            isMobile={isMobile}
-                        />
+                        {listaMemo.cargo.length ? (
+                            <ChartBarPorCargos
+                                data={listaMemo.cargo}
+                                onClick={addFilter}
+                                keyName="cargo"
+                                isMobile={isMobile}
+                            />
+                        ) : (
+                            <ListaVazia />
+                        )}
                     </div>
                     <div className="transacoes__graficos__graficos__grafico">
-                        <h3 className="transacoes__graficos__graficos__grafico__title">
-                            Vendas por Congregações
-                        </h3>
+                        <h3 className="transacoes__graficos__graficos__grafico__title">Vendas por Congregações</h3>
 
-                        <ChartBarPorCargos
-                            data={listaMemo.congregacao}
-                            onClick={addFilter}
-                            keyName="congregacao"
-                            isMobile={isMobile}
-                        />
+                        {listaMemo.congregacao.length ? (
+                            <ChartBarPorCargos
+                                data={listaMemo.congregacao}
+                                onClick={addFilter}
+                                keyName="congregacao"
+                                isMobile={isMobile}
+                            />
+                        ) : (
+                            <ListaVazia />
+                        )}
                     </div>
                 </div>
             </motion.div>
         </div>
     );
-}
-
-export default function TransacoesBody() {
-    const params = useSearchParams();
-    const mode = params.get("mode");
-    const isChart = mode === "graficos";
-    return isChart ? <GraficosTransacoes /> : <ListaTransacoes />;
 }

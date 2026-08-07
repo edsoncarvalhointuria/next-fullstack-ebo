@@ -7,11 +7,9 @@ import { ArrowLeft, LogIn } from "lucide-react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuthContext } from "@/contexts/AuthContexts";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import "./login.scss";
 import Link from "next/link";
+import login from "@/actions/login";
 
 const schema = z.object({
     email: z.email({ error: "Adicione um email válido" }),
@@ -21,30 +19,38 @@ const schema = z.object({
 type FormLogin = z.infer<typeof schema>;
 
 export default function Login() {
-    const { handleLogin, login } = useAuthContext();
-    const router = useRouter();
     const methods = useForm<FormLogin>({ resolver: zodResolver(schema) });
     const {
         handleSubmit,
         register,
-        formState: { errors },
+        setError,
+        formState: { errors, isSubmitting },
     } = methods;
-    const onSubmit = (v: FormLogin) => {
-        console.log(v);
-        if (v) handleLogin();
+
+    const onSubmit = async (v: FormLogin) => {
+        const { success } = await login(v.email, v.senha);
+
+        if (!success) {
+            setError("email", {
+                type: "value",
+                message: "Email ou senha inválido",
+            });
+            setError("senha", {
+                type: "value",
+                message: "Email ou senha inválido",
+            });
+        }
     };
 
-    useEffect(() => {
-        if (login) router.replace("/admin");
-    }, [login]);
     return (
         <MotionMain className="login">
             <Link
                 href={"/"}
                 title="Voltar para página inicial"
+                aria-label="Voltar para página inicial"
                 className="login__back"
             >
-                <i>
+                <i aria-hidden="true">
                     <ArrowLeft size={32} />
                 </i>
                 <span>Home</span>
@@ -73,8 +79,8 @@ export default function Login() {
                         placeholder="&lowast;&lowast;&lowast;&lowast;&lowast;&lowast;"
                     />
 
-                    <button type="submit" className="login__form-btn">
-                        <i>
+                    <button type="submit" className="login__form-btn" disabled={isSubmitting}>
+                        <i aria-hidden="true">
                             <LogIn />
                         </i>
                         <span>Fazer Login</span>

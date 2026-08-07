@@ -1,26 +1,22 @@
-"use client";
 import MotionMain from "@/components/layout/MotionMain";
 import { BaseHeader } from "@/components/pages/config-site/BaseConfig";
-import {
-    NotebookPen,
-    Ticket,
-    TicketPlus,
-    Tickets,
-    TicketX,
-    Trash2,
-    UsersRound,
-} from "lucide-react";
+import { NotebookPen, Ticket, TicketPlus, Tickets, TicketX, Trash2, UsersRound } from "lucide-react";
 import { toCurrency } from "@/lib/toCurrency";
-import "./ingressos.scss";
 import BotaoAcoes from "@/components/ui/btns/BotaoAcoes";
 import ModalBase from "@/components/ui/modal/ModalBase";
 import FormGerenciarIngressos from "@/components/pages/gerenciar-ingressos/FormGerenciarIngressos";
 import { Suspense } from "react";
 import DeletarConfig from "@/components/pages/config-site/DeletarConfig";
-import { useDataContext } from "@/contexts/DataContext";
+import "./ingressos.scss";
+import { getItens } from "@/actions/handlerItens";
+import { ListaVazia } from "@/components/pages/config-site/ListaDados";
 
-export default function GerenciarIngressos() {
-    const { addIngresso, ingressos } = useDataContext();
+export default async function GerenciarIngressos() {
+    const link = "/admin/ingressos";
+    const table = "dimingresso";
+    const { data } = await getItens(table);
+    const ingressos = data as IngressosInterface[];
+
     return (
         <>
             <MotionMain className="gerenciar-ingressos">
@@ -32,89 +28,79 @@ export default function GerenciarIngressos() {
                 />
 
                 <section className="gerenciar-ingressos__ingressos">
-                    {ingressos.map((v) => (
-                        <div
-                            className={`gerenciar-ingressos__ingresso ${!v.is_ativo ? "gerenciar-ingressos__ingresso--inativo" : ""}`}
-                            key={v.id}
-                        >
-                            <div className="gerenciar-ingressos__ingresso__header">
-                                <h2 className="gerenciar-ingressos__ingresso__title">
-                                    {v.nome_tipo}
-                                </h2>
+                    {ingressos.length ? (
+                        ingressos
+                            .sort((a, b) => a.ordem - b.ordem)
+                            .map((v) => (
+                                <div
+                                    className={`gerenciar-ingressos__ingresso ${!v.is_ativo ? "gerenciar-ingressos__ingresso--inativo" : ""}`}
+                                    key={v.id}
+                                >
+                                    <div className="gerenciar-ingressos__ingresso__header">
+                                        <h2 className="gerenciar-ingressos__ingresso__title">{v.nome_tipo}</h2>
 
-                                <h3 className="gerenciar-ingressos__ingresso__preco">
-                                    {toCurrency(Number(v.preco))}
-                                </h3>
-                            </div>
+                                        <h3 className="gerenciar-ingressos__ingresso__preco">
+                                            {toCurrency(Number(v.preco))}
+                                        </h3>
+                                    </div>
 
-                            <div className="gerenciar-ingressos__ingresso__infos">
-                                <p className="gerenciar-ingressos__ingresso__qtd">
-                                    <span>
-                                        <i>
-                                            <UsersRound />
-                                        </i>
-                                        Quantidade de Pessoas:{" "}
-                                    </span>
-                                    <strong>{v.quantidade_pessoas}</strong>
-                                </p>
+                                    <div className="gerenciar-ingressos__ingresso__infos">
+                                        <p className="gerenciar-ingressos__ingresso__qtd">
+                                            <span>
+                                                <i aria-hidden="true">
+                                                    <UsersRound />
+                                                </i>
+                                                Quantidade de Pessoas:{" "}
+                                            </span>
+                                            <strong>{v.quantidade_pessoas}</strong>
+                                        </p>
 
-                                <p className="gerenciar-ingressos__ingresso__descricao">
-                                    <strong>{v.descricao}</strong>
-                                </p>
+                                        <p className="gerenciar-ingressos__ingresso__descricao">
+                                            <strong>{v.descricao}</strong>
+                                        </p>
 
-                                {v?.observacao && (
-                                    <p className="gerenciar-ingressos__ingresso__observacao">
-                                        <span>
-                                            <i>
-                                                <NotebookPen />
-                                            </i>
-                                            Obs:
-                                        </span>
-                                        <em>{v.observacao}</em>
-                                    </p>
-                                )}
+                                        {v?.observacao && (
+                                            <p className="gerenciar-ingressos__ingresso__observacao">
+                                                <span>
+                                                    <i aria-hidden="true">
+                                                        <NotebookPen />
+                                                    </i>
+                                                    Obs:
+                                                </span>
+                                                <em>{v.observacao}</em>
+                                            </p>
+                                        )}
 
-                                {v?.data_fim_vendas && (
-                                    <p className="gerenciar-ingressos__ingresso__data">
-                                        Data Encerramento:{" "}
-                                        <data value={v.data_fim_vendas}>
-                                            <strong>
-                                                {new Date(
-                                                    v.data_fim_vendas,
-                                                ).toLocaleDateString("pt-br")}
-                                            </strong>
-                                        </data>
-                                    </p>
-                                )}
-                            </div>
+                                        {v?.data_fim_vendas && (
+                                            <p className="gerenciar-ingressos__ingresso__data">
+                                                Data Encerramento:{" "}
+                                                <data value={v.data_fim_vendas}>
+                                                    <strong>
+                                                        {new Date(v.data_fim_vendas).toLocaleDateString("pt-br")}
+                                                    </strong>
+                                                </data>
+                                            </p>
+                                        )}
+                                    </div>
 
-                            <div className="gerenciar-ingressos__ingresso__footer">
-                                <BotaoAcoes
-                                    acao="edit"
-                                    link={`?modal=form&id=${v.id}`}
-                                />
+                                    <div className="gerenciar-ingressos__ingresso__footer">
+                                        <BotaoAcoes acao="edit" link={`?modal=form&id=${v.id}`} />
 
-                                <BotaoAcoes
-                                    acao="del"
-                                    link={`?modal=del&id=${v.id}`}
-                                    icon={<Trash2 />}
-                                />
-                            </div>
-                        </div>
-                    ))}
+                                        <BotaoAcoes acao="del" link={`?modal=del&id=${v.id}`} icon={<Trash2 />} />
+                                    </div>
+                                </div>
+                            ))
+                    ) : (
+                        <ListaVazia />
+                    )}
                 </section>
             </MotionMain>
 
             <Suspense>
                 <ModalBase keyName="form" title="Ingressos" icon={<Tickets />}>
-                    <FormGerenciarIngressos />
+                    <FormGerenciarIngressos ordem={ingressos?.length ? ingressos.length + 1 : 1} />
                 </ModalBase>
-                <DeletarConfig
-                    keyName="nome_tipo"
-                    lista={ingressos}
-                    onConfirm={addIngresso}
-                    icon={<TicketX />}
-                />
+                <DeletarConfig<IngressosInterface> keyName="nome_tipo" table={table} link={link} icon={<TicketX />} />
             </Suspense>
         </>
     );

@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Montserrat, Cormorant_Garamond } from "next/font/google";
 import "./main.scss";
-import AuthContext from "@/contexts/AuthContexts";
-import DataContext from "@/contexts/DataContext";
 
 const cormorant = Cormorant_Garamond({
     subsets: ["latin"],
@@ -29,11 +27,7 @@ export default function RootLayout({
             className={`${montserrat.variable} ${cormorant.variable}`}
             data-scroll-behavior="smooth" // Isso diz que aplicamos o scroll smooth na página para evitar saltos indesejados
         >
-            <AuthContext>
-                <DataContext>
-                    <body>{children}</body>
-                </DataContext>
-            </AuthContext>
+            <body>{children}</body>
         </html>
     );
 }

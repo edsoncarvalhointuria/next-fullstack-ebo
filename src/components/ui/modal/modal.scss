@@ -73,11 +73,7 @@
 
             &:hover {
                 color: $vermelho;
-                background-color: color-mix(
-                    in srgb,
-                    $vermelho 10%,
-                    transparent
-                );
+                background-color: color-mix(in srgb, $vermelho 10%, transparent);
                 i {
                     transform: rotate(90deg);
                 }
@@ -112,6 +108,12 @@
         flex-direction: column;
         gap: 1.5rem;
         padding-top: 0.5rem;
+        opacity: 1;
+        transition: all ease 0.5s;
+
+        &--is-loading {
+            opacity: 0.4;
+        }
 
         &__container {
             display: flex;
@@ -194,11 +196,7 @@
                 border: 1px solid $border-color;
 
                 &:hover {
-                    background-color: color-mix(
-                        in srgb,
-                        $text-secondary 10%,
-                        transparent
-                    );
+                    background-color: color-mix(in srgb, $text-secondary 10%, transparent);
                     color: $text-primary;
                 }
             }
@@ -210,8 +208,7 @@
                 &:hover {
                     background-color: color-mix(in srgb, $vermelho, #000 15%);
                     transform: scale(1.03);
-                    box-shadow: 0 4px 12px
-                        color-mix(in srgb, $vermelho 20%, transparent);
+                    box-shadow: 0 4px 12px color-mix(in srgb, $vermelho 20%, transparent);
                 }
 
                 &:active {

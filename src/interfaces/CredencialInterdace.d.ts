@@ -12,7 +12,6 @@ interface CredencialInterface {
 interface CredencialResponse {
     id: number | string;
     nome: string;
-    id_transacao: string;
     is_titular: boolean;
 
     id_cargo: number | string;
@@ -23,6 +22,8 @@ interface CredencialResponse {
 
     is_outra_congregacao: boolean;
     nome_outra_congregacao: string | null;
+
+    id_transacao: string;
     nome_comprador: string;
     email_comprador: string;
     whatsapp_comprador?: string;
@@ -53,8 +54,25 @@ interface CredenciaisTotal {
 }
 
 interface GraficosCrendenciaisResponse {
-    cards: MetricasCardsCredenciais;
+    // cards: MetricasCardsCredenciais;
     congregacoes: GraficoCredenciaisIgrejas[];
     cargos: GraficoCredenciaisCargos[];
     inscricoes: CredenciaisTotal[];
+}
+
+interface TransacaoPorIngresso {
+    total: number;
+    individual: number;
+    casal: number;
+}
+
+interface TransacaoArrecadacao {
+    name: string;
+    arrecadado: number;
+    vendas: number;
+}
+
+interface CredenciaisPorCongregacao {
+    name: string;
+    inscritos: number;
 }

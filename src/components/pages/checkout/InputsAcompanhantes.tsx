@@ -3,31 +3,27 @@
 import TextInput from "@/components/forms/TextInput";
 import SelectInput from "@/components/forms/SelectInput";
 import OutraCongregacao from "./OutraCongregacao";
-import {
-    FieldValues,
-    useFormContext,
-    useFormState,
-    useWatch,
-} from "react-hook-form";
+import { useFormContext, useFormState, useWatch } from "react-hook-form";
 import { FormCheckout } from "./FormularioCheckout";
 import ContainerInput from "@/components/forms/ContainerInput";
 import { useEffect, useMemo } from "react";
-import { useDataContext } from "@/contexts/DataContext";
 
-export default function InputsAcompanhantes({ qtd }: { qtd: number }) {
-    const { cargos, congregacoes } = useDataContext();
+export default function InputsAcompanhantes({
+    qtd,
+    cargos,
+    congregacoes,
+}: {
+    qtd: number;
+    cargos: CargosInterface[];
+    congregacoes: CongregacaoInterface[];
+}) {
     const { register, control, setValue } = useFormContext<FormCheckout>();
     const { errors } = useFormState({ control });
     const congregacao = useWatch({ control, name: "congregacao" });
-    const congregacoesMemo = useMemo(
-        () => [{ id: "outra", nome: "outra" }, ...congregacoes],
-        [congregacao],
-    );
+    const congregacoesMemo = useMemo(() => [{ id: "outra", nome: "outra" }, ...congregacoes], [congregacao]);
     useEffect(() => {
         if (congregacao) {
-            Array.from({ length: qtd }).forEach((_, i) =>
-                setValue(`acompanhantes.${i}.congregacao`, congregacao),
-            );
+            Array.from({ length: qtd }).forEach((_, i) => setValue(`acompanhantes.${i}.congregacao`, congregacao));
         }
     }, [congregacao]);
     return Array.from({
@@ -49,17 +45,10 @@ export default function InputsAcompanhantes({ qtd }: { qtd: number }) {
                     label={"Congregação"}
                     control={control}
                     key={"congregacaoAcompanhante" + i}
-                    messageError={
-                        errors?.acompanhantes?.[i]?.congregacao?.message
-                    }
+                    messageError={errors?.acompanhantes?.[i]?.congregacao?.message}
                     lista={congregacoesMemo}
                 />
-                <OutraCongregacao
-                    index={i}
-                    messageError={
-                        errors.acompanhantes?.[i]?.nomeOutraCongregacao?.message
-                    }
-                />
+                <OutraCongregacao index={i} messageError={errors.acompanhantes?.[i]?.nomeOutraCongregacao?.message} />
             </ContainerInput>
 
             <SelectInput

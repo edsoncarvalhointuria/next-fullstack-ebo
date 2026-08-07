@@ -1,9 +1,9 @@
 import Final from "@/components/pages/home/Final";
-import "./checkout.scss";
+import "./loading.scss";
 
 export default function CheckoutLoading() {
     return (
-        <main className="checkout__loading">
+        <main className="loading">
             <Final showButton={false} />
         </main>
     );

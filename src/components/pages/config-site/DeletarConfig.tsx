@@ -1,35 +1,50 @@
 "use client";
 
-import ModalDeletar, {
-    ModalDeletarText,
-} from "@/components/ui/modal/ModalDeletar";
-import { ReactNode } from "react";
+import ModalDeletar, { ModalDeletarText } from "@/components/ui/modal/ModalDeletar";
+import { ReactNode, useEffect, useState } from "react";
 import { ItensListaDados } from "./ListaDados";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import useGetSearchId from "@/hooks/useGetSearchId";
+import { getItemById, removeItem } from "@/actions/handlerItens";
+import { TableNames } from "@/constants/Tables";
 
 export default function DeletarConfig<T extends { id: string | number }>({
     icon,
-    lista,
-    onConfirm,
+    table,
+    link,
     keyName = "nome" as keyof T,
 }: {
     icon: ReactNode;
-    lista: T[];
+    table: TableNames;
+    link: string;
     keyName?: keyof T;
-    onConfirm: (lista: T[]) => void;
 }) {
-    const params = useSearchParams();
-    const id = params.get("id");
-    const index = lista.findIndex((v) => String(v.id) === id);
-    if (index === -1) return null;
+    const [title, setTitle] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
+    const id = useGetSearchId();
 
+    useEffect(() => {
+        if (!id) return;
+        getItemById(table, id)
+            .then((v) => {
+                if (!v) return;
+                setTitle(v[keyName]);
+            })
+            .catch((v) => console.log("deu erro", v));
+    }, [id]);
+
+    if (!title) return <></>;
     return (
         <ModalDeletar
             keyName="del"
+            isLoading={isLoading}
             onConfirm={() => {
-                const list = [...lista];
-                list.splice(index, 1);
-                onConfirm(list);
+                setIsLoading(true);
+                removeItem(table, id!)
+                    .then(() => router.push(link))
+                    .catch((err) => console.log("deu esse erro", err))
+                    .finally(() => setIsLoading(false));
             }}
             title="Deletar?"
             icon={icon}
@@ -37,8 +52,7 @@ export default function DeletarConfig<T extends { id: string | number }>({
                 <ModalDeletarText
                     text={
                         <>
-                            Tem certeza que deseja deletar:{" "}
-                            <span>{`${lista[index][keyName]}`}</span> ?
+                            Tem certeza que deseja deletar: <span>{title}</span> ?
                         </>
                     }
                 />

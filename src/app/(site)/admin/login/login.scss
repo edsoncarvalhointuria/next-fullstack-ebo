@@ -30,11 +30,7 @@
 
         &:hover {
             color: $text-primary;
-            background-color: color-mix(
-                in srgb,
-                $text-secondary 15%,
-                transparent
-            );
+            background-color: color-mix(in srgb, $text-secondary 15%, transparent);
             transform: translateX(-3px);
         }
 
@@ -118,6 +114,13 @@
 
             &:hover {
                 opacity: 0.9;
+            }
+
+            &:disabled {
+                opacity: 0.4;
+                &:hover {
+                    opacity: 0.4;
+                }
             }
 
             i {

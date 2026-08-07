@@ -9,7 +9,7 @@ export default function NotFound() {
         <MotionMain className="not-found">
             <section className="not-found__header">
                 <h1 className="not-found__title">
-                    <i>
+                    <i aria-hidden="true">
                         <StickyNoteOff size={35} />
                     </i>
                     <strong>404</strong>

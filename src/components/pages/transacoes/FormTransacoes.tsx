@@ -3,15 +3,9 @@
 import z from "zod";
 import TextInput from "@/components/forms/TextInput";
 import SelectInput from "@/components/forms/SelectInput";
-import useGetSearchId from "@/hooks/useGetSearchId";
-import {
-    FormProvider,
-    useForm,
-    useFormContext,
-    useWatch,
-} from "react-hook-form";
+import { FormProvider, useForm, useFormContext, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { getInputsComprador } from "../checkout/InputsComprador";
 import ContainerInput from "@/components/forms/ContainerInput";
 import OutraCongregacao from "../checkout/OutraCongregacao";
@@ -19,6 +13,8 @@ import { mascaraCpfCnpj } from "@/lib/mascaras";
 import ModalButtonSubmit from "@/components/ui/modal/ModalButtonSubmit";
 import { useDataContext } from "@/contexts/DataContext";
 import "./form-transacoes.scss";
+import { salvarTransacaoManual } from "@/actions/transacoes";
+import { useRouter } from "next/navigation";
 
 const opcoesPagamentos = [
     { id: "dinheiro", nome: "DINHEIRO" },
@@ -42,9 +38,7 @@ const schema = z
             error: "Por favor, selecione a congregação.",
         }),
         nomeOutraCongregacao: z.string().optional(),
-        cargo: z
-            .string({ error: "Por favor, selecione o cargo." })
-            .min(1, "O cargo é obrigatório"),
+        cargo: z.string({ error: "Por favor, selecione o cargo." }).min(1, "O cargo é obrigatório"),
         acompanhantes: z
             .array(
                 z
@@ -65,17 +59,13 @@ const schema = z
                         }),
                     })
                     .superRefine((dados, ctx) => {
-                        const isOutraCongregacao =
-                            dados.congregacao.toLocaleLowerCase() === "outra";
-                        const isNome =
-                            !dados.nomeOutraCongregacao?.trim() ||
-                            dados.nomeOutraCongregacao.length < 3;
+                        const isOutraCongregacao = dados.congregacao.toLocaleLowerCase() === "outra";
+                        const isNome = !dados.nomeOutraCongregacao?.trim() || dados.nomeOutraCongregacao.length < 3;
 
                         if (isOutraCongregacao && isNome)
                             ctx.addIssue({
                                 code: "custom",
-                                message:
-                                    "Por favor, digite o nome da outra congregação.",
+                                message: "Por favor, digite o nome da outra congregação.",
                                 path: ["nomeOutraCongregacao"],
                             });
                     }),
@@ -90,9 +80,7 @@ const schema = z
         cpf_cnpj: z.string().refine(
             (v) => {
                 const valorLimpo = v.replace(/\D/g, "");
-                const isOk =
-                    v !== "" &&
-                    (valorLimpo.length === 11 || valorLimpo.length === 14);
+                const isOk = v !== "" && (valorLimpo.length === 11 || valorLimpo.length === 14);
 
                 if (isOk) return true;
                 return false;
@@ -108,11 +96,8 @@ const schema = z
             .or(z.number()),
     })
     .superRefine((dados, ctx) => {
-        const isOutraCongregacao =
-            dados.congregacao.toLocaleLowerCase() === "outra";
-        const isNome =
-            !dados.nomeOutraCongregacao?.trim() ||
-            dados.nomeOutraCongregacao.length < 3;
+        const isOutraCongregacao = dados.congregacao.toLocaleLowerCase() === "outra";
+        const isNome = !dados.nomeOutraCongregacao?.trim() || dados.nomeOutraCongregacao.length < 3;
 
         if (isOutraCongregacao && isNome)
             ctx.addIssue({
@@ -122,9 +107,16 @@ const schema = z
             });
     });
 
-type TransacoesForm = z.infer<typeof schema>;
-const FormTransacoesAcompanhantes = () => {
-    const { ingressos, congregacoes, cargos } = useDataContext();
+export type TransacoesForm = z.infer<typeof schema>;
+const FormTransacoesAcompanhantes = ({
+    cargos,
+    congregacoes,
+    ingressos,
+}: {
+    ingressos: IngressosInterface[];
+    congregacoes: CongregacaoInterface[];
+    cargos: CargosInterface[];
+}) => {
     const {
         control,
         formState: { errors },
@@ -149,10 +141,7 @@ const FormTransacoesAcompanhantes = () => {
                             label="Nome Acompanhante"
                             nameForm={`acompanhantes.${i}.nomeCompleto`}
                             register={register}
-                            messageError={
-                                errors?.acompanhantes?.[i]?.nomeCompleto
-                                    ?.message
-                            }
+                            messageError={errors?.acompanhantes?.[i]?.nomeCompleto?.message}
                             autoComplete="companion-name"
                         />
                         <ContainerInput>
@@ -161,27 +150,19 @@ const FormTransacoesAcompanhantes = () => {
                                 label={"Congregação"}
                                 control={control}
                                 key={"congregacaoAcompanhante" + i}
-                                messageError={
-                                    errors?.acompanhantes?.[i]?.congregacao
-                                        ?.message
-                                }
+                                messageError={errors?.acompanhantes?.[i]?.congregacao?.message}
                                 lista={congregacoesMemo}
                             />
                             <OutraCongregacao
                                 index={i}
-                                messageError={
-                                    errors.acompanhantes?.[i]
-                                        ?.nomeOutraCongregacao?.message
-                                }
+                                messageError={errors.acompanhantes?.[i]?.nomeOutraCongregacao?.message}
                             />
                         </ContainerInput>
 
                         <SelectInput
                             control={control}
                             key={"cargoAcompanhante" + i}
-                            messageError={
-                                errors?.acompanhantes?.[i]?.cargo?.message
-                            }
+                            messageError={errors?.acompanhantes?.[i]?.cargo?.message}
                             lista={cargos}
                             nameForm={`acompanhantes.${i}.cargo`}
                             label={"Cargo"}
@@ -193,135 +174,51 @@ const FormTransacoesAcompanhantes = () => {
     );
 };
 
-export default function FormTransacoes() {
-    const {
-        addComprador,
-        ingressos,
-        addTransacao,
-        cargos,
-        congregacoes,
-        addCredencial,
-        credenciais,
-    } = useDataContext();
-    const id = useGetSearchId();
+export default function FormTransacoes({
+    cargos,
+    congregacoes,
+    ingressos,
+    link,
+}: {
+    ingressos: IngressosInterface[];
+    cargos: CargosInterface[];
+    congregacoes: CongregacaoInterface[];
+    link: string;
+}) {
+    const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
+
     const methods = useForm<TransacoesForm>({
         resolver: zodResolver(schema),
         shouldUnregister: true,
     });
     const {
         register,
-        setValues,
         formState: { errors },
         control,
         handleSubmit,
     } = methods;
 
-    const onSubmit = (v: TransacoesForm) => {
-        if (id) {
-        } else {
-            const {
-                cpf_cnpj,
-                email,
-                nomeCompleto,
-                opcaoPagamento,
-                tipoIngresso,
-                whatsapp,
-                cargo,
-                congregacao,
-                acompanhantes,
-                nomeOutraCongregacao,
-            } = v;
-            const comprador = {
-                cpf_cnpj,
-                email,
-                nome: nomeCompleto,
-                whatsapp: whatsapp || "",
-            };
-            addComprador(comprador);
-            const valor_pedido = ingressos.find(
-                (v) => String(v.id) === tipoIngresso,
-            )?.preco!;
+    const onSubmit = async (v: TransacoesForm) => {
+        setIsLoading(true);
 
-            const id_transacao = String(Date.now());
-            addTransacao({
-                data_hora_pedido: new Date().toISOString(),
-                id: id_transacao,
-                id_comprador: cpf_cnpj,
-                id_ingresso: tipoIngresso,
-                id_pagamento_mp: String(Date.now()),
-                metodo_pagamento: opcaoPagamento as any,
-                status_pagamento: "aprovado",
-                valor_pedido,
-            });
+        const { success, message } = await salvarTransacaoManual(v);
 
-            const novasCredenciais: CredencialInterface[] = [
-                {
-                    id: Date.now(),
-                    id_transacao,
-                    is_titular: true,
+        if (!success) console.log(message);
+        if (success) router.push(link);
 
-                    id_congregacao: congregacao,
-                    id_cargo: cargo,
-                    nome: nomeCompleto,
-                    is_outra_congregacao: !!nomeOutraCongregacao,
-                    nome_outra_congregacao: nomeOutraCongregacao || null,
-                },
-            ];
-            if (acompanhantes?.length) {
-                novasCredenciais.push(
-                    ...acompanhantes.map(
-                        (v, i) =>
-                            ({
-                                id: Date.now() + i,
-                                id_cargo: v.cargo,
-                                id_congregacao: v.congregacao,
-                                id_transacao,
-                                is_outra_congregacao: !!v.nomeOutraCongregacao,
-                                is_titular: false,
-                                nome: v.nomeCompleto,
-                                nome_outra_congregacao:
-                                    v.nomeOutraCongregacao || null,
-                            }) as CredencialInterface,
-                    ),
-                );
-            }
-
-            addCredencial([...credenciais, ...novasCredenciais]);
-            console.log({
-                data_hora_pedido: new Date().toISOString(),
-                id: String(Date.now()),
-                id_comprador: cpf_cnpj,
-                id_ingresso: tipoIngresso,
-                id_pagamento_mp: String(Date.now()),
-                metodo_pagamento: opcaoPagamento as any,
-                status_pagamento: "aprovado",
-                valor_pedido,
-            });
-        }
-        window.history.pushState(null, "", "/admin/transacoes");
+        setIsLoading(false);
     };
     const drops = useMemo(() => {
-        const inputsComprador = getInputsComprador<TransacoesForm>(
-            congregacoes,
-            cargos,
-        );
+        const inputsComprador = getInputsComprador<TransacoesForm>(congregacoes, cargos);
         const tiposDeIngresso = ingressos.map((v) => ({
             ...v,
             nome: v.nome_tipo,
         }));
         return { inputsComprador, tiposDeIngresso };
     }, [cargos, congregacoes]);
-    useEffect(() => {
-        if (!id) return;
-        // const item = testeTransacoes.find(v=>String(v.id_transacao)===id);
-        // if(item){
-        //     setValues({
-        //         acompanhantes:item.credenciais.map((v)=>({cargo:v.}))
-        //     })
-        // }
-    }, [id]);
     return (
-        <div className="transacoes__form">
+        <div className={`transacoes__form ${isLoading ? "transacoes__form--loading" : ""}`}>
             <FormProvider {...methods}>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="transacoes__form__comprador">
@@ -350,17 +247,10 @@ export default function FormTransacoes() {
                                     <SelectInput
                                         {...v}
                                         control={control}
-                                        messageError={
-                                            errors?.[v.nameForm]?.message
-                                        }
+                                        messageError={errors?.[v.nameForm]?.message}
                                     />
 
-                                    <OutraCongregacao
-                                        messageError={
-                                            errors?.["nomeOutraCongregacao"]
-                                                ?.message
-                                        }
-                                    />
+                                    <OutraCongregacao messageError={errors?.["nomeOutraCongregacao"]?.message} />
                                 </ContainerInput>
                             ) : (
                                 <SelectInput
@@ -381,7 +271,7 @@ export default function FormTransacoes() {
                         />
                     </div>
 
-                    <FormTransacoesAcompanhantes />
+                    <FormTransacoesAcompanhantes cargos={cargos} congregacoes={congregacoes} ingressos={ingressos} />
 
                     <div className="transacoes__form__pgmt">
                         <SelectInput
@@ -393,7 +283,7 @@ export default function FormTransacoes() {
                         />
                     </div>
 
-                    <ModalButtonSubmit />
+                    <ModalButtonSubmit disabled={isLoading} />
                 </form>
             </FormProvider>
         </div>

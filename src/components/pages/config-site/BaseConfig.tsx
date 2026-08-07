@@ -19,17 +19,11 @@ interface BaseConfigProps extends BaseHeaderProps {
     title: string;
 }
 
-export const BaseHeader = ({
-    buttonTitle,
-    icon,
-    title,
-    buttonIcon,
-    buttonLink,
-}: BaseHeaderProps) => {
+export const BaseHeader = ({ buttonTitle, icon, title, buttonIcon, buttonLink }: BaseHeaderProps) => {
     return (
         <section className="base-config__header">
             <h1>
-                <i>{icon}</i>
+                <i aria-hidden="true">{icon}</i>
                 <span>{title}</span>
             </h1>
 
@@ -77,14 +71,7 @@ export const BaseCards = ({ itens }: { itens: ItensListaDados[] }) => {
     );
 };
 
-export default function BaseConfig({
-    icon,
-    itens,
-    title,
-    buttonTitle,
-    buttonIcon,
-    buttonLink,
-}: BaseConfigProps) {
+export default function BaseConfig({ icon, itens, title, buttonTitle, buttonIcon, buttonLink }: BaseConfigProps) {
     return (
         <MotionMain className="base-config">
             <BaseHeader

@@ -69,8 +69,16 @@
     }
 
     &__question {
-        &:last-child {
-            border-bottom: none;
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+        padding-left: 1rem;
+        margin-bottom: 0.7rem;
+        &--ativo {
+            border-left: 2px $verde solid;
+        }
+
+        &--inativo {
+            border-left: 2px $vermelho solid;
         }
     }
 
@@ -125,11 +133,7 @@
                 &:hover,
                 &:active {
                     color: $brand-primary;
-                    background-color: color-mix(
-                        in srgb,
-                        $brand-primary 15%,
-                        transparent
-                    );
+                    background-color: color-mix(in srgb, $brand-primary 15%, transparent);
                 }
             }
 
@@ -139,13 +143,17 @@
                 &:hover,
                 &:active {
                     color: $vermelho;
-                    background-color: color-mix(
-                        in srgb,
-                        $vermelho 15%,
-                        transparent
-                    );
+                    background-color: color-mix(in srgb, $vermelho 15%, transparent);
                 }
             }
+        }
+    }
+
+    &__reordenar {
+        transition: all ease 0.5s;
+        opacity: 1;
+        &--loading {
+            opacity: 0.4;
         }
     }
 }

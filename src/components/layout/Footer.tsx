@@ -28,10 +28,7 @@ export default function Footer() {
         <footer className="footer">
             <address className="footer__ministerio">
                 <div className="footer__img">
-                    <img
-                        src="/logo-igreja.png"
-                        alt="Ministério Vale Das Virtudes"
-                    />
+                    <img src="/logo-igreja.png" alt="Ministério Vale Das Virtudes" />
                 </div>
                 <p className="footer__direcao">
                     Sob a direção do Pastor Presidente{" "}
@@ -60,10 +57,8 @@ export default function Footer() {
 
             <section className="footer__infos">
                 <p className="footer__copy">
-                    <Link href="/admin/login">
-                        &copy; {eventDetails.data.getFullYear()}
-                    </Link>{" "}
-                    EBOVV. Todos os direitos reservados.
+                    <Link href="/admin/login">&copy; {eventDetails.data.getFullYear()}</Link> EBOVV. Todos os direitos
+                    reservados.
                 </p>
                 <p className="footer__desenvolvido">
                     Desenvolvido por{" "}

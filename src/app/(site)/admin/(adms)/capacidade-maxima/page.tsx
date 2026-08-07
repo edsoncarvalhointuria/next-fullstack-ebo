@@ -1,45 +1,34 @@
 import MotionMain from "@/components/layout/MotionMain";
-import "./capacidade-maxima.scss";
 import { PackageOpen } from "lucide-react";
 import CountUp from "@/components/ui/CountUp";
+import "./capacidade-maxima.scss";
+import { getItens } from "@/actions/handlerItens";
+import FormCapacidade from "@/components/pages/capacidade-maxima/FormCapacidade";
 
-export default function CapacidadeMaxima() {
+export default async function CapacidadeMaxima() {
+    const { data } = await getItens("dimcapacidade");
+    const capacidade = data?.length ? data[0] : { quantidade: 0, id: "" };
+
     return (
         <MotionMain className="capacidade-maxima">
             <section className="capacidade-maxima__header">
                 <div className="capacidade-maxima__card">
                     <h1 className="capacidade-maxima__title">
-                        <i>
+                        <i aria-hidden="true">
                             <PackageOpen />
                         </i>
                         <span>Capacidade Maxima</span>
                     </h1>
 
                     <h2 className="capacidade-maxima__numero">
-                        <CountUp valor={100} duration={1.3} type="round" />
+                        <CountUp valor={capacidade.quantidade} duration={1.3} type="round" />
                     </h2>
                 </div>
             </section>
 
             <section className="capacidade-maxima__edicao">
                 <form>
-                    <div className="capacidade-maxima__input">
-                        <input
-                            type="number"
-                            name="capacidade-maxima-input"
-                            id="capacidade-maxima-input"
-                            defaultValue={100}
-                        />
-                        <p className="capacidade-maxima__input-aviso">
-                            Quando o total de inscrições aprovadas e pendentes
-                            atingir este limite, o sistema pausará
-                            automaticamente as vendas públicas
-                        </p>
-                    </div>
-
-                    <button type="submit" title="salvar nova capacidade">
-                        Atualizar Capacidades
-                    </button>
+                    <FormCapacidade capacidade={capacidade.quantidade} id={capacidade.id} />
                 </form>
             </section>
         </MotionMain>

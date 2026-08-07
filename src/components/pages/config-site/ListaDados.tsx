@@ -3,19 +3,11 @@
 import { ReactNode, useDeferredValue, useMemo, useState } from "react";
 import Search from "@/components/ui/Search";
 import Dropdown, { ItemDropdownDefault } from "@/components/ui/Dropdown";
-import {
-    Ban,
-    Briefcase,
-    CircleCheck,
-    CloudOff,
-    Cog,
-    Power,
-    Trash,
-    UserRoundPen,
-} from "lucide-react";
+import { Ban, Briefcase, CircleCheck, CloudOff, Cog, Power, UserRoundPen } from "lucide-react";
 import useResize from "@/hooks/useResize";
 import BotaoAcoes from "@/components/ui/btns/BotaoAcoes";
 import "./lista-dados.scss";
+import { ListaVazia } from "./ListaVazia";
 
 type tipos = "todos" | "ativos" | "inativos";
 export interface ItensListaDados {
@@ -43,16 +35,6 @@ const opcoes = [
     { id: "inativos", nome: "Inativos" },
 ];
 
-export const ListaVazia = () => {
-    return (
-        <div className="lista-dados__lista--vazio">
-            <i>
-                <CloudOff />
-            </i>
-            <p>Nenhum Item encontrado</p>
-        </div>
-    );
-};
 const ListaDadosCard = ({ id, is_ativo, nome }: ItensListaDados) => {
     return (
         <div
@@ -76,25 +58,16 @@ const ListaDadosCard = ({ id, is_ativo, nome }: ItensListaDados) => {
             )}
 
             <div className="lista-dados__lista__card-buttons">
-                <BotaoAcoes
-                    acao="edit"
-                    link={`?modal=form&id=${id}`}
-                    icon={<UserRoundPen />}
-                />
+                <BotaoAcoes acao="edit" link={`?modal=form&id=${id}`} icon={<UserRoundPen />} />
                 <BotaoAcoes acao="del" link={`?modal=del&id=${id}`} />
             </div>
         </div>
     );
 };
-const ListaDadosItens = ({
-    colunas = defaultColumns,
-    itens,
-}: ListaDadosItensProps) => {
+const ListaDadosItens = ({ colunas = defaultColumns, itens }: ListaDadosItensProps) => {
     const isMobile = useResize(750);
     return (
-        <div
-            className={`lista-dados__lista ${isMobile ? "lista-dados__lista--mobile" : ""}`}
-        >
+        <div className={`lista-dados__lista ${isMobile ? "lista-dados__lista--mobile" : ""}`}>
             {isMobile ? (
                 itens.map((v) => <ListaDadosCard key={v.id} {...v} />)
             ) : (
@@ -124,17 +97,21 @@ const ListaDadosItens = ({
                         {itens.map((v) => (
                             <tr key={v.id} className="lista-dados__lista__item">
                                 <td>
-                                    <p className="lista-dados__lista__item-nome">
-                                        {v.nome}
-                                    </p>
+                                    <p className="lista-dados__lista__item-nome">{v.nome}</p>
                                 </td>
                                 <td>
                                     {v.is_ativo ? (
-                                        <i className="lista-dados__lista__item-boolean lista-dados__lista__item-boolean--ativo">
+                                        <i
+                                            aria-hidden="true"
+                                            className="lista-dados__lista__item-boolean lista-dados__lista__item-boolean--ativo"
+                                        >
                                             <CircleCheck />
                                         </i>
                                     ) : (
-                                        <i className="lista-dados__lista__item-boolean lista-dados__lista__item-boolean--inativo">
+                                        <i
+                                            aria-hidden="true"
+                                            className="lista-dados__lista__item-boolean lista-dados__lista__item-boolean--inativo"
+                                        >
                                             <Ban />
                                         </i>
                                     )}
@@ -146,10 +123,7 @@ const ListaDadosItens = ({
                                             link={`?modal=form&id=${v.id}`}
                                             icon={<UserRoundPen />}
                                         />
-                                        <BotaoAcoes
-                                            acao="del"
-                                            link={`?modal=del&id=${v.id}`}
-                                        />
+                                        <BotaoAcoes acao="del" link={`?modal=del&id=${v.id}`} />
                                     </div>
                                 </td>
                             </tr>
@@ -160,11 +134,7 @@ const ListaDadosItens = ({
         </div>
     );
 };
-export const ListaDadosItensDefault = ({
-    itens,
-}: {
-    itens: ItensListaDados[];
-}) => {
+export const ListaDadosItensDefault = ({ itens }: { itens: ItensListaDados[] }) => {
     return (
         <ListaDados
             itens={itens}
@@ -179,9 +149,11 @@ export const ListaDadosItensDefault = ({
     );
 };
 
-export default function ListaDados<
-    T extends { is_ativo: boolean; order?: number },
->({ itens, onFilter, children }: ListaDadosProps<T>) {
+export default function ListaDados<T extends { is_ativo: boolean; order?: number }>({
+    itens,
+    onFilter,
+    children,
+}: ListaDadosProps<T>) {
     const [currentDrop, setCurrentDrop] = useState<ItemDropdownDefault>({
         id: "todos",
         nome: "Todos",
@@ -193,11 +165,7 @@ export default function ListaDados<
         let c = itens;
 
         if (currentDrop.id !== "todos") {
-            c = c.filter((v) =>
-                currentDrop.id === "ativos"
-                    ? v.is_ativo === true
-                    : v.is_ativo === false,
-            );
+            c = c.filter((v) => (currentDrop.id === "ativos" ? v.is_ativo === true : v.is_ativo === false));
         }
         if (p) c = onFilter(p, c);
         return c;
@@ -209,11 +177,7 @@ export default function ListaDados<
                     <Search placeholder="Pesquisar" onSearch={setPesquisa} />
                 </div>
                 <div className="lista-dados__filtros-filtro">
-                    <Dropdown
-                        lista={opcoes}
-                        currentValue={currentDrop}
-                        onSelected={setCurrentDrop}
-                    />
+                    <Dropdown lista={opcoes} currentValue={currentDrop} onSelected={setCurrentDrop} />
                 </div>
             </div>
 

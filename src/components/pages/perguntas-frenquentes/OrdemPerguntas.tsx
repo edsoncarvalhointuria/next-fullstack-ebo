@@ -1,31 +1,32 @@
 "use client";
 
-import Reordernar from "@/components/ui/Reordernar";
-import { testePerguntas } from "../../../../config/datasTeste";
+import { updateItem } from "@/actions/handlerItens";
+import Reordenar from "@/components/ui/Reordernar";
 import ModalBase from "@/components/ui/modal/ModalBase";
 import { MessageCircleQuestionMark } from "lucide-react";
-import { useDataContext } from "@/contexts/DataContext";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-export default function OrdemPerguntas() {
-    const { perguntas, addPergunta } = useDataContext();
+export default function OrdemPerguntas({ perguntas, link }: { perguntas: FAQInterface[]; link: string }) {
+    const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
     return (
-        <ModalBase
-            keyName="reordenar"
-            title="Perguntas"
-            icon={<MessageCircleQuestionMark size={34} />}
-        >
-            {(closeModal) => (
-                <Reordernar
+        <ModalBase keyName="reordenar" title="Perguntas" icon={<MessageCircleQuestionMark size={34} />}>
+            <div
+                className={`perguntas-frequentes__reordenar ${isLoading ? "perguntas-frequentes__reordenar--loading" : ""}`}
+            >
+                <Reordenar
                     keyName="pergunta"
-                    lista={perguntas}
-                    onSave={(v) => {
-                        const lista = v.map((v, i) => ({ ...v, ordem: i }));
-                        addPergunta(lista);
-                        console.log(v);
-                        closeModal();
+                    lista={perguntas.sort((a, b) => a.ordem - b.ordem)}
+                    onSave={async (v) => {
+                        setIsLoading(true);
+                        Promise.all(v.map((v, i) => updateItem("dimfaq", { ordem: i }, v.id))).then(() => {
+                            setIsLoading(false);
+                            router.push(link);
+                        });
                     }}
                 />
-            )}
+            </div>
         </ModalBase>
     );
 }

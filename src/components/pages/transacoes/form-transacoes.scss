@@ -6,6 +6,11 @@
         flex-direction: column;
         width: 100%;
 
+        &--loading {
+            background-color: color-mix(in srgb, $border-color 80%, transparent);
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
         form {
             display: flex;
             flex-direction: column;
@@ -67,11 +72,7 @@
         &__pgmt {
             display: flex;
             flex-direction: column;
-            background-color: color-mix(
-                in srgb,
-                $brand-primary 5%,
-                transparent
-            );
+            background-color: color-mix(in srgb, $brand-primary 5%, transparent);
             padding: 1.25rem;
             border-radius: $radius-md;
             border-left: 4px solid $brand-primary;

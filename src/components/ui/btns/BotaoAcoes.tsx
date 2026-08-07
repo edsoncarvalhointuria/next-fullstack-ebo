@@ -20,8 +20,9 @@ export default function BotaoAcoes({
             type="button"
             className={`botao-acoes botao-acoes--${acao} ${className || ""}`}
             onClick={() => window.history.pushState(null, "", link)}
+            aria-label={acao === "del" ? "Clique para deletar" : "Clique para editar"}
         >
-            <i>{icon ? icon : acao === "del" ? <Trash /> : <SquarePen />}</i>
+            <i aria-hidden="true">{icon ? icon : acao === "del" ? <Trash /> : <SquarePen />}</i>
         </button>
     );
 }

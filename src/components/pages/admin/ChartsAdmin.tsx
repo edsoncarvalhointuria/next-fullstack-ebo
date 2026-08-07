@@ -1,26 +1,13 @@
 "use client";
 
-import {
-    Area,
-    Bar,
-    BarChart,
-    ComposedChart,
-    Legend,
-    Line,
-    Tooltip,
-    XAxis,
-    YAxis,
-} from "recharts";
+import { Area, Bar, BarChart, ComposedChart, Legend, Line, Tooltip, XAxis, YAxis } from "recharts";
 import useResize from "@/hooks/useResize";
-import {
-    ChartContainer,
-    ChartPie,
-    ToolTipPersonalizado,
-} from "@/components/charts/Charts";
+import { ChartContainer, ChartPie, ToolTipPersonalizado } from "@/components/charts/Charts";
 import { toCurrency } from "@/lib/toCurrency";
 import { ChartArea, ChartPieIcon, UsersRound } from "lucide-react";
 import { useDataContext } from "@/contexts/DataContext";
 import { useMemo } from "react";
+import { ListaVazia } from "../config-site/ListaVazia";
 
 export function ChartArrecadacao({ data }: { data: any[] }) {
     const isMobile = useResize(480);
@@ -29,16 +16,8 @@ export function ChartArrecadacao({ data }: { data: any[] }) {
             <ComposedChart data={data}>
                 <defs>
                     <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                        <stop
-                            offset="5%"
-                            stopColor="var(--brand-primary)"
-                            stopOpacity={0.5}
-                        />
-                        <stop
-                            offset="95%"
-                            stopColor="var(--brand-primary)"
-                            stopOpacity={0.05}
-                        />
+                        <stop offset="5%" stopColor="var(--brand-primary)" stopOpacity={0.5} />
+                        <stop offset="95%" stopColor="var(--brand-primary)" stopOpacity={0.05} />
                     </linearGradient>
                 </defs>
 
@@ -78,18 +57,9 @@ export function ChartArrecadacao({ data }: { data: any[] }) {
                         );
                     }}
                 />
-                <YAxis
-                    yAxisId={"direita"}
-                    orientation={"right"}
-                    hide
-                    domain={[0, (dataMax) => dataMax * 1.15]}
-                />
+                <YAxis yAxisId={"direita"} orientation={"right"} hide domain={[0, (dataMax) => dataMax * 1.15]} />
                 <Tooltip content={ToolTipPersonalizado} />
-                <Legend
-                    formatter={(v) => (
-                        <span style={{ textTransform: "capitalize" }}>{v}</span>
-                    )}
-                />
+                <Legend formatter={(v) => <span style={{ textTransform: "capitalize" }}>{v}</span>} />
                 <Line
                     type={"monotone"}
                     yAxisId="esquerda"
@@ -135,9 +105,7 @@ export function BarPorCongregacao({ data }: { data: any[] }) {
                 layout="vertical"
                 data={data}
                 margin={
-                    isMobile
-                        ? { top: 0, left: 0, right: 0, bottom: 0 }
-                        : { top: 10, right: 30, left: 10, bottom: 0 }
+                    isMobile ? { top: 0, left: 0, right: 0, bottom: 0 } : { top: 10, right: 30, left: 10, bottom: 0 }
                 }
             >
                 <XAxis type="number" hide />
@@ -170,10 +138,7 @@ export function BarPorCongregacao({ data }: { data: any[] }) {
                     }}
                 />
 
-                <Tooltip
-                    content={ToolTipPersonalizado}
-                    cursor={{ fill: "var(--bg-secondary)" }}
-                />
+                <Tooltip content={ToolTipPersonalizado} cursor={{ fill: "var(--bg-secondary)" }} />
 
                 <Bar
                     dataKey="inscritos"
@@ -191,19 +156,22 @@ export function BarPorCongregacao({ data }: { data: any[] }) {
     );
 }
 
-export default function ChartsLista() {
-    const {
-        responsesMemo: {
-            transacoesArrecadacao,
-            transacoesPorStatus,
-            credenciaisPorCongregacao,
-        },
-    } = useDataContext();
-    const transacoesStatus = useMemo(
-        () => Object.values(transacoesPorStatus),
-        [],
-    );
-
+export default function ChartsLista({
+    credenciaisPorCongregacao,
+    transacoesArrecadacao,
+    transacoesPorStatus,
+}: {
+    transacoesArrecadacao: TransacaoArrecadacao[];
+    transacoesPorStatus: CardsTransacaoStatus;
+    credenciaisPorCongregacao: CredenciaisPorCongregacao[];
+}) {
+    const transacoesStatus = useMemo(() => {
+        const { totalArrecadado, totalTransacoes, ...values } = transacoesPorStatus;
+        values.pendente.fill = "var(--brand-warning)";
+        values.aprovado.fill = "var(--brand-success)";
+        values.cancelado.fill = "var(--brand-danger)";
+        return Object.values(values);
+    }, []);
     return (
         <div className="admin__charts">
             <div className="admin__chart">
@@ -214,7 +182,7 @@ export default function ChartsLista() {
                     <span>Vendas X Arrecadação</span>
                 </h2>
 
-                <ChartArrecadacao data={transacoesArrecadacao} />
+                {transacoesArrecadacao.length ? <ChartArrecadacao data={transacoesArrecadacao} /> : <ListaVazia />}
             </div>
             <div className="admin__chart">
                 <h2>
@@ -234,7 +202,11 @@ export default function ChartsLista() {
                     <span>Pessoas por Congregação</span>
                 </h2>
 
-                <BarPorCongregacao data={credenciaisPorCongregacao} />
+                {credenciaisPorCongregacao.length ? (
+                    <BarPorCongregacao data={credenciaisPorCongregacao} />
+                ) : (
+                    <ListaVazia />
+                )}
             </div>
         </div>
     );

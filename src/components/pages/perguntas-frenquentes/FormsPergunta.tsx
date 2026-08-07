@@ -1,17 +1,17 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Send } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { testePerguntas } from "../../../../config/datasTeste";
-import "./form-pergunta.scss";
 import CheckInput from "@/components/forms/CheckInput";
 import TextAreaInput from "@/components/forms/TextAreaInput";
 import useGetSearchId from "@/hooks/useGetSearchId";
 import ModalFormContainer from "@/components/ui/modal/ModalFormContainer";
 import ModalButtonSubmit from "@/components/ui/modal/ModalButtonSubmit";
-import { useDataContext } from "@/contexts/DataContext";
+import { addItem, getItemById, updateItem } from "@/actions/handlerItens";
+import { useRouter } from "next/navigation";
+import "./form-pergunta.scss";
+import FormErrorP from "../config-site/FormErrorP";
 
 const schemaEdicao = z.object({
     pergunta: z.string().min(5, "A pergunta está inválida"),
@@ -22,8 +22,12 @@ const schemaEdicao = z.object({
 type FormEdicao = z.infer<typeof schemaEdicao>;
 
 export function FormFAQ() {
-    const { perguntas, addPergunta } = useDataContext();
+    const [isLoading, setIsLoading] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const table = "dimfaq";
+    const link = "/admin/perguntas-frequentes";
     const id = useGetSearchId();
+    const router = useRouter();
 
     const methods = useForm<FormEdicao>({
         resolver: zodResolver(schemaEdicao),
@@ -37,53 +41,40 @@ export function FormFAQ() {
         setValues,
     } = methods;
 
-    const onSubmit = (v: FormEdicao) => {
+    const onSubmit = async (v: FormEdicao) => {
+        setIsLoading(true);
         if (id) {
-            const perguntaIndex = perguntas.findIndex(
-                (v) => String(v.id) === id,
-            );
-            if (perguntaIndex !== -1) {
-                const newPerguntas = [...perguntas];
-                const pergunta = newPerguntas.splice(perguntaIndex, 1);
-
-                addPergunta([
-                    ...newPerguntas,
-                    { ...pergunta[0], ...v, id: Date.now() },
-                ]);
-            }
-        } else {
-            addPergunta({
-                ...v,
-                data_criacao: new Date().toISOString(),
-                id: Date.now(),
-                ordem: perguntas.length + 1,
-            });
+            const { success, error } = await updateItem(table, v, id);
+            if (error) return setIsError(true);
+            if (success) return router.push(link);
         }
 
-        window.history.pushState(null, "", "/admin/perguntas-frequentes");
-        console.log(v);
+        const { success, error } = await addItem(table, v);
+        if (error) return setIsError(true);
+        if (success) return router.push(link);
+
+        console.log(v, error);
     };
     useEffect(() => {
         if (!id) return;
+        setIsLoading(true);
 
-        const pergunta = perguntas.find((v) => String(v.id) === id);
-        if (pergunta) {
-            setValues({
-                is_ativo: pergunta.is_ativo,
-                pergunta: pergunta.pergunta,
-                resposta: pergunta.resposta,
-            });
-        }
+        getItemById(table, id)
+            .then((v) => {
+                if (!v) return;
+                setIsLoading(false);
+                setValues({ is_ativo: v.is_ativo, pergunta: v.pergunta, resposta: v.resposta });
+            })
+            .catch((error) => console.log("deu erro", error));
     }, [id]);
     return (
         <ModalFormContainer>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <CheckInput
-                    label="Visível?"
-                    register={register}
-                    nameForm="is_ativo"
-                    isRequired={false}
-                />
+            {isError && <FormErrorP />}
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                className={`perguntas-frequentes__form ${isLoading ? "perguntas-frequentes__form--loading" : ""}`}
+            >
+                <CheckInput label="Visível?" register={register} nameForm="is_ativo" isRequired={false} />
 
                 <TextAreaInput
                     register={register}
@@ -102,7 +93,7 @@ export function FormFAQ() {
                     messageError={errors.resposta?.message}
                 />
 
-                <ModalButtonSubmit />
+                <ModalButtonSubmit disabled={isLoading} />
             </form>
         </ModalFormContainer>
     );

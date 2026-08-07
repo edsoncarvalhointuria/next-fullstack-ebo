@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS DimCapacidade(
 
     CONSTRAINT id_capacidade_pk PRIMARY KEY(id)
 );
+ALTER TABLE DimCapacidade ENABLE ROW LEVEL SECURITY;
 
 --EBO
 CREATE TABLE IF NOT EXISTS DimEbo(
@@ -15,7 +16,8 @@ CREATE TABLE IF NOT EXISTS DimEbo(
     is_ativo BOOLEAN DEFAULT(TRUE) NOT NULL,
 
     CONSTRAINT id_ebo_pk PRIMARY KEY(id)
-)
+);
+ALTER TABLE DimEbo ENABLE ROW LEVEL SECURITY;
 
 -- Faq
 CREATE TABLE IF NOT EXISTS DimFaq(
@@ -28,6 +30,7 @@ CREATE TABLE IF NOT EXISTS DimFaq(
 
     CONSTRAINT id_faq_pk PRIMARY KEY(id)
 );
+ALTER TABLE DimFaq ENABLE ROW LEVEL SECURITY;
 
 -- Ingressos
 CREATE TABLE IF NOT EXISTS DimIngresso(
@@ -43,6 +46,7 @@ CREATE TABLE IF NOT EXISTS DimIngresso(
 
     CONSTRAINT id_ingresso_pk PRIMARY KEY(id)
 );
+ALTER TABLE DimIngresso ENABLE ROW LEVEL SECURITY;
 
 -- Cargo
 CREATE TABLE IF NOT EXISTS DimCargo(
@@ -52,6 +56,7 @@ CREATE TABLE IF NOT EXISTS DimCargo(
 
     CONSTRAINT id_cargo_pk PRIMARY KEY(id)
 );
+ALTER TABLE DimCargo ENABLE ROW LEVEL SECURITY;
 
 -- Congregação
 CREATE TABLE IF NOT EXISTS DimCongregacao(
@@ -61,6 +66,7 @@ CREATE TABLE IF NOT EXISTS DimCongregacao(
 
     CONSTRAINT id_congregacao_pk PRIMARY KEY(id)
 );
+ALTER TABLE DimCongregacao ENABLE ROW LEVEL SECURITY;
 
 -- Comprador
 CREATE TABLE IF NOT EXISTS DimComprador(
@@ -71,18 +77,21 @@ CREATE TABLE IF NOT EXISTS DimComprador(
 
     CONSTRAINT cpf_cnpj_comprador_pk PRIMARY KEY(cpf_cnpj)
 );
+ALTER TABLE DimComprador ENABLE ROW LEVEL SECURITY;
 
 -- Usuário
 CREATE TYPE enum_nivel AS ENUM('super_admin', 'financeiro', 'portaria');
 CREATE TABLE IF NOT EXISTS DimUsuario(
-    id UUID DEFAULT (gen_random_uuid()) NOT NULL,
+    id UUID NOT NULL,
     nome VARCHAR(250) NOT NULL,
-    email VARCHAR(250) UNIQUE NOT NULL,
     nivel enum_nivel DEFAULT('super_admin') NOT NULL,
     is_ativo BOOLEAN DEFAULT(TRUE) NOT NULL,
 
-    CONSTRAINT id_usuario_pk PRIMARY KEY(id)
+
+    CONSTRAINT id_usuario_pk PRIMARY KEY(id),
+    CONSTRAINT id_usuario_fk FOREIGN KEY(id) REFERENCES auth.users(id) ON DELETE CASCADE
 );
+ALTER TABLE DimUsuario ENABLE ROW LEVEL SECURITY;
 
 -- Transação
 CREATE TYPE enum_status_pagamento AS ENUM('pendente', 'aprovado', 'cancelado');
@@ -103,6 +112,7 @@ CREATE TABLE IF NOT EXISTS FactTransacao(
     CONSTRAINT id_ingresso_transacao_fk FOREIGN KEY(id_ingresso) REFERENCES DimIngresso(id),
     CONSTRAINT id_ebo_transacao_fk FOREIGN KEY(id_ebo) REFERENCES DimEbo(id)
 );
+ALTER TABLE FactTransacao ENABLE ROW LEVEL SECURITY;
 CREATE INDEX idx_transacao_id_comprador ON FactTransacao(id_comprador);
 CREATE INDEX idx_transacao_id_ingresso ON FactTransacao(id_ingresso);
 CREATE INDEX idx_transacao_id_ebo ON FactTransacao(id_ebo);
@@ -119,7 +129,7 @@ CREATE TABLE IF NOT EXISTS DimCredencial(
     is_titular BOOLEAN DEFAULT(TRUE) NOT NULL,
 
     CONSTRAINT id_credencial_pk PRIMARY KEY(id),
-    CONSTRAINT id_transacao_credencial_fk FOREIGN KEY(id_transacao) REFERENCES FactTransacao(id),
+    CONSTRAINT id_transacao_credencial_fk FOREIGN KEY(id_transacao) REFERENCES FactTransacao(id) ON DELETE CASCADE,
     CONSTRAINT id_congregacao_credencial_fk FOREIGN KEY(id_congregacao) REFERENCES DimCongregacao(id),
     CONSTRAINT id_cargo_credencial_fk FOREIGN KEY(id_cargo) REFERENCES DimCargo(id),
     CONSTRAINT nome_outra_congregacao_id_congregacao_credencial_ck CHECK(
@@ -128,6 +138,7 @@ CREATE TABLE IF NOT EXISTS DimCredencial(
         (is_outra_congregacao = TRUE AND id_congregacao IS NULL AND nome_outra_congregacao IS NOT NULL)
     )
 );
+ALTER TABLE DimCredencial ENABLE ROW LEVEL SECURITY;
 CREATE INDEX idx_credencial_nome ON DimCredencial(nome);
 CREATE INDEX idx_credencial_id_transacao ON DimCredencial(id_transacao);
 CREATE INDEX idx_credencial_id_cargo ON DimCredencial(id_cargo);
@@ -144,6 +155,7 @@ CREATE TABLE IF NOT EXISTS FactCheckin(
     CONSTRAINT id_credencial_checkin_fk FOREIGN KEY(id_credencial) REFERENCES DimCredencial(id),
     CONSTRAINT id_usuario_checkin_fk FOREIGN KEY(id_usuario) REFERENCES DimUsuario(id)
 );
+ALTER TABLE FactCheckin ENABLE ROW LEVEL SECURITY;
 CREATE INDEX idx_checkin_id_credencial ON FactCheckin(id_credencial);
 CREATE INDEX idx_checkin_id_usuario ON FactCheckin(id_usuario);
 

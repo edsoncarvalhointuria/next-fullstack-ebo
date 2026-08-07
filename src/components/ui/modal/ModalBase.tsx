@@ -13,28 +13,20 @@ export interface ModalBaseProps {
     children: ((closeModal: () => void) => ReactNode) | ReactNode;
 }
 
-export default function ModalBase({
-    keyName,
-    title,
-    icon,
-    children,
-}: ModalBaseProps) {
+export default function ModalBase({ keyName, title, icon, children }: ModalBaseProps) {
     const params = useSearchParams();
     const isOpen = params.get("modal") === keyName;
 
     const closeModal = useCallback(() => {
         const currentParams = new URLSearchParams(params.toString());
         currentParams.delete("modal");
+        currentParams.delete("id");
         window.history.pushState(null, "", "?" + currentParams.toString());
     }, [params]);
     return (
         <Modal isOpen={isOpen} onClose={closeModal}>
             <ModalHeader onClose={closeModal} title={title} icon={icon} />
-            <ModalBody>
-                {typeof children === "function"
-                    ? children(closeModal)
-                    : children}
-            </ModalBody>
+            <ModalBody>{typeof children === "function" ? children(closeModal) : children}</ModalBody>
         </Modal>
     );
 }

@@ -3,7 +3,6 @@
 import Dropdown, { ItemDropdownDefault } from "@/components/ui/Dropdown";
 import { memo, ReactNode, useCallback, useDeferredValue, useMemo, useState } from "react";
 import Search from "@/components/ui/Search";
-import { ListaVazia } from "../config-site/ListaDados";
 import Link from "next/link";
 import Whatsapp from "@/components/ui/icons/Whatsapp";
 import Gmail from "@/components/ui/icons/Gmail";
@@ -16,11 +15,19 @@ import { useSearchParams } from "next/navigation";
 import GraficoRosca from "@/components/ui/GraficoRosca";
 import { useDataContext } from "@/contexts/DataContext";
 import { motion } from "framer-motion";
+import { ListaVazia } from "../config-site/ListaVazia";
 
 interface StateDrops {
     ingresso: ItemDropdownDefault;
     cargo: ItemDropdownDefault;
     congregacao: ItemDropdownDefault;
+}
+
+interface CredenciaisProps {
+    ingressos: IngressosInterface[];
+    cargos: CargosInterface[];
+    congregacoes: CongregacaoInterface[];
+    credenciaisResponse: CredencialResponse[];
 }
 
 const CredencialCard = ({
@@ -53,7 +60,9 @@ const Crendecial = memo(
                         </h2>
 
                         <p className="credenciais__credencial__tipo">
-                            <i>{comprador?.tipo_ingresso === "individual" ? <Ticket /> : <Tickets />}</i>
+                            <i aria-hidden="true">
+                                {comprador?.tipo_ingresso === "individual" ? <Ticket /> : <Tickets />}
+                            </i>
                             <span>{comprador?.tipo_ingresso}</span>
                         </p>
                     </div>
@@ -65,7 +74,7 @@ const Crendecial = memo(
                             href={`mailto:${comprador?.email_comprador}`}
                             title="Entrar em contato por email"
                         >
-                            <i>
+                            <i aria-hidden="true">
                                 <Gmail />
                             </i>
                         </Link>
@@ -76,7 +85,7 @@ const Crendecial = memo(
                                 rel="noopener noreferrer"
                                 className="credenciais__credencial__contato credenciais__credencial__contato--whats"
                             >
-                                <i>
+                                <i aria-hidden="true">
                                     <Whatsapp />
                                 </i>
                             </Link>
@@ -96,15 +105,11 @@ const Crendecial = memo(
 
 export function FiltrosCredenciais({
     children,
-}: {
-    children: (listaAtualizada: [string, CredencialResponse[] | undefined][]) => ReactNode;
-}) {
-    const {
-        ingressos,
-        cargos,
-        congregacoes,
-        responsesMemo: { credenciaisResponse, responseTransacoes },
-    } = useDataContext();
+    ingressos,
+    cargos,
+    congregacoes,
+    credenciaisResponse,
+}: { children: (listaAtualizada: [string, CredencialResponse[] | undefined][]) => ReactNode } & CredenciaisProps) {
     const [pesquisa, setPesquisa] = useState("");
     const [drops, setDrops] = useState<StateDrops>({
         cargo: { id: "todos", nome: "Todos" },
@@ -115,6 +120,8 @@ export function FiltrosCredenciais({
     const addDrops = useCallback((id: string, value: ItemDropdownDefault) => {
         setDrops((v) => ({ ...v, [id]: value }));
     }, []);
+
+    console.log(credenciaisResponse);
 
     const ingressosMemo = useMemo(() => {
         return ingressos.map((v) => ({ ...v, nome: v.nome_tipo }));
@@ -131,22 +138,21 @@ export function FiltrosCredenciais({
         if (p)
             c = c.filter(
                 (v) =>
-                    v.email_comprador.toLowerCase().includes(p) ||
-                    v.nome.toLowerCase().includes(p) ||
-                    v.nome_cargo.toLowerCase().includes(p) ||
-                    v.nome_comprador.toLowerCase().includes(p) ||
+                    v.email_comprador?.toLowerCase().includes(p) ||
+                    v.nome?.toLowerCase().includes(p) ||
+                    v.nome_cargo?.toLowerCase().includes(p) ||
+                    v.nome_comprador?.toLowerCase().includes(p) ||
                     v.nome_outra_congregacao?.toLowerCase().includes(p),
             );
 
         return Object.entries(Object.groupBy(c, (v) => v.id_transacao));
     }, [p, drops, credenciaisResponse]);
     const cards = useMemo(() => {
-        let individual = 0;
-        let casal = 0;
-        responseTransacoes.forEach((v) => {
-            const { credenciais } = v;
-            if (credenciais.length) credenciais[0].tipo_ingresso === "individual" ? ++individual : ++casal;
-        });
+        const casalSet = new Set();
+        const individualSet = new Set();
+        credenciaisResponse.forEach((v) =>
+            v.tipo_ingresso?.includes("individual") ? individualSet.add(v.id_transacao) : casalSet.add(v.id_transacao),
+        );
         const c: CardProps[] = [
             {
                 icon: <Users />,
@@ -157,18 +163,18 @@ export function FiltrosCredenciais({
             {
                 icon: <Ticket />,
                 title: "Individual",
-                number: individual,
+                number: individualSet.size,
                 type: "round",
             },
             {
                 icon: <Tickets />,
                 title: "Casal",
-                number: casal,
+                number: casalSet.size,
                 type: "round",
             },
         ];
         return c;
-    }, [credenciaisResponse, responseTransacoes]);
+    }, [credenciaisResponse]);
     return (
         <>
             <BaseCardsContainer>
@@ -214,9 +220,9 @@ export function FiltrosCredenciais({
     );
 }
 
-export function ListaCredenciais() {
+export function ListaCredenciais(props: CredenciaisProps) {
     return (
-        <FiltrosCredenciais>
+        <FiltrosCredenciais {...props}>
             {(lista) => (
                 <div className="credenciais__itens">
                     {lista.length > 0 ? (
@@ -235,30 +241,38 @@ export function ListaCredenciais() {
 
 const bars = [
     { dataKey: "casal", fill: "var(--chart-2)" },
-    { dataKey: "individual", fill: "var(--chart-3)" },
+    { dataKey: "individual masculino", fill: "var(--chart-3)" },
+    { dataKey: "individual feminino", fill: "var(--chart-5)" },
 ];
-export function GraficosCredenciais() {
-    const {
-        responsesMemo: { cardsCredenciais, listaGraficosCredenciais },
-    } = useDataContext();
+export function GraficosCredenciais({
+    listaGraficosCredenciais,
+    cardsCredenciais,
+}: {
+    listaGraficosCredenciais: GraficosCrendenciaisResponse;
+    cardsCredenciais?: MetricasCardsCredenciais;
+}) {
+    console.log("aaa", listaGraficosCredenciais);
+
     const isMobile = useResize(480);
     const cards = useMemo(() => {
         const c: (CardOpcaoProps | CardProps | CardCustomProps)[] = [
             {
                 icon: <Users />,
-                number: cardsCredenciais.totalCredenciais,
+                number: cardsCredenciais?.totalCredenciais || 0,
                 title: "Total Credenciais",
                 className: "card--center",
             },
             {
                 icon: <Box />,
-                children: <GraficoRosca cor="var(--chart-3)" porcentagem={cardsCredenciais.lotacaoPercentual * 100} />,
+                children: (
+                    <GraficoRosca cor="var(--chart-3)" porcentagem={cardsCredenciais?.lotacaoPercentual || 0 * 100} />
+                ),
                 title: "Capacidade Atingida",
                 className: "card--center",
             },
             {
                 icon: <Church />,
-                number: cardsCredenciais.congregacoesAlcancadas,
+                number: cardsCredenciais?.congregacoesAlcancadas || 0,
                 title: "Igrejas Alcançadas",
                 className: "card--center",
             },
@@ -274,41 +288,51 @@ export function GraficosCredenciais() {
                     !("number" in v) ? <CardCustom {...v} key={`card-${i}`} /> : <Card {...v} key={`card-${i}`} />,
                 )}
             </BaseCardsContainer>
-            <motion.div initial={{ display: "none" }} animate={{ display: "block" }} transition={{ delay: 1 }}>
-                <div className="credenciais__graficos__graficos">
-                    <div className="credenciais__graficos__graficos__grafico">
-                        <h3 className="credenciais__graficos__graficos__grafico__title">Credencias Por Congregação</h3>
-                        <ChartBarPorCargos
-                            isMobile={isMobile}
-                            data={listaGraficosCredenciais.congregacoes}
-                            onClick={() => undefined}
-                            keyName="quantidadeCredenciais"
-                            dataKey="quantidadeCredenciais"
-                        />
-                    </div>
-                    <div className="credenciais__graficos__graficos__grafico">
-                        <ChartPieCustom isMobile={isMobile} data={listaGraficosCredenciais.cargos} type="qtd" />
-                    </div>
+            <div style={{ minHeight: "50vh" }}>
+                <motion.div initial={{ display: "none" }} animate={{ display: "block" }} transition={{ delay: 1 }}>
+                    <div className="credenciais__graficos__graficos">
+                        <div className="credenciais__graficos__graficos__grafico">
+                            <h3 className="credenciais__graficos__graficos__grafico__title">
+                                Credencias Por Congregação
+                            </h3>
+                            {listaGraficosCredenciais.congregacoes.length ? (
+                                <ChartBarPorCargos
+                                    isMobile={isMobile}
+                                    data={listaGraficosCredenciais.congregacoes}
+                                    onClick={() => undefined}
+                                    keyName="quantidadeCredenciais"
+                                    dataKey="quantidadeCredenciais"
+                                />
+                            ) : (
+                                <ListaVazia />
+                            )}
+                        </div>
+                        <div className="credenciais__graficos__graficos__grafico">
+                            {listaGraficosCredenciais.cargos.length ? (
+                                <ChartPieCustom isMobile={isMobile} data={listaGraficosCredenciais.cargos} type="qtd" />
+                            ) : (
+                                <ListaVazia />
+                            )}
+                        </div>
 
-                    <div className="credenciais__graficos__graficos__grafico">
-                        <h3 className="credenciais__graficos__graficos__grafico__title">Ingressos Vendidos Por Dia</h3>
-                        <ChartFaturamento
-                            data={listaGraficosCredenciais.inscricoes}
-                            isMobile={isMobile}
-                            areaKeyName="quantidadeTotal"
-                            bars={bars}
-                        />
+                        <div className="credenciais__graficos__graficos__grafico">
+                            <h3 className="credenciais__graficos__graficos__grafico__title">
+                                Ingressos Vendidos Por Dia
+                            </h3>
+                            {listaGraficosCredenciais.inscricoes.length ? (
+                                <ChartFaturamento
+                                    data={listaGraficosCredenciais.inscricoes}
+                                    isMobile={isMobile}
+                                    areaKeyName="quantidadeTotal"
+                                    bars={bars}
+                                />
+                            ) : (
+                                <ListaVazia />
+                            )}
+                        </div>
                     </div>
-                </div>
-            </motion.div>
+                </motion.div>
+            </div>
         </div>
     );
-}
-
-export default function BodyCredenciais() {
-    const params = useSearchParams();
-    const mode = params.get("mode");
-    const isChart = mode === "graficos";
-
-    return isChart ? <GraficosCredenciais /> : <ListaCredenciais />;
 }

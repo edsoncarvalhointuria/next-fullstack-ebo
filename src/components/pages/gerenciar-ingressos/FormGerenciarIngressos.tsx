@@ -2,19 +2,18 @@
 
 import useGetSearchId from "@/hooks/useGetSearchId";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import z from "zod";
-import { testeIngressos } from "../../../../config/datasTeste";
 import CheckInput from "@/components/forms/CheckInput";
 import TextInput from "@/components/forms/TextInput";
 import GroupInputContainer from "@/components/forms/GroupInput";
 import TextAreaInput from "@/components/forms/TextAreaInput";
-import ContainerInput from "@/components/forms/ContainerInput";
-import GenericInput from "@/components/forms/GenericInput";
 import { Send } from "lucide-react";
 import DateInput from "@/components/forms/DateInput";
-import { useDataContext } from "@/contexts/DataContext";
+import { addItem, getItemById, updateItem } from "@/actions/handlerItens";
+import z from "zod";
+import { useRouter } from "next/navigation";
+import FormErrorP from "../config-site/FormErrorP";
 
 const schema = z.object({
     is_ativo: z.boolean(),
@@ -29,56 +28,83 @@ const schema = z.object({
         .min(2, "Preço Inválido"),
     descricao: z.string().min(5, "Descrição Inválida"),
     observacao: z.string().min(5, "Observação Inválida").optional(),
-    data_fim_vendas: z.string().or(z.null()),
+    data_fim_vendas: z.string().optional().or(z.null()),
+    ordem: z.number(),
 });
 type FormIngressos = z.infer<typeof schema>;
 
-export default function FormGerenciarIngressos() {
-    const { addIngresso, ingressos } = useDataContext() as any;
+export default function FormGerenciarIngressos({ ordem }: { ordem: number }) {
+    const [isError, setIsError] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const table = "dimingresso";
     const id = useGetSearchId();
-    const methods = useForm<FormIngressos>({
-        resolver: zodResolver(schema),
-        defaultValues: { is_ativo: true },
-    });
+    const link = "/admin/ingressos";
+    const router = useRouter();
+    const methods = useForm<FormIngressos>({ resolver: zodResolver(schema), defaultValues: { is_ativo: true, ordem } });
     const {
         register,
         formState: { errors },
         setValues,
         handleSubmit,
     } = methods;
-    const onSubmit = (v: FormIngressos) => {
+
+    const onSubmit = async (v: FormIngressos) => {
+        const dados = {
+            is_ativo: v.is_ativo,
+            nome_tipo: v.nome_tipo,
+            quantidade_pessoas: Number(v.quantidade_pessoas),
+            preco: Number(v.preco),
+            descricao: v.descricao,
+            data_fim_vendas: v.data_fim_vendas || null,
+            observacao: v.observacao,
+            ordem: v.ordem,
+        };
+
+        setIsLoading(true);
         if (id) {
-            const index = ingressos.findIndex((v: any) => String(v.id) === id);
-            if (index !== -1) {
-                const list = [...ingressos];
-                const item = list.splice(index, 1);
-                addIngresso([...list, { ...item[0], ...v, id: Date.now() }]);
+            const { success, error } = await updateItem(table, dados, id);
+            if (error) {
+                setIsError(true);
+                return setIsLoading(false);
             }
-        } else addIngresso({ ...v, id: Date.now(), ordem: ingressos.length });
+
+            if (success) return router.push(link);
+        }
+
+        const { error, success } = await addItem(table, dados);
+        if (error) {
+            console.log(error);
+            setIsError(true);
+            return setIsLoading(false);
+        }
+        if (success) return router.push(link);
 
         console.log(v);
-        window.history.pushState(null, "", "/admin/ingressos");
     };
 
     useEffect(() => {
         if (!id) return;
+        setIsLoading(true);
 
-        const item = testeIngressos.find((v) => String(v.id) === id);
-
-        if (item)
+        getItemById(table, id).then((v) => {
+            setIsLoading(false);
             setValues({
-                data_fim_vendas: item.data_fim_vendas?.slice(0, 16),
-                descricao: item.descricao,
-                is_ativo: item.is_ativo,
-                nome_tipo: item.nome_tipo,
-                observacao: item.observacao,
-                preco: String(item.preco),
-                quantidade_pessoas: String(item.quantidade_pessoas),
+                data_fim_vendas: v.data_fim_vendas?.slice(0, 16),
+                descricao: v.descricao,
+                is_ativo: v.is_ativo,
+                nome_tipo: v.nome_tipo,
+                observacao: v.observacao,
+                preco: String(v.preco),
+                quantidade_pessoas: String(v.quantidade_pessoas),
+                ordem: v.ordem || ordem,
             });
+        });
     }, [id]);
     return (
-        <div className="base-config__form">
-            <form action="" onSubmit={handleSubmit(onSubmit)}>
+        <div className={`base-config__form ${isLoading ? "base-config__form--is-loading" : ""}`}>
+            {isError && <FormErrorP />}
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <CheckInput
                     label="Ativo?"
                     isRequired={false}
@@ -91,7 +117,7 @@ export default function FormGerenciarIngressos() {
                     register={register}
                     nameForm="nome_tipo"
                     label="Nome/Tipo Ingresso"
-                    placeholder="família, casal, etc"
+                    placeholder="inidividual, casal, etc"
                     messageError={errors.nome_tipo?.message}
                 />
 
@@ -144,8 +170,9 @@ export default function FormGerenciarIngressos() {
                         className="base-config__form__btn"
                         type="submit"
                         title="Enviar Formulário"
+                        disabled={isLoading}
                     >
-                        <i>
+                        <i aria-hidden="true">
                             <Send />
                         </i>
                         <span>Enviar</span>

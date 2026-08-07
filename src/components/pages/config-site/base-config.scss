@@ -54,6 +54,12 @@
         width: 100%;
         margin-top: 1.5rem;
 
+        transition: all ease 0.5s;
+
+        &--is-loading {
+            opacity: 0.4;
+        }
+
         form {
             display: flex;
             flex-direction: column;
@@ -95,8 +101,7 @@
             &:hover {
                 background-color: color-mix(in srgb, $brand-primary, #000 15%);
                 transform: scale(1.03);
-                box-shadow: 0 4px 12px
-                    color-mix(in srgb, $brand-primary 30%, transparent);
+                box-shadow: 0 4px 12px color-mix(in srgb, $brand-primary 30%, transparent);
             }
 
             &:active {

@@ -17,16 +17,10 @@ import {
     Settings,
     Tickets,
 } from "lucide-react";
-import {
-    animate,
-    AnimatePresence,
-    getValueTransition,
-    motion,
-    TargetAndTransition,
-    Variants,
-} from "framer-motion";
+import { animate, AnimatePresence, getValueTransition, motion, TargetAndTransition, Variants } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import logout from "@/actions/logout";
 
 interface OpcoesDefault {
     icon?: ReactNode;
@@ -63,10 +57,7 @@ const variantsBtnDrop: Variants = {
     animate: (isOpen: boolean) => (isOpen ? { rotate: 180 } : { rotate: 360 }),
 };
 const variantsMenuContainer: Variants = {
-    animate: (isOpen) =>
-        isOpen
-            ? { width: "auto", transition: { duration: 0.4 } }
-            : { width: 0 },
+    animate: (isOpen) => (isOpen ? { width: "auto", transition: { duration: 0.4 } } : { width: 0 }),
 };
 const variantsMenu: Variants = {
     initial: { x: "-100%", opacity: 1 },
@@ -147,19 +138,15 @@ const OPCOES: (OpcoesOpcao | OpcoesDropdown)[] = [
     },
 ];
 
-const MenuItem = ({
-    link,
-    title,
-    icon,
-    onClick,
-}: OpcoesDefault & { onClick: () => void }) => {
+const MenuItem = ({ link, title, icon, onClick }: OpcoesDefault & { onClick: () => void }) => {
     const path = usePathname();
+
     return (
         <li className="menu__lista-item">
             <Link
                 onClick={onClick}
                 href={link}
-                className={`menu__lista-item__link ${path === link ? "menu__lista-item__link--active" : ""}`}
+                className={`menu__lista-item__link ${path === link || (link !== "/admin" && path.startsWith(link)) ? "menu__lista-item__link--active" : ""}`}
             >
                 {icon && <i>{icon}</i>}
                 <span>{title}</span>
@@ -167,12 +154,7 @@ const MenuItem = ({
         </li>
     );
 };
-const MenuDrop = ({
-    itens,
-    title,
-    icon,
-    onClick,
-}: OpcoesDropdown & { onClick: () => void }) => {
+const MenuDrop = ({ itens, title, icon, onClick }: OpcoesDropdown & { onClick: () => void }) => {
     const [isOpen, setIsOpen] = useState(false);
     const path = usePathname();
     const isActive = itens.find((v) => v.link === path);
@@ -187,12 +169,7 @@ const MenuDrop = ({
             >
                 {icon && <i>{icon}</i>}
                 <span>{title}</span>
-                <motion.i
-                    variants={variantsBtnDrop}
-                    initial={"initial"}
-                    animate={"animate"}
-                    custom={isOpen}
-                >
+                <motion.i variants={variantsBtnDrop} initial={"initial"} animate={"animate"} custom={isOpen}>
                     <ChevronDown size={14} />
                 </motion.i>
             </button>
@@ -209,11 +186,7 @@ const MenuDrop = ({
                                 className="menu__lista-drop__opcoes"
                             >
                                 {itens.map((v, i) => (
-                                    <MenuItem
-                                        onClick={onClick}
-                                        {...v}
-                                        key={i}
-                                    />
+                                    <MenuItem onClick={onClick} {...v} key={i} />
                                 ))}
                             </motion.div>
                         </div>
@@ -240,6 +213,7 @@ export default function Menu() {
                     className={`menu__btn ${!isOpen ? "menu__btn--close" : ""}`}
                     type="button"
                     title="Abrir Menu"
+                    aria-label="Abrir Menu"
                     variants={variantsBtn}
                     initial="initial"
                     animate="animate"
@@ -249,6 +223,7 @@ export default function Menu() {
                         custom={isOpen}
                         initial="initial"
                         animate="animate"
+                        aria-hidden="true"
                     >
                         <ChevronRight />
                     </motion.i>
@@ -266,17 +241,9 @@ export default function Menu() {
                             <ul className="menu__lista">
                                 {OPCOES.map((v, i) =>
                                     v.isDropDown ? (
-                                        <MenuDrop
-                                            onClick={closeMenu}
-                                            {...v}
-                                            key={i}
-                                        />
+                                        <MenuDrop onClick={closeMenu} {...v} key={i} />
                                     ) : (
-                                        <MenuItem
-                                            onClick={closeMenu}
-                                            key={i}
-                                            {...v}
-                                        />
+                                        <MenuItem onClick={closeMenu} key={i} {...v} />
                                     ),
                                 )}
                             </ul>
@@ -285,8 +252,10 @@ export default function Menu() {
                                 className="menu__sair"
                                 title="sair da conta"
                                 type="button"
+                                aria-label="Sair da conta"
+                                onClick={logout}
                             >
-                                <i>
+                                <i aria-hidden="true">
                                     <LogOut size={24} />
                                 </i>
                                 <span>Sair</span>

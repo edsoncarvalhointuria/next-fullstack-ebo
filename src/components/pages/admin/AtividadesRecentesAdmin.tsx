@@ -1,15 +1,9 @@
 "use client";
-import { useDataContext } from "@/contexts/DataContext";
 import { ScrollText } from "lucide-react";
 
 export default function AtividadesRecentes() {
-    const {
-        responsesMemo: { responseTransacoes },
-    } = useDataContext();
-    const transacoesLista = responseTransacoes.slice(
-        responseTransacoes.length - 5,
-        responseTransacoes.length,
-    );
+    // const transacoesLista = responseTransacoes.slice(responseTransacoes.length - 5, responseTransacoes.length);
+    const transacoesLista: any[] = [];
 
     return (
         <div className="admin__atividades-recentes">
@@ -39,9 +33,7 @@ export default function AtividadesRecentes() {
                             <td>
                                 <div className="admin__atividades-recentes__info">
                                     <data value={v.data_compra}>
-                                        {new Date(
-                                            v.data_compra,
-                                        ).toLocaleDateString("pt-BR", {
+                                        {new Date(v.data_compra).toLocaleDateString("pt-BR", {
                                             day: "2-digit",
                                             month: "2-digit",
                                             year: "2-digit",

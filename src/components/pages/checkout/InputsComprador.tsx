@@ -10,7 +10,6 @@ import { ItemDropdownDefault } from "@/components/ui/Dropdown";
 import OutraCongregacao from "./OutraCongregacao";
 import ContainerInput from "@/components/forms/ContainerInput";
 import { HTMLInputAutoCompleteAttribute, useMemo } from "react";
-import { useDataContext } from "@/contexts/DataContext";
 
 interface ItensFormularioPadrao<T> {
     nameForm: keyof T;

@@ -11,7 +11,6 @@ import ContainerInput from "@/components/forms/ContainerInput";
 import OutraCongregacao from "../checkout/OutraCongregacao";
 import { mascaraCpfCnpj } from "@/lib/mascaras";
 import ModalButtonSubmit from "@/components/ui/modal/ModalButtonSubmit";
-import { useDataContext } from "@/contexts/DataContext";
 import "./form-transacoes.scss";
 import { salvarTransacaoManual } from "@/actions/transacoes";
 import { useRouter } from "next/navigation";

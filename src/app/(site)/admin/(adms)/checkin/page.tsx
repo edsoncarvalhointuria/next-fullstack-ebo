@@ -24,10 +24,8 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Search from "@/components/ui/Search";
 import { Suspense, useCallback, useState } from "react";
-import { testeCheckinResponses } from "../../../../../../config/datasTeste";
 import { useSearchParams } from "next/navigation";
 import Modal from "@/components/ui/modal/Modal";
-import { useDataContext } from "@/contexts/DataContext";
 
 const opcoes: ItemDropdownDefault[] = [
     { nome: "Todos", id: "todos" },
@@ -44,14 +42,14 @@ const schema = z.object({
 type FormCheckin = z.infer<typeof schema>;
 
 const ModalCheckin = () => {
-    const { addCheckin } = useDataContext();
+    // const { addCheckin } = useDataContext();
     const params = useSearchParams();
     const id = params.get("id");
     const modal = params.get("modal");
-    const item = testeCheckinResponses.find(
-        (v) => String(v.dados.credencial.id) === id,
-    );
-    const credencial = item?.dados.credencial;
+    // const item = testeCheckinResponses.find(
+    //     (v) => String(v.dados.credencial.id) === id,
+    // );
+    // const credencial = item?.dados.credencial;
     const isOpen = modal === "checkin" && id;
 
     const closeModal = useCallback(() => {
@@ -63,23 +61,16 @@ const ModalCheckin = () => {
     }, []);
     return (
         <Modal isOpen={!!isOpen} onClose={closeModal}>
-            <div
-                className={`checkin__modal ${credencial?.is_outra_congregacao ? "checkin__modal--visitante" : ""}`}
-            >
-                <button
-                    className="checkin__modal__close"
-                    title="Fechar Modal"
-                    type="button"
-                    onClick={closeModal}
-                >
+            <div></div>
+            {/* <div className={`checkin__modal ${credencial?.is_outra_congregacao ? "checkin__modal--visitante" : ""}`}>
+                <button className="checkin__modal__close" title="Fechar Modal" type="button" onClick={closeModal}>
                     <i>
                         <X size={34} />
                     </i>
                 </button>
 
                 <div className="checkin__modal__conteudo">
-                    {(item?.dados.checkin_hoje.quantidade_registros || 0) >
-                        0 && (
+                    {(item?.dados.checkin_hoje.quantidade_registros || 0) > 0 && (
                         <div className="checkin__modal__aviso">
                             <p>Usuário já fez checkin hoje</p>
                         </div>
@@ -90,16 +81,12 @@ const ModalCheckin = () => {
                     >
                         <span>
                             Pagamento:
-                            <strong>
-                                {item?.dados.transacao.status_pagamento}
-                            </strong>
+                            <strong>{item?.dados.transacao.status_pagamento}</strong>
                         </span>
                         <i>
-                            {item?.dados.transacao.status_pagamento ===
-                            "aprovado" ? (
+                            {item?.dados.transacao.status_pagamento === "aprovado" ? (
                                 <CircleCheck />
-                            ) : item?.dados.transacao.status_pagamento ===
-                              "pendente" ? (
+                            ) : item?.dados.transacao.status_pagamento === "pendente" ? (
                                 <Clock />
                             ) : (
                                 <CircleX />
@@ -141,17 +128,11 @@ const ModalCheckin = () => {
 
                     <div className="checkin__modal__infos">
                         <p className="checkin__modal__titular">
-                            <span>
-                                {item?.dados.credencial.is_titular
-                                    ? "Titular"
-                                    : "Não é titular"}
-                            </span>
+                            <span>{item?.dados.credencial.is_titular ? "Titular" : "Não é titular"}</span>
                         </p>
                         <p className="checkin__modal__cpf">
                             <span>CPF PAGADOR: </span>
-                            <strong>
-                                {item?.dados.transacao.cpf_comprador}
-                            </strong>
+                            <strong>{item?.dados.transacao.cpf_comprador}</strong>
                         </p>
 
                         <p className="checkin__modal__tipo-ingresso">
@@ -181,7 +162,7 @@ const ModalCheckin = () => {
                         FAZER CHECKIN
                     </button>
                 </div>
-            </div>
+            </div> */}
         </Modal>
     );
 };
@@ -239,10 +220,7 @@ export default function Checkin() {
                 </section>
 
                 <section className="checkin__body">
-                    <form
-                        className="checkin__filtros"
-                        onSubmit={handleSubmit(onSubmit)}
-                    >
+                    <form className="checkin__filtros" onSubmit={handleSubmit(onSubmit)}>
                         <div className="checkin__drop">
                             <Controller
                                 control={control}
@@ -274,11 +252,7 @@ export default function Checkin() {
                             />
                         </div>
 
-                        <button
-                            className="checkin__pesquisar"
-                            type="submit"
-                            title="pesquisar"
-                        >
+                        <button className="checkin__pesquisar" type="submit" title="pesquisar">
                             <i>
                                 <FolderSearch />
                             </i>
@@ -288,42 +262,29 @@ export default function Checkin() {
 
                     <div className="checkin__lista">
                         <div className="checkin__lista__pesquisa">
-                            <Search
-                                onSearch={setPesquisa}
-                                placeholder="Pesquisar Credencial"
-                            />
+                            <Search onSearch={setPesquisa} placeholder="Pesquisar Credencial" />
                         </div>
 
                         <div className="checkin__lista__itens">
-                            {testeCheckinResponses.map((v) => (
+                            {/* {testeCheckinResponses.map((v) => (
                                 <button
                                     key={v.dados.credencial.id}
                                     className="checkin__lista__item"
                                     type="button"
                                     title={`Selecionar ${v.dados.credencial.nome}`}
                                     onClick={() =>
-                                        window.history.pushState(
-                                            null,
-                                            "",
-                                            `?modal=checkin&id=${v.dados.credencial.id}`,
-                                        )
+                                        window.history.pushState(null, "", `?modal=checkin&id=${v.dados.credencial.id}`)
                                     }
                                 >
-                                    <strong className="checkin__lista__item__nome">
-                                        {v.dados.credencial.nome}
-                                    </strong>
+                                    <strong className="checkin__lista__item__nome">{v.dados.credencial.nome}</strong>
                                     <span
                                         className={`checkin__lista__item__pagamento checkin__lista__item__pagamento--${v.dados.transacao.status_pagamento}`}
                                     >
                                         <span>Status Pagamento:</span>
                                         <i>
-                                            {v.dados.transacao
-                                                .status_pagamento ===
-                                            "aprovado" ? (
+                                            {v.dados.transacao.status_pagamento === "aprovado" ? (
                                                 <CircleCheck size={34} />
-                                            ) : v.dados.transacao
-                                                  .status_pagamento ===
-                                              "pendente" ? (
+                                            ) : v.dados.transacao.status_pagamento === "pendente" ? (
                                                 <Clock size={34} />
                                             ) : (
                                                 <CircleX />
@@ -336,7 +297,7 @@ export default function Checkin() {
                                             `Visitante: ${v.dados.credencial.nome_outra_congregacao}`}
                                     </span>
                                 </button>
-                            ))}
+                            ))} */}
                         </div>
                     </div>
                 </section>

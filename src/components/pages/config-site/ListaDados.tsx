@@ -3,7 +3,7 @@
 import { ReactNode, useDeferredValue, useMemo, useState } from "react";
 import Search from "@/components/ui/Search";
 import Dropdown, { ItemDropdownDefault } from "@/components/ui/Dropdown";
-import { Ban, Briefcase, CircleCheck, CloudOff, Cog, Power, UserRoundPen } from "lucide-react";
+import { Ban, Briefcase, CircleCheck, Cog, Power, UserRoundPen } from "lucide-react";
 import useResize from "@/hooks/useResize";
 import BotaoAcoes from "@/components/ui/btns/BotaoAcoes";
 import "./lista-dados.scss";

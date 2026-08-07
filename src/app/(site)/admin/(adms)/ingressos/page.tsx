@@ -9,7 +9,7 @@ import { Suspense } from "react";
 import DeletarConfig from "@/components/pages/config-site/DeletarConfig";
 import "./ingressos.scss";
 import { getItens } from "@/actions/handlerItens";
-import { ListaVazia } from "@/components/pages/config-site/ListaDados";
+import { ListaVazia } from "@/components/pages/config-site/ListaVazia";
 
 export default async function GerenciarIngressos() {
     const link = "/admin/ingressos";

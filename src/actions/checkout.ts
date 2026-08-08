@@ -43,6 +43,8 @@ export async function salvarMercadoPago(form: FormCheckout & { tipoIngresso: str
         const id_ebo = ebo?.id!;
         const valor_pedido = ingresso?.preco!;
 
+        const valorFinal = opcaoPagamento === "cartao" ? Number(valor_pedido) + 5 : Number(valor_pedido);
+
         if (!id_ebo || !valor_pedido) return { success: false, message: "Falha ao pegar dados" };
 
         const id_transacao = randomUUID();
@@ -107,7 +109,7 @@ export async function salvarMercadoPago(form: FormCheckout & { tipoIngresso: str
                         id: String(tipoIngresso),
                         title: ebo?.nome || "EBO",
                         quantity: 1,
-                        unit_price: Number(valor_pedido),
+                        unit_price: valorFinal,
                         currency_id: "BRL",
                         description: ingresso.descricao || "Ingresso EBO",
                     },

@@ -120,8 +120,7 @@
 
             &:hover {
                 border-color: $brand-primary;
-                box-shadow: 0 4px 12px
-                    color-mix(in srgb, $brand-primary 10%, transparent);
+                box-shadow: 0 4px 12px color-mix(in srgb, $brand-primary 10%, transparent);
                 transform: translateY(-2px);
             }
 
@@ -169,8 +168,11 @@
                     color: $verde;
                 }
 
-                &--pendente i {
-                    color: $amarelo;
+                &--pendente,
+                &--analise {
+                    i {
+                        color: $amarelo;
+                    }
                 }
 
                 &--cancelado i {
@@ -270,7 +272,8 @@
                 }
             }
 
-            &--pendente {
+            &--pendente,
+            &--analise {
                 background-color: color-mix(in srgb, $amarelo 15%, transparent);
                 color: $am;
                 border: 1px solid color-mix(in srgb, $amarelo 30%, transparent);
@@ -281,11 +284,7 @@
             }
 
             &--cancelado {
-                background-color: color-mix(
-                    in srgb,
-                    $vermelho 15%,
-                    transparent
-                );
+                background-color: color-mix(in srgb, $vermelho 15%, transparent);
                 color: $vermelho;
                 border: 1px solid color-mix(in srgb, $vermelho 30%, transparent);
                 strong,
@@ -300,11 +299,7 @@
             flex-direction: column;
             gap: 0.75rem;
             padding: 1.25rem;
-            background-color: color-mix(
-                in srgb,
-                $brand-primary 5%,
-                transparent
-            );
+            background-color: color-mix(in srgb, $brand-primary 5%, transparent);
             border-radius: $radius-md;
             border-left: 4px solid $brand-primary;
         }
@@ -411,8 +406,7 @@
 
             &:hover {
                 background-color: color-mix(in srgb, $brand-primary, #000 15%);
-                box-shadow: 0 8px 16px
-                    color-mix(in srgb, $brand-primary 30%, transparent);
+                box-shadow: 0 8px 16px color-mix(in srgb, $brand-primary 30%, transparent);
             }
         }
     }

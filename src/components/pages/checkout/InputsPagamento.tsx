@@ -15,7 +15,6 @@ import { TERMOS_PRIVACIDADE } from "@/constants/Links";
 export default function InputsPagamento({ disable }: { disable: boolean }) {
     const { control, register } = useFormContext<FormCheckout>();
     const { errors } = useFormState({ control });
-    // const pagamento = useWatch({ control, name: "opcaoPagamento" });
 
     return (
         <div className="checkout__pagamentos">

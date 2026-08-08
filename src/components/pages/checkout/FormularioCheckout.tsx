@@ -2,7 +2,7 @@
 
 import { toCurrency } from "@/lib/toCurrency";
 import { Ticket, Users } from "lucide-react";
-import { FormProvider, useForm } from "react-hook-form";
+import { Control, FormProvider, useForm, useFormContext, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputsComprador from "./InputsComprador";
@@ -127,34 +127,47 @@ const schema = z
 // });
 export type FormCheckout = z.infer<typeof schema>;
 
-const ResumoPedido = ({ ingresso, isTopo }: { ingresso: IngressosInterface; isTopo: boolean }) => (
-    <div className={`checkout__resumo ${isTopo ? "is-top" : "is-down"}`}>
-        <div className="checkout__resumo-infos">
-            <h2 className="checkout__resumo-title">
-                <i aria-hidden="true">
-                    <Ticket size={24} />
-                </i>
-                <span>{ingresso.nome_tipo}</span>
-            </h2>
+const ResumoPedido = ({
+    ingresso,
+    isTopo,
+    control,
+}: {
+    ingresso: IngressosInterface;
+    isTopo: boolean;
+    control: Control<any>;
+}) => {
+    const pagamento = useWatch({ control, name: "opcaoPagamento" });
+    return (
+        <div className={`checkout__resumo ${isTopo ? "is-top" : "is-down"}`}>
+            <div className="checkout__resumo-infos">
+                <h2 className="checkout__resumo-title">
+                    <i aria-hidden="true">
+                        <Ticket size={24} />
+                    </i>
+                    <span>{ingresso.nome_tipo}</span>
+                </h2>
 
-            <p className="checkout__resumo-qtd">
-                <i aria-hidden="true">
-                    <Users size={24} />
-                </i>
-                <span>{ingresso.quantidade_pessoas}</span>
-            </p>
+                <p className="checkout__resumo-qtd">
+                    <i aria-hidden="true">
+                        <Users size={24} />
+                    </i>
+                    <span>{ingresso.quantidade_pessoas}</span>
+                </p>
+            </div>
+
+            <p className="checkout__resumo-desc">{ingresso.descricao}</p>
+
+            <div className="checkout__resumo-footer">
+                <h3 className="checkout__resumo-price">
+                    <strong>
+                        {toCurrency(pagamento === "cartao" ? Number(ingresso.preco) + 5 : Number(ingresso.preco))}
+                    </strong>
+                </h3>
+                {ingresso.observacao && <p className="checkout__resumo-obs">{ingresso.observacao}</p>}
+            </div>
         </div>
-
-        <p className="checkout__resumo-desc">{ingresso.descricao}</p>
-
-        <div className="checkout__resumo-footer">
-            <h3 className="checkout__resumo-price">
-                <strong>{toCurrency(ingresso.preco)}</strong>
-            </h3>
-            {ingresso.observacao && <p className="checkout__resumo-obs">{ingresso.observacao}</p>}
-        </div>
-    </div>
-);
+    );
+};
 
 export default function FormularioCheckout({
     ingresso,
@@ -170,7 +183,7 @@ export default function FormularioCheckout({
     const methods = useForm<FormCheckout>({
         resolver: zodResolver(schema),
     });
-    const { handleSubmit } = methods;
+    const { handleSubmit, control } = methods;
 
     const onSubmit = async (v: FormCheckout) => {
         setIsLoading(true);
@@ -191,7 +204,7 @@ export default function FormularioCheckout({
                 className={`checkout__form ${isLoading ? "checkout__form--loading" : ""}`}
                 onSubmit={handleSubmit(onSubmit)}
             >
-                <ResumoPedido ingresso={ingresso} isTopo />
+                <ResumoPedido control={control as any} ingresso={ingresso} isTopo />
 
                 <div className="checkout__form-inputs">
                     <div className="checkout__form-comprador">
@@ -210,7 +223,7 @@ export default function FormularioCheckout({
                 </div>
 
                 <div className="checkout__form-resumo">
-                    <ResumoPedido ingresso={ingresso} isTopo={false} />
+                    <ResumoPedido control={control as any} ingresso={ingresso} isTopo={false} />
 
                     <InputsPagamento disable={isLoading} />
                 </div>

@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
         const dados = await payment.get({ id: data.id });
 
         const isErro = dados.status === "charged_back" || dados.status === "refunded";
+        const isCancelado = dados.status === "rejected" || dados.status === "cancelled";
         const method =
             dados.payment_type_id === "bank_transfer"
                 ? "pix"
@@ -66,7 +67,23 @@ export async function POST(request: NextRequest) {
             });
 
             if (error) console.log(error);
-        }
+        } else if (isCancelado) {
+            const { data } = await supabase
+                .from("facttransacao")
+                .select("status_pagamento")
+                .eq("id", idTransacao)
+                .single();
+
+            if (data?.status_pagamento === "analise") {
+                const { error } = await supabase.rpc("fn_cancelar_venda", {
+                    transacao_id: idTransacao,
+                    p_metodo_pagamento: method,
+                });
+
+                if (error) console.log(error);
+            }
+        } else if (dados.status === "in_process")
+            await supabase.from("facttransacao").update({ status_pagamento: "analise" }).eq("id", idTransacao);
 
         TAGS_PARA_REMOVER.forEach((v) => revalidateTag(TAGS_CACHE[v], { expire: 0 }));
     }

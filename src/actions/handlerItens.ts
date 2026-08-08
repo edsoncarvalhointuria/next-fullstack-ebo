@@ -18,7 +18,7 @@ export async function getItensFunction(table: TableNames) {
     "use cache";
     const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_BROWSER_API_KEY!);
     cacheTag(TAGS_CACHE[table]!);
-    cacheLife("hours");
+    cacheLife("minutes");
 
     return supabase.rpc(table);
 }

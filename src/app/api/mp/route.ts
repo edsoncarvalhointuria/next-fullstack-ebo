@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
                 p_metodo_pagamento: method,
             });
 
-            if (error) console.log(error);
+            if (error) console.log("isErro", error);
         } else if (isCancelado) {
             const { data } = await supabase
                 .from("facttransacao")
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
                     p_metodo_pagamento: method,
                 });
 
-                if (error) console.log(error);
+                if (error) console.log("isCancelado", error);
             }
         } else if (dados.status === "in_process")
             await supabase.from("facttransacao").update({ status_pagamento: "analise" }).eq("id", idTransacao);

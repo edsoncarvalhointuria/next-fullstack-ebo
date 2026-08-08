@@ -401,13 +401,13 @@ CREATE OR REPLACE FUNCTION fn_cancelar_venda(
 LANGUAGE plpgsql
 AS $$
 DECLARE
-    quantidade INT;
+    v_quantidade INT;
 BEGIN
 
     SELECT
         ing.quantidade_pessoas
     INTO 
-        quantidade
+        v_quantidade
     FROM
         facttransacao ft
     INNER JOIN dimingresso ing ON ft.id_ingresso = ing.id
@@ -417,7 +417,7 @@ BEGIN
 
         UPDATE
             dimcapacidade
-        SET ocupacao = ocupacao - quantidade;
+        SET ocupacao = ocupacao - v_quantidade;
 
         UPDATE
             facttransacao

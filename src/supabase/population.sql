@@ -218,11 +218,11 @@ ORDER BY DATE(ft.data_hora_pedido AT TIME ZONE 'America/Sao_Paulo') ASC;
 
 CREATE OR REPLACE VIEW vw_transacoes_por_status AS
 SELECT
-    COUNT(id) AS "totalArrecadado",
-    COALESCE(SUM(valor_pedido) FILTER (WHERE status_pagamento = 'aprovado'),0) AS "totalTransacoes",
+    COUNT(id) AS "totalTransacoes",
+    COALESCE(SUM(valor_pedido) FILTER (WHERE status_pagamento = 'aprovado'),0) AS "totalArrecadado",
     jsonb_build_object(
         'name', 'pendente',
-        'value', COUNT(id) FILTER (WHERE status_pagamento = 'pendente')
+        'value', COUNT(id) FILTER (WHERE status_pagamento = 'pendente' OR status_pagamento = 'analise')
     ) AS pendente,
     jsonb_build_object(
         'name', 'aprovado',
@@ -231,11 +231,7 @@ SELECT
     jsonb_build_object(
         'name', 'cancelado',
         'value', COUNT(id) FILTER (WHERE status_pagamento = 'cancelado')
-    ) AS cancelado,
-    jsonb_build_object(
-        'name', 'em_analise',
-        'value', COUNT(id) FILTER (WHERE status_pagamento = 'analise')
-    ) AS analise
+    ) AS cancelado
 FROM
     facttransacao;
 

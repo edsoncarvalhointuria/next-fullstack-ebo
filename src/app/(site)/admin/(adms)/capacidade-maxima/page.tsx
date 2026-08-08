@@ -7,7 +7,7 @@ import FormCapacidade from "@/components/pages/capacidade-maxima/FormCapacidade"
 
 export default async function CapacidadeMaxima() {
     const { data } = await getItens("dimcapacidade");
-    const capacidade = data?.length ? data[0] : { quantidade: 0, id: "" };
+    const capacidade = data?.length ? data[0] : { quantidade: 0, id: "", ocupacao: 0 };
 
     return (
         <MotionMain className="capacidade-maxima">
@@ -17,11 +17,11 @@ export default async function CapacidadeMaxima() {
                         <i aria-hidden="true">
                             <PackageOpen />
                         </i>
-                        <span>Capacidade Maxima</span>
+                        <span>Capacidade Atingida</span>
                     </h1>
 
                     <h2 className="capacidade-maxima__numero">
-                        <CountUp valor={capacidade.quantidade} duration={1.3} type="round" />
+                        <CountUp valor={capacidade.ocupacao} duration={1.3} type="round" />
                     </h2>
                 </div>
             </section>

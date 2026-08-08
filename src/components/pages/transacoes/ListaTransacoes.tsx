@@ -61,7 +61,7 @@ const bars = [
     { dataKey: "aprovado", fill: "var(--brand-success)" },
     { dataKey: "cancelado", fill: "var(--brand-danger)" },
     { dataKey: "pendente", fill: "var(--brand-warning)" },
-    { dataKey: "analise", fill: "var(--brand-primary)" },
+    // { dataKey: "analise", fill: "var(--brand-primary)" },
 ];
 
 const variansDrop: Variants = {
@@ -470,13 +470,14 @@ export function GraficosTransacoes({
             faturamento: Array.from(faturamentoMap.values() || {}),
         };
     }, [filter]);
+
     const cards = useMemo(() => {
         const dados = {
             total_arrecadado: transacoesPorStatus.totalArrecadado,
             total_transacoes: transacoesPorStatus.totalTransacoes,
             aprovados: transacoesPorStatus.aprovado.value,
             cancelados: transacoesPorStatus.cancelado.value,
-            pendentes: (transacoesPorStatus.pendente.value || 0) + (transacoesPorStatus.analise.value || 0),
+            pendentes: transacoesPorStatus.pendente.value || 0,
             ticket: transacoesPorStatus.totalArrecadado / transacoesPorStatus.totalTransacoes || 0,
         };
 

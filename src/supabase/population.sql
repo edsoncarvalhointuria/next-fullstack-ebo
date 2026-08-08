@@ -231,9 +231,13 @@ SELECT
     jsonb_build_object(
         'name', 'cancelado',
         'value', COUNT(id) FILTER (WHERE status_pagamento = 'cancelado')
-    ) AS cancelado
+    ) AS cancelado,
+    jsonb_build_object(
+        'name', 'em_analise',
+        'value', COUNT(id) FILTER (WHERE status_pagamento = 'analise')
+    ) AS analise
 FROM
-    facttransacao
+    facttransacao;
 
 CREATE OR REPLACE VIEW vw_transacoes_por_ingresso AS
 SELECT
@@ -417,7 +421,8 @@ BEGIN
 
         UPDATE
             dimcapacidade
-        SET ocupacao = ocupacao - v_quantidade;
+        SET ocupacao = ocupacao - v_quantidade
+        WHERE 1 = 1;
 
         UPDATE
             facttransacao

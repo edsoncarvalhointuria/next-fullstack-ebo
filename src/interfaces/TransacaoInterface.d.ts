@@ -19,6 +19,11 @@ interface CardsTransacaoStatus {
         value: number;
         fill: string;
     };
+    analise: {
+        name: string;
+        value: number;
+        fill: string;
+    };
 }
 interface TransacaoInterface {
     id: string;

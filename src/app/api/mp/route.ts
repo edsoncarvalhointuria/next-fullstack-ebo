@@ -21,6 +21,7 @@ const TAGS_PARA_REMOVER: TableNames[] = [
     "vw_credenciais_por_congregacao",
     "facttransacao",
     "dimcomprador",
+    "dimcapacidade",
 ];
 
 export async function POST(request: NextRequest) {

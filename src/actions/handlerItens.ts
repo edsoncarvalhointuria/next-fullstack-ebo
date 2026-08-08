@@ -46,7 +46,7 @@ export async function addItem(table: TableNames, values: { [key: string]: any })
 }
 
 export async function removeItem(table: TableNames, id: string) {
-    const supabase = await createClientCookies();
+    const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVER_API_KEY!);
     const { success } = await supabase.from(table).delete().eq("id", id);
     if (success) revalidateTag(TAGS_CACHE[table]!, { expire: 0 });
     return success;

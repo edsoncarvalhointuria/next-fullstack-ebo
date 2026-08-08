@@ -25,6 +25,7 @@ const TAGS_PARA_REMOVER: TableNames[] = [
 
 export async function POST(request: NextRequest) {
     const body = await request.json();
+    console.log("body", body);
 
     if (body.type === "payment") {
         const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVER_API_KEY!);
@@ -32,6 +33,8 @@ export async function POST(request: NextRequest) {
 
         const payment = new Payment(client);
         const dados = await payment.get({ id: data.id });
+
+        console.log("status", dados.status);
 
         const isErro =
             dados.status === "charged_back" ||

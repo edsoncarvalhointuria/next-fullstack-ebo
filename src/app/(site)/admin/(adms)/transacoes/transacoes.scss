@@ -365,17 +365,19 @@ $break-point: 879px;
                     }
                 }
 
-                &--aprovado,
-                &--analise {
+                &--aprovado {
                     p {
                         background-color: color-mix(in srgb, $verde 15%, transparent);
                         color: $verde;
                     }
                 }
 
-                &--pendente p {
-                    background-color: color-mix(in srgb, $amarelo 15%, transparent);
-                    color: $amarelo;
+                &--pendente,
+                &--analise {
+                    p {
+                        background-color: color-mix(in srgb, $amarelo 15%, transparent);
+                        color: $amarelo;
+                    }
                 }
 
                 &--cancelado p {

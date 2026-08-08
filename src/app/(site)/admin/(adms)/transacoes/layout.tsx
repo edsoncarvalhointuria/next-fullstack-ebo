@@ -11,7 +11,13 @@ import WrapperForm from "@/components/pages/transacoes/WrapperForm";
 export default function LayoutTransacoes({ children }: { children: ReactNode }) {
     return (
         <MotionMain className="transacoes">
-            <HeaderTransacoes icon={<Receipt />} title="Transações" caminho="transacoes" notAdd={false} />
+            <HeaderTransacoes
+                type="transacoes"
+                icon={<Receipt />}
+                title="Transações"
+                caminho="transacoes"
+                notAdd={false}
+            />
 
             <Suspense fallback={<LoadingPage />}>{children}</Suspense>
             <Suspense>

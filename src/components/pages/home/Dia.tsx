@@ -6,10 +6,10 @@ import { useRef } from "react";
 interface DiaProps {
     img: string;
     nome: string;
-    dia: number;
+    title: string;
 }
 
-export function Dia({ img, nome, dia }: DiaProps) {
+export function Dia({ img, nome, title }: DiaProps) {
     const secaoRef = useRef(null);
     const { scrollYProgress } = useScroll({
         target: secaoRef,
@@ -25,7 +25,7 @@ export function Dia({ img, nome, dia }: DiaProps) {
     return (
         <section className="home-dia" ref={secaoRef}>
             <div className="home-dia__infos">
-                <h2 className="home-dia__title">Dia {dia}</h2>
+                <h2 className="home-dia__title">{title}</h2>
                 <p className="home-dia__subtitle">{nome}</p>
                 <div className="home-dia__theme__infos">
                     <p className="home-dia__theme">Tema: Mãos à Obra</p>

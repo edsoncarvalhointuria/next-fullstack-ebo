@@ -10,6 +10,7 @@ import ErrorMessage from "@/components/forms/ErrorMessage";
 import ContainerInput from "@/components/forms/ContainerInput";
 import TextInput from "@/components/forms/TextInput";
 import { mascaraCpfCnpj } from "@/lib/mascaras";
+import { TERMOS_PRIVACIDADE } from "@/constants/Links";
 
 export default function InputsPagamento({ disable }: { disable: boolean }) {
     const { control, register } = useFormContext<FormCheckout>();
@@ -30,14 +31,14 @@ export default function InputsPagamento({ disable }: { disable: boolean }) {
                     icon={<Pix />}
                     className="checkout__pagamento--pix"
                 />
-                <RadioInput
+                {/* <RadioInput
                     label="Boleto"
                     value="boleto"
                     nameForm="opcaoPagamento"
                     register={register}
                     icon={<ReceiptText />}
                     className="checkout__pagamento--boleto"
-                />
+                /> */}
                 <RadioInput
                     label="Cartão de Crédito"
                     value="cartao"
@@ -121,7 +122,10 @@ export default function InputsPagamento({ disable }: { disable: boolean }) {
                             className={`forms__input-label ${errors.termos?.message ? "forms__input-label--erro" : ""}`}
                             htmlFor="termos"
                         >
-                            Li e concordo com os <a href="#">termos de uso</a>
+                            Li e concordo com os{" "}
+                            <a href={TERMOS_PRIVACIDADE} target="_blank" rel="noopener noreferrer">
+                                termos de uso
+                            </a>
                         </label>
                     </ContainerInput>
                     <ErrorMessage message={errors.termos?.message} />

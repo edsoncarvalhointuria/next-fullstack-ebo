@@ -7,10 +7,10 @@ import Final from "@/components/pages/home/Final";
 import { createClient } from "@supabase/supabase-js";
 
 const dias = [
-    { img: "/dia1ebo.png", dia: 1, nome: "Pr. Eberson Tobias" },
-    { img: "/dia2ebo.png", dia: 2, nome: "Pr. André Bueno" },
-    { img: "/dia3ebo.png", dia: 3, nome: "Pr. Carlos Roberto" },
-    // { img: "/dia4ebo.png", dia: 4, nome: "Pr. Sérgio Pereira" },
+    { img: "/Altair_Germano.png", title: "PRELETOR", nome: "Altair Germano" },
+    { img: "/Carlos_Emael.png", title: "PRELETOR", nome: "Carlos Emael" },
+    { img: "/Cassandra_Albrecht.png", title: "PRELETORA", nome: "Cassandra Albrecht" },
+    { img: "/Nerildo_Accioly.png", title: "PRELETOR", nome: "Nerildo Accioly" },
 ];
 
 export default async function Home() {

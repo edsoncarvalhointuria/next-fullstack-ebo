@@ -4,15 +4,18 @@ import BotaoAdd from "@/components/ui/btns/BotaoAdd";
 import BotaoHeaderContainer from "@/components/ui/btns/BotaoHeaderContainer";
 import HeaderButtonsTransacoes from "./HeaderButtonsTrasacoes";
 import "./header-transacoes.scss";
+import BotaoExportar from "@/components/ui/btns/BotaoExportar";
 
 export default function HeaderTransacoes({
     icon,
     title,
     caminho,
+    type,
     notAdd = true,
 }: {
     icon: ReactNode;
     title: string;
+    type: "credenciais" | "transacoes";
     caminho: string;
     notAdd?: boolean;
 }) {
@@ -27,12 +30,7 @@ export default function HeaderTransacoes({
                 <BotaoHeaderContainer>
                     {!notAdd && <BotaoAdd title="Nova Venda Manual" icon={<Banknote />} />}
 
-                    <button className="transacoes__button" type="button" title="Exportar para Excel">
-                        <i aria-hidden="true">
-                            <Sheet />
-                        </i>
-                        <span>Exportar</span>
-                    </button>
+                    <BotaoExportar type={type} />
                 </BotaoHeaderContainer>
             </div>
 

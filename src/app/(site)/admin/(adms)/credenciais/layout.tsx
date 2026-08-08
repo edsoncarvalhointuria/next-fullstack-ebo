@@ -8,7 +8,12 @@ import LoadingPage from "@/components/layout/LoadingPage";
 export default async function LayoutCredencial({ children }: { children: ReactNode }) {
     return (
         <MotionMain className="credenciais">
-            <HeaderTransacoes icon={<IdCardLanyard size={34} />} caminho="credenciais" title="Credenciais" />
+            <HeaderTransacoes
+                type="credenciais"
+                icon={<IdCardLanyard size={34} />}
+                caminho="credenciais"
+                title="Credenciais"
+            />
             <Suspense fallback={<LoadingPage />}>{children}</Suspense>
         </MotionMain>
     );

@@ -474,3 +474,83 @@ BEGIN
     END LOOP;
 END;
 $$;
+
+
+CREATE OR REPLACE VIEW vw_download_transacoes AS
+SELECT
+    ft.id AS "ID Transação",
+    ft.id_pagamento_mp AS "ID Mercado Pago",
+    ft.metodo_pagamento AS "Método Pagamento",
+    ft.status_pagamento AS "Status Pagamento",
+    ft.valor_pedido AS "Valor Compra",
+    TO_CHAR(ft.data_hora_pedido AT TIME ZONE 'America/Sao_Paulo', 'DD/MM/YYYY HH24:MI:SS') AS "Data Pedido",
+    ft.type AS "Tipo de Transação",
+    comp.cpf_cnpj AS "CPF/CNPJ",
+    comp.nome AS "Comprador Nome",
+    comp.email AS "Comprador Email",
+    comp.whatsapp AS "Comprador Whats",
+    ing.id AS "Ingresso ID",
+    ing.nome_tipo AS "Ingresso Tipo",
+    ing.descricao AS "Ingresso Descrição",
+    ing.observacao AS "Ingresso Observação",
+    ing.quantidade_pessoas AS "Ingresso Quantidade Pessoas",
+    ing.ordem AS "Ingresso Ordem",
+    ing.preco AS "Ingresso Preço",
+    ing.data_fim_vendas AS "Ingresso Data Fim Vendas",
+    ing.is_ativo AS "Ingresso está ativo?",
+    ebo.id AS "EBO ID",
+    ebo.nome AS "EBO Título",
+    ebo.is_ativo AS "EBO está ativa?"
+FROM
+    facttransacao ft
+INNER JOIN dimcomprador comp ON comp.cpf_cnpj = ft.id_comprador 
+INNER JOIN dimingresso ing ON ing.id = ft.id_ingresso
+INNER JOIN dimebo ebo ON ebo.id = ft.id_ebo;
+
+CREATE OR REPLACE VIEW vw_download_credenciais AS
+SELECT
+    dc.id AS "ID Credencial",
+    dc.nome AS "Nome",
+    dc.is_outra_congregacao AS "É de outro ministério?",
+    dc.nome_outra_congregacao AS "Nome outro ministério",
+    dc.is_titular AS "É o titular?",
+
+    carg.id AS "Cargo ID",
+    carg.nome AS "Cargo Título",
+    carg.is_ativo AS "Cargo está ativo?",
+
+    cong.id AS "Congregação ID",
+    cong.nome AS "Congregação Título",
+    cong.is_ativo AS "Congregação está ativo?",
+
+    comp.cpf_cnpj AS "Titular CPF/CNPJ",
+    comp.nome AS "Titular Nome",
+    comp.email AS "Titular Email",
+    comp.whatsapp AS "Titular Whatsapp",
+
+    ing.id AS "Ingresso ID",
+    ing.nome_tipo AS "Ingresso Tipo",
+    ing.quantidade_pessoas AS "Ingresso Quantidade Pessoas",
+    ing.preco AS "Ingresso Preço",
+    ing.data_fim_vendas AS "Ingresso Data Fim Vendas",
+    ing.is_ativo AS "Ingresso está ativo?",
+
+    ebo.id AS "EBO ID",
+    ebo.nome AS "EBO Título",
+    ebo.is_ativo AS "EBO está ativa?",
+    
+    ft.id AS "Transação ID",
+    ft.id_pagamento_mp AS "Transação ID Mercado Pago",
+    ft.status_pagamento AS "Transação Status Pagamento",
+    ft.metodo_pagamento AS "Transação Método Pagamento",
+    ft.valor_pedido AS "Transação Valor Compra",
+    TO_CHAR(ft.data_hora_pedido AT TIME ZONE 'America/Sao_Paulo', 'DD/MM/YYYY HH24:MI:SS') AS "Transação Data Pedido",
+    ft.type AS "Transação Tipo de Pedido"
+FROM 
+    dimcredencial dc
+INNER JOIN facttransacao ft ON ft.id = dc.id_transacao
+    INNER JOIN dimcomprador comp ON comp.cpf_cnpj = ft.id_comprador
+    INNER JOIN dimingresso ing ON ing.id = ft.id_ingresso
+    INNER JOIN dimebo ebo ON ebo.id = ft.id_ebo
+INNER JOIN dimcargo carg ON carg.id = dc.id_cargo
+INNER JOIN dimcongregacao cong ON cong.id = dc.id_congregacao;

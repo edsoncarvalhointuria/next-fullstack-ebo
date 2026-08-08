@@ -177,7 +177,10 @@ export default function FormularioCheckout({
         const { success, link, code } = await salvarMercadoPago({ ...v, tipoIngresso: ingresso.id });
 
         if (success) router.push(link!);
-        else if (!success && code === "ESGOTADO") router.push("/checkout/esgotado");
+        else if (!success) {
+            if (code === "ESGOTADO") router.push("/checkout/esgotado");
+            else router.push("/checkout/falha");
+        }
 
         setIsLoading(false);
     };

@@ -11,7 +11,6 @@ const dias = [
     { img: "/Carlos_Emael.png", title: "PRELETOR", nome: "Carlos Emael" },
     { img: "/Cassandra_Albrecht.png", title: "PRELETORA", nome: "Cassandra Albrecht" },
     { img: "/Nerildo_Accioly.png", title: "PRELETOR", nome: "Nerildo Accioly" },
-    { img: "/Nerildo_Accioly.png", title: "PRELETOR", nome: "Nerildo Accioly" },
     { img: "/dia4ebo.png", title: "PRELEITOR", nome: "Sérgio Pereira" },
 ];
 

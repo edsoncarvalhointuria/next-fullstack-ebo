@@ -107,7 +107,7 @@ export async function salvarMercadoPago(form: FormCheckout & { tipoIngresso: str
                 items: [
                     {
                         id: String(tipoIngresso),
-                        title: ebo?.nome || "EBO",
+                        title: `${ebo?.nome || "EBO"} ${ingresso.nome_tipo}`,
                         quantity: 1,
                         unit_price: valorFinal,
                         currency_id: "BRL",

@@ -173,13 +173,13 @@ AS $$
         jsonb_object_agg(nome_ingresso, total_ingresso)
     FROM (
         SELECT
-            DATE(data_hora_pedido) AS data_compra,
+            DATE(data_hora_pedido AT TIME ZONE 'America/Sao_Paulo') AS data_compra,
             ing.nome_tipo AS nome_ingresso,
             COUNT(ing.id)  AS total_ingresso
         FROM facttransacao trans
         INNER JOIN dimingresso ing ON ing.id = trans.id_ingresso
         WHERE trans.status_pagamento = 'aprovado'
-        GROUP BY DATE(data_hora_pedido), ing.nome_tipo
+        GROUP BY DATE(data_hora_pedido AT TIME ZONE 'America/Sao_Paulo'), ing.nome_tipo
     ) AS tabela_agregada
     GROUP BY data_compra
     ORDER BY data_compra ASC
@@ -202,7 +202,7 @@ FROM
 CREATE OR REPLACE VIEW vw_graficos_transacoes AS
 SELECT
     ft.id AS id_transacao,
-    TO_CHAR(ft.data_hora_pedido, 'DD/MM') AS data_pedido,
+    TO_CHAR(DATE(ft.data_hora_pedido AT TIME ZONE 'America/Sao_Paulo'), 'DD/MM') AS data_pedido,
     ft.valor_pedido AS valor,
     ft.status_pagamento AS status,
     ft.metodo_pagamento,
@@ -211,11 +211,10 @@ SELECT
     cong.nome AS titular_congregacao
 FROM
     facttransacao ft
-LEFT JOIN dimcredencial dc ON dc.id_transacao = ft.id
-    INNER JOIN dimcargo cargo ON cargo.id = dc.id_cargo
-    INNER JOIN  dimcongregacao cong ON cong.id = dc.id_congregacao
-WHERE dc.is_titular = TRUE
-ORDER BY DATE(ft.data_hora_pedido) ASC;
+LEFT JOIN dimcredencial dc ON dc.id_transacao = ft.id AND dc.is_titular = TRUE
+    LEFT JOIN dimcargo cargo ON cargo.id = dc.id_cargo
+    LEFT JOIN  dimcongregacao cong ON cong.id = dc.id_congregacao
+ORDER BY DATE(ft.data_hora_pedido AT TIME ZONE 'America/Sao_Paulo') ASC;
 
 CREATE OR REPLACE VIEW vw_transacoes_por_status AS
 SELECT
@@ -257,13 +256,13 @@ GROUP BY cong.nome;
 
 CREATE OR REPLACE VIEW vw_transacoes_arrecadacao AS
 SELECT
-    TO_CHAR(DATE(data_hora_pedido), 'DD/MM') AS name,
+    TO_CHAR(DATE(data_hora_pedido AT TIME ZONE 'America/Sao_Paulo'), 'DD/MM') AS name,
     SUM(valor_pedido) FILTER (WHERE status_pagamento = 'aprovado') AS arrecadado,
     COUNT(id) AS vendas
 FROM
     facttransacao
-GROUP BY DATE(data_hora_pedido)
-ORDER BY DATE(data_hora_pedido) ASC;
+GROUP BY DATE(data_hora_pedido AT TIME ZONE 'America/Sao_Paulo')
+ORDER BY DATE(data_hora_pedido AT TIME ZONE 'America/Sao_Paulo') ASC;
     
 
 CREATE OR REPLACE FUNCTION fn_registrar_venda_manual(
@@ -456,7 +455,7 @@ BEGIN
             facttransacao ft
         INNER JOIN dimingresso ing ON ft.id_ingresso = ing.id
         WHERE ft.status_pagamento = 'pendente' 
-          AND ft.data_hora_pedido < NOW() - INTERVAL '1 hours'
+          AND ft.data_hora_pedido < NOW() - INTERVAL '10 minutes'
     LOOP
         UPDATE 
             dimcapacidade

@@ -25,7 +25,6 @@ const TAGS_PARA_REMOVER: TableNames[] = [
 
 export async function POST(request: NextRequest) {
     const body = await request.json();
-    console.log("body", body);
 
     if (body.type === "payment") {
         const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVER_API_KEY!);
@@ -34,13 +33,7 @@ export async function POST(request: NextRequest) {
         const payment = new Payment(client);
         const dados = await payment.get({ id: data.id });
 
-        console.log("status", dados.status);
-
-        const isErro =
-            dados.status === "charged_back" ||
-            dados.status === "cancelled" ||
-            dados.status === "refunded" ||
-            dados.status === "rejected";
+        const isErro = dados.status === "charged_back" || dados.status === "refunded";
         const method =
             dados.payment_type_id === "bank_transfer"
                 ? "pix"
@@ -67,10 +60,12 @@ export async function POST(request: NextRequest) {
 
             if (credencial.error || transacao.error) console.log(`${transacao.error}\n${credencial.error}`);
         } else if (isErro) {
-            await supabase.rpc("fn_cancelar_venda", {
+            const { error } = await supabase.rpc("fn_cancelar_venda", {
                 transacao_id: idTransacao,
                 p_metodo_pagamento: method,
             });
+
+            if (error) console.log(error);
         }
 
         TAGS_PARA_REMOVER.forEach((v) => revalidateTag(TAGS_CACHE[v], { expire: 0 }));

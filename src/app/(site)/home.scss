@@ -9,7 +9,7 @@
     &-hero {
         overflow: hidden;
         max-width: 100dvw;
-        min-height: 100dvh;
+        min-height: 100vh;
         position: relative;
         z-index: 0;
 
@@ -85,8 +85,8 @@
         justify-content: space-between;
         gap: 4rem;
         padding: 6rem 2rem;
-        min-height: 100dvh;
-        max-height: 100dvh;
+        min-height: 100vh;
+        max-height: 100vh;
         width: 100%;
         padding: 3rem;
         background-color: v.$bg-primary;
@@ -160,11 +160,7 @@
             letter-spacing: 3px;
             text-transform: uppercase;
             color: v.$accent-color;
-            background-color: color-mix(
-                in srgb,
-                v.$text-primary 10%,
-                transparent
-            );
+            background-color: color-mix(in srgb, v.$text-primary 10%, transparent);
             padding: 0.4rem 0.8rem;
             border-radius: 4px;
         }
@@ -324,11 +320,7 @@
                 color: v.$text-primary;
 
                 &:hover {
-                    background-color: color-mix(
-                        in srgb,
-                        v.$text-primary 5%,
-                        transparent
-                    );
+                    background-color: color-mix(in srgb, v.$text-primary 5%, transparent);
                     transform: translateY(-2px);
                 }
             }

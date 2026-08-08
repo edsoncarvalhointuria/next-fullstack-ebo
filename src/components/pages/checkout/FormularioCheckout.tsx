@@ -109,22 +109,22 @@ const schema = z
                 message: "Por favor, digite o nome da sua congregação.",
                 path: ["nomeOutraCongregacao"],
             });
-    })
-    .superRefine((dados, ctx) => {
-        const { opcaoPagamento, numeroCartao, nomeTitular, dataValidade, cvv } = dados;
-        const isErro = !numeroCartao || !nomeTitular || !dataValidade || !cvv;
-        if (opcaoPagamento === "cartao" && isErro) {
-            const obj = {
-                code: "custom",
-                message: "Esse campo é obrigatório",
-            } as any;
-
-            if (!numeroCartao) ctx.addIssue({ ...obj, path: ["numeroCartao"] });
-            if (!nomeTitular) ctx.addIssue({ ...obj, path: ["nomeTitular"] });
-            if (!dataValidade) ctx.addIssue({ ...obj, path: ["dataValidade"] });
-            if (!cvv) ctx.addIssue({ ...obj, path: ["cvv"] });
-        }
     });
+// .superRefine((dados, ctx) => {
+//     const { opcaoPagamento, numeroCartao, nomeTitular, dataValidade, cvv } = dados;
+//     const isErro = !numeroCartao || !nomeTitular || !dataValidade || !cvv;
+//     if (opcaoPagamento === "cartao" && isErro) {
+//         const obj = {
+//             code: "custom",
+//             message: "Esse campo é obrigatório",
+//         } as any;
+
+//         if (!numeroCartao) ctx.addIssue({ ...obj, path: ["numeroCartao"] });
+//         if (!nomeTitular) ctx.addIssue({ ...obj, path: ["nomeTitular"] });
+//         if (!dataValidade) ctx.addIssue({ ...obj, path: ["dataValidade"] });
+//         if (!cvv) ctx.addIssue({ ...obj, path: ["cvv"] });
+//     }
+// });
 export type FormCheckout = z.infer<typeof schema>;
 
 const ResumoPedido = ({ ingresso, isTopo }: { ingresso: IngressosInterface; isTopo: boolean }) => (
@@ -174,17 +174,20 @@ export default function FormularioCheckout({
 
     const onSubmit = async (v: FormCheckout) => {
         setIsLoading(true);
-        const { success, link } = await salvarMercadoPago({ ...v, tipoIngresso: ingresso.id });
+        const { success, link, code } = await salvarMercadoPago({ ...v, tipoIngresso: ingresso.id });
 
         if (success) router.push(link!);
-        else console.log("deu ruim");
+        else if (!success && code === "ESGOTADO") router.push("/checkout/esgotado");
 
         setIsLoading(false);
     };
 
     return (
         <FormProvider {...methods}>
-            <form className="checkout__form" onSubmit={handleSubmit(onSubmit)}>
+            <form
+                className={`checkout__form ${isLoading ? "checkout__form--loading" : ""}`}
+                onSubmit={handleSubmit(onSubmit)}
+            >
                 <ResumoPedido ingresso={ingresso} isTopo />
 
                 <div className="checkout__form-inputs">
@@ -206,7 +209,7 @@ export default function FormularioCheckout({
                 <div className="checkout__form-resumo">
                     <ResumoPedido ingresso={ingresso} isTopo={false} />
 
-                    <InputsPagamento />
+                    <InputsPagamento disable={isLoading} />
                 </div>
             </form>
         </FormProvider>

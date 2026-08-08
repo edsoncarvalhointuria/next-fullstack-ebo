@@ -39,6 +39,22 @@ $cor-pessoas: #8b5cf6;
             align-items: start;
         }
 
+        &--loading {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            position: relative;
+            &::after {
+                content: "";
+                padding: 1rem;
+                position: fixed;
+                left: 50%;
+                top: 50%;
+                border: 5px solid $text-primary;
+                border-top-color: $text-secondary;
+                border-radius: 50%;
+                animation: spin ease-in-out 1s infinite;
+            }
+        }
+
         &-inputs {
             display: flex;
             flex-direction: column;
@@ -300,5 +316,14 @@ $cor-pessoas: #8b5cf6;
                 color: $cor-cartao;
             }
         }
+    }
+}
+
+@keyframes spin {
+    from {
+        rotate: 0deg;
+    }
+    to {
+        rotate: 360deg;
     }
 }

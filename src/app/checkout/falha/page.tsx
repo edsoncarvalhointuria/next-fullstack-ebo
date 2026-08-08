@@ -12,9 +12,9 @@ export default function Falha() {
                     <i aria-hidden="true">
                         <CircleX size={35} />
                     </i>
+                    <span>Pagamento rejeitado</span>
                 </h1>
                 <div className="falha__infos">
-                    <p className="falha__info">Pagamento rejeitado. Tente novamente.</p>
                     <p className="falha__info falha__info--whats">
                         Em caso de dúvidas entre em contato pelo <Link href="#">Whatsapp</Link>
                     </p>

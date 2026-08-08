@@ -11,7 +11,7 @@ export default function Esgotado() {
                     <i aria-hidden="true">
                         <Ticket size={35} />
                     </i>
-                    <span>Esgotados</span>
+                    <span>Esgotado</span>
                 </h1>
 
                 <p className="esgotado__whats">

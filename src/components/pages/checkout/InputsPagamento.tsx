@@ -9,20 +9,12 @@ import RadioInput from "@/components/forms/RadioInput";
 import ErrorMessage from "@/components/forms/ErrorMessage";
 import ContainerInput from "@/components/forms/ContainerInput";
 import TextInput from "@/components/forms/TextInput";
-import {
-    mascaraCartao,
-    mascaraCpf,
-    mascaraCpfCnpj,
-    mascaraCvvCartao,
-    mascaraDataCartao,
-} from "@/lib/mascaras";
-import GroupInputContainer from "@/components/forms/GroupInput";
-import { AnimatePresence, motion } from "framer-motion";
+import { mascaraCpfCnpj } from "@/lib/mascaras";
 
-export default function InputsPagamento() {
+export default function InputsPagamento({ disable }: { disable: boolean }) {
     const { control, register } = useFormContext<FormCheckout>();
     const { errors } = useFormState({ control });
-    const pagamento = useWatch({ control, name: "opcaoPagamento" });
+    // const pagamento = useWatch({ control, name: "opcaoPagamento" });
 
     return (
         <div className="checkout__pagamentos">
@@ -67,7 +59,7 @@ export default function InputsPagamento() {
                     inputMode="numeric"
                 />
 
-                <AnimatePresence>
+                {/* <AnimatePresence>
                     {pagamento === "cartao" && (
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
@@ -118,17 +110,13 @@ export default function InputsPagamento() {
                             </GroupInputContainer>
                         </motion.div>
                     )}
-                </AnimatePresence>
+                </AnimatePresence> */}
             </div>
 
             <div className="checkout__pagamentos-footer">
                 <div className="checkout__pagamentos-termos">
                     <ContainerInput className="forms__input__check">
-                        <input
-                            type="checkbox"
-                            id="termos"
-                            {...register("termos")}
-                        />
+                        <input type="checkbox" id="termos" {...register("termos")} />
                         <label
                             className={`forms__input-label ${errors.termos?.message ? "forms__input-label--erro" : ""}`}
                             htmlFor="termos"
@@ -138,7 +126,9 @@ export default function InputsPagamento() {
                     </ContainerInput>
                     <ErrorMessage message={errors.termos?.message} />
                 </div>
-                <button className="checkout__comprar">Finalizar Compra</button>
+                <button type="submit" disabled={disable} className="checkout__comprar">
+                    Finalizar Compra
+                </button>
             </div>
         </div>
     );

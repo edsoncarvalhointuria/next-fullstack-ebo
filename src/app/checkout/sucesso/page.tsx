@@ -12,8 +12,8 @@ export default function Sucesso() {
                     <i aria-hidden="true">
                         <CircleCheck size={35} />
                     </i>
+                    <span>Pagamento concluído!</span>
                 </h1>
-                <p className="sucesso__info">Pagamento concluído!</p>
             </section>
             <section className="sucesso__redirect">
                 <h2 className="sucesso__redirect-texto">

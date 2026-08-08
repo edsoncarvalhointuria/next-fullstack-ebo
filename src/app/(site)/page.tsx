@@ -21,7 +21,7 @@ export default async function Home() {
         <main className="home">
             <Hero>
                 <div className="home-hero__video">
-                    <video src="/ebo-video.mp4" muted autoPlay loop playsInline></video>
+                    <video src="/ebo.mp4" muted autoPlay loop playsInline></video>
                 </div>
             </Hero>
 

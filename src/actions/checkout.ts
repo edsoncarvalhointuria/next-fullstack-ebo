@@ -89,9 +89,8 @@ export async function salvarMercadoPago(form: FormCheckout & { tipoIngresso: str
             metodo_pagamento: opcaoPagamento,
             credenciais,
         });
-        console.log("error", error);
-        console.log("data", data);
 
+        if (!data.success && data.code === "ESGOTADO") return { success: false, code: "ESGOTADO" };
         if (error || !data.success) throw new Error(`deu ruim`);
 
         const client = new MercadoPagoConfig({
@@ -144,6 +143,7 @@ export async function salvarMercadoPago(form: FormCheckout & { tipoIngresso: str
         console.log(err);
         return {
             success: false,
+            code: "INTERNO",
         };
     }
 }

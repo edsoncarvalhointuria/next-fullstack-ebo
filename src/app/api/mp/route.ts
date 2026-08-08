@@ -45,6 +45,7 @@ export async function POST(request: NextRequest) {
 
         const idTransacao = dados.external_reference;
         if (dados.status === "approved") {
+            const valorFinal = dados.transaction_amount;
             const credenciaisData = await supabase
                 .from("cachecredencial")
                 .select("credenciais")
@@ -55,7 +56,12 @@ export async function POST(request: NextRequest) {
                 supabase.from("dimcredencial").insert(credenciaisData.data!.credenciais as any[]),
                 supabase
                     .from("facttransacao")
-                    .update({ status_pagamento: "aprovado", id_pagamento_mp: data.id!, metodo_pagamento: method })
+                    .update({
+                        status_pagamento: "aprovado",
+                        id_pagamento_mp: data.id!,
+                        metodo_pagamento: method,
+                        ...(valorFinal ? { valor_pedido: valorFinal } : {}),
+                    })
                     .eq("id", idTransacao),
                 supabase.from("cachecredencial").delete().eq("id_transacao", idTransacao),
             ]);

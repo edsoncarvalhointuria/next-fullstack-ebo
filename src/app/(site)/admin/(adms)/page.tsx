@@ -30,9 +30,7 @@ export default async function AdminHome() {
         <>
             <MotionMain className="admin">
                 <section className="admin__header">
-                    <h1>
-                        Olá, <strong>Edson</strong>. Seja bem-vindo(a)!
-                    </h1>
+                    <h1>Olá. Seja bem-vindo(a)!</h1>
 
                     <BotaoAdd title="Adicionar Venda Manual" />
                 </section>

@@ -14,6 +14,15 @@ export async function getItens(table: TableNames) {
     return supabase.from(table).select("*");
 }
 
+export async function getItemAtivo(table: TableNames) {
+    "use cache";
+    const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_BROWSER_API_KEY!);
+    cacheTag(TAGS_CACHE[table]!);
+    cacheLife("hours");
+
+    return supabase.from(table).select("*").eq("is_ativo", true);
+}
+
 export async function getItensFunction(table: TableNames) {
     "use cache";
     const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_BROWSER_API_KEY!);

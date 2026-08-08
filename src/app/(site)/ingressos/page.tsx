@@ -3,11 +3,11 @@ import MotionMain from "@/components/layout/MotionMain";
 import { eventDetails } from "../../../../config/eventDetails";
 import Ingresso from "@/components/pages/ingressos/Ingresso";
 import BotaoWhatsapp from "@/components/ui/btns/BotaoWhatsapp";
-import { getItens } from "@/actions/handlerItens";
+import { getItemAtivo, getItens } from "@/actions/handlerItens";
 import "./ingressos.scss";
 
 export default async function Ingressos() {
-    const { data } = await getItens("dimingresso");
+    const { data } = await getItemAtivo("dimingresso");
     const ingressos = data as IngressosInterface[];
     return (
         <MotionMain className="ingressos">

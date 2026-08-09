@@ -1,5 +1,5 @@
 "use client";
-import { getItemById } from "@/actions/handlerItens";
+import { addUsuario, getItemById, updateUsuario } from "@/actions/handlerItens";
 import useGetSearchId from "@/hooks/useGetSearchId";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
@@ -19,14 +19,15 @@ const cargosDrop = cargos.map((v) => ({ id: v, nome: v }));
 const schema = z.object({
     nome: z.email("O email é obrigatório"),
     nivel: z.enum(cargos, "O cargo é obrigatório"),
-    is_ativo: z.boolean(),
-    senha: z.string().min(6, "Senha inválida"),
+    // is_ativo: z.boolean(),
+    senha: z.string().optional(),
 });
 
 type FormDados = z.infer<typeof schema>;
 
 export default function FormUsuario() {
     const table = "dimusuario";
+    const link = "/admin/usuarios";
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
 
@@ -35,35 +36,33 @@ export default function FormUsuario() {
 
     const methods = useForm<FormDados>({
         resolver: zodResolver(schema),
-        defaultValues: { is_ativo: true },
     });
     const {
         register,
         setValues,
         control,
         handleSubmit,
+        setError,
         formState: { errors },
     } = methods;
 
     const onSubmit = async (v: FormDados) => {
-        setIsLoading(true);
+        // setIsLoading(true);
         // if (id) {
-        //     const { success, error } = await updateItem(table, v, id);
-
-        //     if (error) {
+        //     const { success } = await updateUsuario(id, v.nome, v.nivel, v.senha);
+        //     if (!success) {
         //         setIsLoading(false);
         //         return setIsError(true);
         //     }
-
-        //     if (success) return router.push(link);
+        //     return router.push(link);
         // }
-
-        // const { success, error } = await addItem(table, v);
-        // if (error) {
+        // if (!id && (!v.senha || v.senha!.length < 6)) setError("senha", { message: "A senha é obrigatória" });
+        // const { success } = await addUsuario(v.nome, v.senha!, v.nivel);
+        // if (!success) {
         //     setIsLoading(false);
         //     return setIsError(true);
         // }
-        // if (success) return router.push(link);
+        // return router.push(link);
     };
 
     useEffect(() => {
@@ -73,8 +72,8 @@ export default function FormUsuario() {
         getItemById(table, id)
             .then((v) => {
                 if (!v) return;
-                const { nome, is_ativo, nivel } = v;
-                setValues({ nome, nivel, is_ativo });
+                const { nome, nivel } = v;
+                setValues({ nome, nivel });
             })
             .catch((err) => console.log("deu erro", err))
             .finally(() => setIsLoading(false));
@@ -83,7 +82,7 @@ export default function FormUsuario() {
         <div className={`base-config__form ${isLoading ? "base-config__form--is-loading" : ""} `}>
             {isError && <FormErrorP />}
             <form onSubmit={handleSubmit(onSubmit)}>
-                <CheckInput label="Ativo?" register={register} nameForm="is_ativo" isRequired={false} />
+                {/* <CheckInput label="Ativo?" register={register} nameForm="is_ativo" isRequired={false} /> */}
                 <SelectInput
                     control={control}
                     label="Cargo"
@@ -102,13 +101,15 @@ export default function FormUsuario() {
                     messageError={errors.nome?.message}
                 />
 
-                <PasswordInput
-                    label="Senha"
-                    register={register}
-                    nameForm="senha"
-                    messageError={errors.senha?.message}
-                    placeholder="&lowast;&lowast;&lowast;&lowast;&lowast;&lowast;"
-                />
+                {!id && (
+                    <PasswordInput
+                        label="Senha"
+                        register={register}
+                        nameForm="senha"
+                        messageError={errors.senha?.message}
+                        placeholder="&lowast;&lowast;&lowast;&lowast;&lowast;&lowast;"
+                    />
+                )}
 
                 <div className="base-config__form__submit">
                     <button className="base-config__form__btn" disabled={isLoading}>

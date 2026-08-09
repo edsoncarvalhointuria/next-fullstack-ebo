@@ -8,6 +8,7 @@ import {
     ChevronDown,
     ChevronRight,
     Church,
+    CircleUserRound,
     Cog,
     Coins,
     House,
@@ -128,6 +129,11 @@ const OPCOES: (OpcoesOpcao | OpcoesDropdown)[] = [
                 link: "/admin/perguntas-frequentes",
                 icon: <MessageCircleQuestionMark size={20} />,
                 title: "Perguntas Frequentes",
+            },
+            {
+                link: "/admin/usuarios",
+                icon: <CircleUserRound size={20} />,
+                title: "Usuários",
             },
             {
                 link: "/admin/capacidade-maxima",

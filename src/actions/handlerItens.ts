@@ -54,7 +54,48 @@ export async function addItem(table: TableNames, values: { [key: string]: any })
     return { success, error };
 }
 
-export async function addUsuario() {}
+export async function addUsuario(email: string, password: string, cargo: string) {
+    const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVER_API_KEY!);
+    const { data, error } = await supabase.auth.admin.createUser({ email, password, email_confirm: true });
+
+    if (error) {
+        console.log(error);
+        return { success: false, message: "Houve um erro" };
+    }
+
+    await supabase.from("dimusuario").insert({
+        id: data.user.id,
+        nome: email,
+        nivel: cargo,
+        is_ativo: true,
+    });
+
+    return { success: true, message: "Sucesso" };
+}
+
+export async function updateUsuario(id: string, email?: string, cargo?: string, password?: string) {
+    if (!email && !cargo && !password) return { success: false, message: "Nenhum item" };
+
+    const objAuth = {} as any;
+    const obj = {} as any;
+
+    if (email) {
+        objAuth.email = email;
+        obj.nome = email;
+    }
+    if (cargo) obj.nivel = cargo;
+    if (password) objAuth.password = password;
+
+    const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVER_API_KEY!);
+    const { error } = await supabase.auth.admin.updateUserById(id, obj);
+
+    if (error) return { success: false, message: "Houve um erro" };
+
+    const { error: e } = await supabase.from("dimusuario").update(obj).eq("id", id);
+    if (e) return { success: false, message: "Houve um erro" };
+
+    return { success: true, message: "Sucesso!" };
+}
 
 export async function removeItem(table: TableNames, id: string) {
     const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVER_API_KEY!);

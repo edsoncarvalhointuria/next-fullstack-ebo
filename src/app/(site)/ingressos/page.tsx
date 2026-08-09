@@ -3,7 +3,7 @@ import MotionMain from "@/components/layout/MotionMain";
 import { eventDetails } from "../../../../config/eventDetails";
 import Ingresso from "@/components/pages/ingressos/Ingresso";
 import BotaoWhatsapp from "@/components/ui/btns/BotaoWhatsapp";
-import { getItemAtivo, getItens } from "@/actions/handlerItens";
+import { getItemAtivo } from "@/actions/handlerItens";
 import "./ingressos.scss";
 
 export default async function Ingressos() {

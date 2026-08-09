@@ -17,6 +17,7 @@ interface BaseConfigProps extends BaseHeaderProps {
     icon: ReactNode;
     itens: ItensListaDados[];
     title: string;
+    isUsuario?: boolean;
 }
 
 export const BaseHeader = ({ buttonTitle, icon, title, buttonIcon, buttonLink }: BaseHeaderProps) => {
@@ -71,7 +72,15 @@ export const BaseCards = ({ itens }: { itens: ItensListaDados[] }) => {
     );
 };
 
-export default function BaseConfig({ icon, itens, title, buttonTitle, buttonIcon, buttonLink }: BaseConfigProps) {
+export default function BaseConfig({
+    icon,
+    itens,
+    title,
+    buttonTitle,
+    buttonIcon,
+    buttonLink,
+    isUsuario,
+}: BaseConfigProps) {
     return (
         <MotionMain className="base-config">
             <BaseHeader
@@ -82,7 +91,7 @@ export default function BaseConfig({ icon, itens, title, buttonTitle, buttonIcon
                 buttonLink={buttonLink}
             />
             <BaseCards itens={itens} />
-            <ListaDadosItensDefault itens={itens} />
+            <ListaDadosItensDefault isUsuario={isUsuario} itens={itens} />
         </MotionMain>
     );
 }

@@ -76,6 +76,14 @@ export async function salvarTransacaoManual(form: TransacoesForm) {
         );
     }
 
+    const capacidade = await supabase.from("dimcapacidade").select("quantidade, ocupacao, id").single();
+
+    if (
+        capacidade.data?.ocupacao >= capacidade.data?.quantidade ||
+        capacidade.data?.ocupacao + credenciais?.length > capacidade.data?.quantidade
+    )
+        return { success: false, message: "Capacidade Total Atingida." };
+
     const { data, error } = await supabase.rpc("fn_registrar_venda_manual", {
         p_cpf_cnpj: cpf_cnpj,
         email,
@@ -93,6 +101,10 @@ export async function salvarTransacaoManual(form: TransacoesForm) {
     if (error) return { success: false, message: "Falha ao conectar com o banco de dados." };
     if (!data.success) return { success: false, message: data.erro };
 
+    await supabase
+        .from("dimcapacidade")
+        .update({ ocupacao: capacidade.data?.ocupacao + credenciais.length })
+        .eq("id", capacidade.data?.id);
     TAGS_PARA_REMOVER.forEach((v) => revalidateTag(TAGS_CACHE[v], { expire: 0 }));
 
     return { success: true, message: "Sucesso!" };

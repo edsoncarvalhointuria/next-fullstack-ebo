@@ -3,7 +3,7 @@
 import { ReactNode, useDeferredValue, useMemo, useState } from "react";
 import Search from "@/components/ui/Search";
 import Dropdown, { ItemDropdownDefault } from "@/components/ui/Dropdown";
-import { Ban, Briefcase, CircleCheck, Cog, Power, UserRoundPen } from "lucide-react";
+import { Ban, Briefcase, CircleCheck, Cog, IdCard, Power, UserRoundPen } from "lucide-react";
 import useResize from "@/hooks/useResize";
 import BotaoAcoes from "@/components/ui/btns/BotaoAcoes";
 import "./lista-dados.scss";
@@ -13,6 +13,7 @@ type tipos = "todos" | "ativos" | "inativos";
 export interface ItensListaDados {
     id: string | number;
     nome: string;
+    nivel?: string;
     is_ativo: boolean;
 }
 interface ListaDadosProps<T> {
@@ -29,18 +30,24 @@ const defaultColumns = [
     { icon: <Briefcase />, title: "Nome" },
     { icon: <Power />, title: "Ativo" },
 ];
+const colunasUsuarios = [
+    { icon: <Briefcase />, title: "Nome" },
+    { icon: <IdCard />, title: "Cargo" },
+    { icon: <Power />, title: "Ativo" },
+];
 const opcoes = [
     { id: "todos", nome: "Todos" },
     { id: "ativos", nome: "Ativos" },
     { id: "inativos", nome: "Inativos" },
 ];
 
-const ListaDadosCard = ({ id, is_ativo, nome }: ItensListaDados) => {
+const ListaDadosCard = ({ id, is_ativo, nome, nivel }: ItensListaDados) => {
     return (
         <div
             className={`lista-dados__lista__card ${is_ativo ? "lista-dados__lista__card--ativo" : "lista-dados__lista__card--inativo"}`}
         >
             <h3>{nome}</h3>
+            {nivel && <p className="lista-dados__lista__card-nivel">super_admin</p>}
             {is_ativo ? (
                 <p className="lista-dados__lista__card-ativo">
                     <i>
@@ -56,7 +63,6 @@ const ListaDadosCard = ({ id, is_ativo, nome }: ItensListaDados) => {
                     <span>Inativo</span>
                 </p>
             )}
-
             <div className="lista-dados__lista__card-buttons">
                 <BotaoAcoes acao="edit" link={`?modal=form&id=${id}`} icon={<UserRoundPen />} />
                 <BotaoAcoes acao="del" link={`?modal=del&id=${id}`} />
@@ -77,7 +83,7 @@ const ListaDadosItens = ({ colunas = defaultColumns, itens }: ListaDadosItensPro
                             {colunas.map((v) => (
                                 <th key={v.title}>
                                     <div className="lista-dados__lista__coluna">
-                                        <i>{v.icon}</i>
+                                        <i aria-label="true">{v.icon}</i>
                                         <span>{v.title}</span>
                                     </div>
                                 </th>
@@ -99,6 +105,11 @@ const ListaDadosItens = ({ colunas = defaultColumns, itens }: ListaDadosItensPro
                                 <td>
                                     <p className="lista-dados__lista__item-nome">{v.nome}</p>
                                 </td>
+                                {v.nivel && (
+                                    <td>
+                                        <p className="lista-dados__lista__item-nome">{v.nivel}</p>
+                                    </td>
+                                )}
                                 <td>
                                     {v.is_ativo ? (
                                         <i
@@ -134,7 +145,13 @@ const ListaDadosItens = ({ colunas = defaultColumns, itens }: ListaDadosItensPro
         </div>
     );
 };
-export const ListaDadosItensDefault = ({ itens }: { itens: ItensListaDados[] }) => {
+export const ListaDadosItensDefault = ({
+    itens,
+    isUsuario = false,
+}: {
+    itens: ItensListaDados[];
+    isUsuario?: boolean;
+}) => {
     return (
         <ListaDados
             itens={itens}
@@ -143,7 +160,7 @@ export const ListaDadosItensDefault = ({ itens }: { itens: ItensListaDados[] }) 
             }}
         >
             {(listaFiltrada) => {
-                return <ListaDadosItens itens={listaFiltrada} />;
+                return <ListaDadosItens colunas={isUsuario ? colunasUsuarios : undefined} itens={listaFiltrada} />;
             }}
         </ListaDados>
     );

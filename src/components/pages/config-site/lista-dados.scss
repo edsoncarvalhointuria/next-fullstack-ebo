@@ -151,11 +151,18 @@
             }
 
             h3 {
-                margin: 0;
                 font-family: $montserrat;
                 font-size: 1.125rem;
                 font-weight: 700;
+                word-break: break-all;
                 color: $text-primary;
+                text-transform: uppercase;
+            }
+
+            &-nivel {
+                font-size: 0.8rem;
+                font-weight: 300;
+                color: $text-secondary;
                 text-transform: uppercase;
             }
 

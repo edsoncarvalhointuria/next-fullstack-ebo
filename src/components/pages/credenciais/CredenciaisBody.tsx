@@ -1,7 +1,7 @@
 "use client";
 
 import Dropdown, { ItemDropdownDefault } from "@/components/ui/Dropdown";
-import { memo, ReactNode, useCallback, useDeferredValue, useMemo, useState } from "react";
+import { memo, ReactNode, useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import Search from "@/components/ui/Search";
 import Link from "next/link";
 import Whatsapp from "@/components/ui/icons/Whatsapp";
@@ -14,6 +14,7 @@ import useResize from "@/hooks/useResize";
 import GraficoRosca from "@/components/ui/GraficoRosca";
 import { motion } from "framer-motion";
 import { ListaVazia } from "../config-site/ListaVazia";
+import { useSearchParams } from "next/navigation";
 
 interface StateDrops {
     ingresso: ItemDropdownDefault;
@@ -108,6 +109,8 @@ export function FiltrosCredenciais({
     congregacoes,
     credenciaisResponse,
 }: { children: (listaAtualizada: [string, CredencialResponse[] | undefined][]) => ReactNode } & CredenciaisProps) {
+    const params = useSearchParams();
+
     const [pesquisa, setPesquisa] = useState("");
     const [drops, setDrops] = useState<StateDrops>({
         cargo: { id: "todos", nome: "Todos" },
@@ -141,8 +144,11 @@ export function FiltrosCredenciais({
                     v.nome?.toLowerCase().includes(p) ||
                     v.nome_cargo?.toLowerCase().includes(p) ||
                     v.nome_comprador?.toLowerCase().includes(p) ||
-                    v.nome_outra_congregacao?.toLowerCase().includes(p),
+                    v.nome_outra_congregacao?.toLowerCase().includes(p) ||
+                    v.id === p,
             );
+
+        console.log(p);
 
         return Object.entries(Object.groupBy(c, (v) => v.id_transacao));
     }, [p, drops, credenciaisResponse]);
@@ -174,6 +180,11 @@ export function FiltrosCredenciais({
         ];
         return c;
     }, [credenciaisResponse]);
+
+    useEffect(() => {
+        const search = params.get("search");
+        if (search) setPesquisa(search.toLocaleLowerCase().trim());
+    }, []);
     return (
         <>
             <BaseCardsContainer>

@@ -254,7 +254,11 @@ const TableItem = ({ comprador, pagamento, credenciais, data_compra, tipo, id_tr
                                             ))}
                                         </div>
                                         <div className="transacoes__table-container__buttons">
-                                            <TableButton link="#" title="Credenciais" icon={<IdCard />} />
+                                            <TableButton
+                                                link={`/admin/credenciais/lista?search=${comprador.nome}`}
+                                                title="Credenciais"
+                                                icon={<IdCard />}
+                                            />
 
                                             {tipo === "manual" && (
                                                 <TableButton

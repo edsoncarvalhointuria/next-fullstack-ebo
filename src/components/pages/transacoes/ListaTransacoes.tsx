@@ -58,6 +58,11 @@ const statusPedido: ItemDropdownDefault[] = [
     { id: "cancelado", nome: "Cancelado" },
     { id: "analise", nome: "Análise" },
 ];
+const tipo = [
+    { id: "todos", nome: "Todos" },
+    { id: "manual", nome: "Manual" },
+    { id: "automatico", nome: "Automatico" },
+];
 const bars = [
     { dataKey: "aprovado", fill: "var(--brand-success)" },
     { dataKey: "cancelado", fill: "var(--brand-danger)" },
@@ -296,6 +301,7 @@ export function ListaTransacoes({ responseTransacoes }: { responseTransacoes: Tr
     const [drops, setDrops] = useState({
         pgmt: { id: "todos", nome: "todos" },
         stts: { id: "todos", nome: "todos" },
+        tipo: { id: "todos", nome: "todos" },
     });
     const p = useDeferredValue(pesquisa);
 
@@ -308,6 +314,7 @@ export function ListaTransacoes({ responseTransacoes }: { responseTransacoes: Tr
 
         if (drops.pgmt.id !== "todos") c = c.filter((v) => v.pagamento.metodo_pagamento === drops.pgmt.id);
         if (drops.stts.id !== "todos") c = c.filter((v) => v.pagamento.status === drops.stts.id);
+        if (drops.tipo.id !== "todos") c = c.filter((v) => v.tipo === drops.tipo.id);
         if (p)
             c = c.filter((v) => {
                 const { cpf, email } = v.comprador;
@@ -333,25 +340,37 @@ export function ListaTransacoes({ responseTransacoes }: { responseTransacoes: Tr
                 <div className="transacoes__filtro transacoes__filtro-search">
                     <Search onSearch={setPesquisa} />
                 </div>
-                <div className="transacoes__filtro transacoes__filtro-drop">
-                    <p className="transacoes__filtro-title">Método de Pagamento</p>
-                    <Dropdown
-                        lista={metodosPagamento}
-                        currentValue={drops.pgmt}
-                        onSelected={addDrops}
-                        placeholder="Método de Pagamento"
-                        idObj="pgmt"
-                    />
-                </div>
-                <div className="transacoes__filtro transacoes__filtro-drop">
-                    <p className="transacoes__filtro-title">Status Pedido</p>
-                    <Dropdown
-                        lista={statusPedido}
-                        currentValue={drops.stts}
-                        idObj="stts"
-                        onSelected={addDrops}
-                        placeholder="Status Pedido"
-                    />
+                <div className="transacoes__filtros-container">
+                    <div className="transacoes__filtro transacoes__filtro-drop">
+                        <p className="transacoes__filtro-title">Método de Pagamento</p>
+                        <Dropdown
+                            lista={metodosPagamento}
+                            currentValue={drops.pgmt}
+                            onSelected={addDrops}
+                            placeholder="Método de Pagamento"
+                            idObj="pgmt"
+                        />
+                    </div>
+                    <div className="transacoes__filtro transacoes__filtro-drop">
+                        <p className="transacoes__filtro-title">Status Pedido</p>
+                        <Dropdown
+                            lista={statusPedido}
+                            currentValue={drops.stts}
+                            idObj="stts"
+                            onSelected={addDrops}
+                            placeholder="Status Pedido"
+                        />
+                    </div>
+                    <div className="transacoes__filtro transacoes__filtro-drop">
+                        <p className="transacoes__filtro-title">Tipo</p>
+                        <Dropdown
+                            lista={tipo}
+                            currentValue={drops.tipo}
+                            idObj="tipo"
+                            onSelected={addDrops}
+                            placeholder="Tipo Pgmt"
+                        />
+                    </div>
                 </div>
             </div>
 

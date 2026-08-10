@@ -26,18 +26,28 @@ $break-point: 879px;
 
     &__filtros {
         display: flex;
-        align-items: flex-end;
+        flex-direction: column;
         gap: 1.5rem;
-        flex-wrap: wrap;
-        padding-bottom: 1.5rem;
         border-bottom: 1px dashed $border-color;
+
+        &-container {
+            display: flex;
+            justify-content: space-evenly;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            padding-bottom: 1.5rem;
+
+            @media all and (max-width: 991px) {
+                flex-direction: column;
+            }
+        }
     }
 
     &__filtro {
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
-
+        flex: 1;
         &-search {
             flex-grow: 1;
             min-width: 280px;

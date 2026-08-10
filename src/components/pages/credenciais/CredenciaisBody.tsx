@@ -80,7 +80,7 @@ const Crendecial = memo(
 
                         {comprador?.whatsapp_comprador && (
                             <Link
-                                href={"#"}
+                                href={`https://wa.me/55${comprador.whatsapp_comprador.replace(/[./-\s]/g, "")}`}
                                 rel="noopener noreferrer"
                                 className="credenciais__credencial__contato credenciais__credencial__contato--whats"
                             >

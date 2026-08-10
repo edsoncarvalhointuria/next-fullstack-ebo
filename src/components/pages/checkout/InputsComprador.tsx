@@ -73,7 +73,7 @@ export const getInputsComprador = <T,>(
             placeholder: "(11) 99999-9999",
             mascara: mascaraTelefone,
             inputMode: "tel",
-            autoComplete: "tel",
+            autoComplete: "tel-national",
         },
     ];
 };

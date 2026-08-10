@@ -304,7 +304,7 @@ export function ListaTransacoes({ responseTransacoes }: { responseTransacoes: Tr
     const [pesquisa, setPesquisa] = useState("");
     const [drops, setDrops] = useState({
         pgmt: { id: "todos", nome: "todos" },
-        stts: { id: "todos", nome: "todos" },
+        stts: { id: "aprovado", nome: "Aprovado" },
         tipo: { id: "todos", nome: "todos" },
     });
     const p = useDeferredValue(pesquisa);

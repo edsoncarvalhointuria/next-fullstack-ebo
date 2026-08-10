@@ -77,9 +77,9 @@
             height: 1.25rem;
         }
 
-        &:hover {
+        &:hover,
+        &:active {
             background-color: color-mix(in srgb, $brand-primary, #000 10%);
-            transform: translateY(-2px);
         }
     }
 

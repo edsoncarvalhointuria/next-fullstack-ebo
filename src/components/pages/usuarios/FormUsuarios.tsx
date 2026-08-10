@@ -19,7 +19,7 @@ const cargosDrop = cargos.map((v) => ({ id: v, nome: v }));
 const schema = z.object({
     nome: z.email("O email é obrigatório"),
     nivel: z.enum(cargos, "O cargo é obrigatório"),
-    // is_ativo: z.boolean(),
+    is_ativo: z.boolean(),
     senha: z.string().optional(),
 });
 
@@ -36,6 +36,7 @@ export default function FormUsuario() {
 
     const methods = useForm<FormDados>({
         resolver: zodResolver(schema),
+        defaultValues: { is_ativo: true },
     });
     const {
         register,
@@ -43,26 +44,26 @@ export default function FormUsuario() {
         control,
         handleSubmit,
         setError,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = methods;
 
     const onSubmit = async (v: FormDados) => {
-        // setIsLoading(true);
-        // if (id) {
-        //     const { success } = await updateUsuario(id, v.nome, v.nivel, v.senha);
-        //     if (!success) {
-        //         setIsLoading(false);
-        //         return setIsError(true);
-        //     }
-        //     return router.push(link);
-        // }
-        // if (!id && (!v.senha || v.senha!.length < 6)) setError("senha", { message: "A senha é obrigatória" });
-        // const { success } = await addUsuario(v.nome, v.senha!, v.nivel);
-        // if (!success) {
-        //     setIsLoading(false);
-        //     return setIsError(true);
-        // }
-        // return router.push(link);
+        setIsLoading(true);
+        if (id) {
+            const { success } = await updateUsuario(id, v.is_ativo, v.nome, v.nivel, v.senha);
+            if (!success) {
+                setIsLoading(false);
+                return setIsError(true);
+            }
+            return router.push(link);
+        }
+        if (!id && (!v.senha || v.senha!.length < 6)) setError("senha", { message: "A senha é obrigatória" });
+        const { success } = await addUsuario(v.nome, v.senha!, v.nivel, v.is_ativo);
+        if (!success) {
+            setIsLoading(false);
+            return setIsError(true);
+        }
+        return router.push(link);
     };
 
     useEffect(() => {
@@ -72,8 +73,8 @@ export default function FormUsuario() {
         getItemById(table, id)
             .then((v) => {
                 if (!v) return;
-                const { nome, nivel } = v;
-                setValues({ nome, nivel });
+                const { nome, nivel, is_ativo } = v;
+                setValues({ nome, nivel, is_ativo });
             })
             .catch((err) => console.log("deu erro", err))
             .finally(() => setIsLoading(false));
@@ -82,7 +83,7 @@ export default function FormUsuario() {
         <div className={`base-config__form ${isLoading ? "base-config__form--is-loading" : ""} `}>
             {isError && <FormErrorP />}
             <form onSubmit={handleSubmit(onSubmit)}>
-                {/* <CheckInput label="Ativo?" register={register} nameForm="is_ativo" isRequired={false} /> */}
+                <CheckInput label="Ativo?" register={register} nameForm="is_ativo" isRequired={false} />
                 <SelectInput
                     control={control}
                     label="Cargo"
@@ -101,18 +102,17 @@ export default function FormUsuario() {
                     messageError={errors.nome?.message}
                 />
 
-                {!id && (
-                    <PasswordInput
-                        label="Senha"
-                        register={register}
-                        nameForm="senha"
-                        messageError={errors.senha?.message}
-                        placeholder="&lowast;&lowast;&lowast;&lowast;&lowast;&lowast;"
-                    />
-                )}
+                <PasswordInput
+                    label="Senha"
+                    register={register}
+                    nameForm="senha"
+                    isRequired={!id}
+                    messageError={errors.senha?.message}
+                    placeholder="&lowast;&lowast;&lowast;&lowast;&lowast;&lowast;"
+                />
 
                 <div className="base-config__form__submit">
-                    <button className="base-config__form__btn" disabled={isLoading}>
+                    <button className="base-config__form__btn" disabled={isSubmitting || isLoading}>
                         <i aria-hidden="true">
                             <Send />
                         </i>

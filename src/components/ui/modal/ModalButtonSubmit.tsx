@@ -1,3 +1,4 @@
+"use no memo";
 import { Send } from "lucide-react";
 import "./modal.scss";
 
@@ -8,7 +9,7 @@ export default function ModalButtonSubmit({ disabled }: { disabled?: boolean }) 
                 <i aria-hidden="true">
                     <Send />
                 </i>
-                <span>Salvar</span>
+                <span>{disabled ? "Salvando..." : "Salvar"}</span>
             </button>
         </div>
     );

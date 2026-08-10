@@ -8,15 +8,17 @@ import useGetSearchId from "@/hooks/useGetSearchId";
 import { getItemById, removeItem } from "@/actions/handlerItens";
 import { TableNames } from "@/constants/Tables";
 
-export default function DeletarConfig<T extends { id: string | number }>({
+export default function DeletarConfig<T>({
     icon,
     table,
     link,
+    onClick,
     keyName = "nome" as keyof T,
 }: {
     icon: ReactNode;
     table: TableNames;
     link: string;
+    onClick?: (id: string) => Promise<any>;
     keyName?: keyof T;
 }) {
     const [title, setTitle] = useState("");
@@ -39,12 +41,18 @@ export default function DeletarConfig<T extends { id: string | number }>({
         <ModalDeletar
             keyName="del"
             isLoading={isLoading}
-            onConfirm={() => {
+            onConfirm={async () => {
                 setIsLoading(true);
-                removeItem(table, id!)
-                    .then(() => router.push(link))
-                    .catch((err) => console.log("deu esse erro", err))
-                    .finally(() => setIsLoading(false));
+                if (onClick)
+                    onClick(id!)
+                        .then(() => router.push(link))
+                        .catch((err) => console.log("deu esse erro", err))
+                        .finally(() => setIsLoading(false));
+                else
+                    removeItem(table, id!)
+                        .then(() => router.push(link))
+                        .catch((err) => console.log("deu esse erro", err))
+                        .finally(() => setIsLoading(false));
             }}
             title="Deletar?"
             icon={icon}

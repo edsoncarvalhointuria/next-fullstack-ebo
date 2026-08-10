@@ -109,3 +109,23 @@ export async function salvarTransacaoManual(form: TransacoesForm) {
 
     return { success: true, message: "Sucesso!" };
 }
+
+export async function deletarTransacaoManual(idTransacao: string) {
+    const supabase = await createClientCookies();
+
+    const { error, count } = await supabase
+        .from("dimcredencial")
+        .delete({ count: "exact" })
+        .eq("id_transacao", idTransacao);
+    if (error) throw new Error("Houve um erro");
+
+    await supabase.from("facttransacao").delete().eq("id", idTransacao);
+
+    const { data } = await supabase.from("dimcapacidade").select("ocupacao, id").single();
+    if (data)
+        await supabase
+            .from("dimcapacidade")
+            .update({ ocupacao: data.ocupacao - Number(count || 0) })
+            .eq("id", data.id);
+    return { success: true, message: "Sucesso!" };
+}

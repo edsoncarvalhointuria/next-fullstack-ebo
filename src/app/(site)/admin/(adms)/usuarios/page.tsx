@@ -29,7 +29,7 @@ export default async function Usuarios() {
                 <ModalBase keyName="form" title="Ingressos" icon={<CircleUserRound />}>
                     <FormUsuario />
                 </ModalBase>
-                <DeletarConfig<UsuarioInterface> keyName="nome" table={table} link={link} icon={<UserRoundX />} />
+                {/* <DeletarConfig<UsuarioInterface> keyName="nome" table={table} link={link} icon={<UserRoundX />} /> */}
             </Suspense>
         </>
     );

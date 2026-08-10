@@ -14,6 +14,7 @@ import ModalButtonSubmit from "@/components/ui/modal/ModalButtonSubmit";
 import "./form-transacoes.scss";
 import { salvarTransacaoManual } from "@/actions/transacoes";
 import { useRouter } from "next/navigation";
+import FormErrorP from "../config-site/FormErrorP";
 
 const opcoesPagamentos = [
     { id: "dinheiro", nome: "DINHEIRO" },
@@ -185,6 +186,7 @@ export default function FormTransacoes({
     link: string;
 }) {
     const [isLoading, setIsLoading] = useState(false);
+    const [isError, setIsError] = useState(false);
     const router = useRouter();
 
     const methods = useForm<TransacoesForm>({
@@ -193,7 +195,7 @@ export default function FormTransacoes({
     });
     const {
         register,
-        formState: { errors },
+        formState: { errors, isSubmitting },
         control,
         handleSubmit,
     } = methods;
@@ -203,8 +205,11 @@ export default function FormTransacoes({
 
         const { success, message } = await salvarTransacaoManual(v);
 
-        if (!success) console.log(message);
-        if (success) router.push(link);
+        if (!success) {
+            setIsError(true);
+            console.log(message);
+        }
+        if (success) return router.push(link);
 
         setIsLoading(false);
     };
@@ -218,6 +223,7 @@ export default function FormTransacoes({
     }, [cargos, congregacoes]);
     return (
         <div className={`transacoes__form ${isLoading ? "transacoes__form--loading" : ""}`}>
+            {isError && <FormErrorP />}
             <FormProvider {...methods}>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="transacoes__form__comprador">
@@ -282,7 +288,7 @@ export default function FormTransacoes({
                         />
                     </div>
 
-                    <ModalButtonSubmit disabled={isLoading} />
+                    <ModalButtonSubmit disabled={isSubmitting || isLoading} />
                 </form>
             </FormProvider>
         </div>

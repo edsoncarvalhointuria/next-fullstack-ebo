@@ -45,6 +45,7 @@ interface TransacaoResponseCrendencial {
 interface TransacaoResponse {
     id_transacao: string;
     data_compra: string;
+    tipo: "automatico" | "manual";
 
     comprador: {
         nome: string;

@@ -24,6 +24,7 @@ import {
     Tag,
     Ticket,
     TicketCheck,
+    Trash,
 } from "lucide-react";
 import { toCurrency } from "@/lib/toCurrency";
 import Link from "next/link";
@@ -77,11 +78,8 @@ const variansArrow: Variants = {
 const TableButton = ({ link, title, icon }: TableButton) => {
     return (
         <Link href={link}>
-            <i>{icon}</i>
-            <span>
-                <span>Ir para </span>
-                {title}
-            </span>
+            <i aria-hidden="true">{icon}</i>
+            <span>{title}</span>
         </Link>
     );
 };
@@ -162,7 +160,7 @@ const TableDropVazio = () => {
         </div>
     );
 };
-const TableItem = ({ comprador, pagamento, credenciais, data_compra }: TransacaoResponse) => {
+const TableItem = ({ comprador, pagamento, credenciais, data_compra, tipo, id_transacao }: TransacaoResponse) => {
     const [isOpen, setIsOpen] = useState(false);
     const alterarIsOpen = () => setIsOpen((v) => !v);
     return (
@@ -252,7 +250,14 @@ const TableItem = ({ comprador, pagamento, credenciais, data_compra }: Transacao
                                         </div>
                                         <div className="transacoes__table-container__buttons">
                                             <TableButton link="#" title="Credenciais" icon={<IdCard />} />
-                                            <TableButton link="#" title="Checkin" icon={<TicketCheck />} />
+
+                                            {tipo === "manual" && (
+                                                <TableButton
+                                                    link={`?modal=del&id=${id_transacao}`}
+                                                    title="Deletar"
+                                                    icon={<Trash />}
+                                                />
+                                            )}
                                         </div>
                                     </>
                                 ) : (

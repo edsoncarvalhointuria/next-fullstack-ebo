@@ -92,6 +92,7 @@ CREATE OR REPLACE VIEW vw_transacao_response AS
 SELECT
     ft.id as "id_transacao",
     ft.data_hora_pedido as "data_compra",
+    ft.type as "tipo",
     
     jsonb_build_object(
         'status', ft.status_pagamento,
@@ -138,6 +139,7 @@ INNER JOIN dimingresso ing ON ing.id = ft.id_ingresso
 LEFT JOIN dimcredencial credencial ON ft.id = credencial.id_transacao
 GROUP BY 
     ft.id, 
+    ft.type,
     ft.data_hora_pedido, 
     ft.status_pagamento, 
     ft.metodo_pagamento, 

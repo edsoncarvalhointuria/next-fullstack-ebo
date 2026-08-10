@@ -65,7 +65,7 @@ const ListaDadosCard = ({ id, is_ativo, nome, nivel }: ItensListaDados) => {
             )}
             <div className="lista-dados__lista__card-buttons">
                 <BotaoAcoes acao="edit" link={`?modal=form&id=${id}`} icon={<UserRoundPen />} />
-                <BotaoAcoes acao="del" link={`?modal=del&id=${id}`} />
+                {!nivel && <BotaoAcoes acao="del" link={`?modal=del&id=${id}`} />}
             </div>
         </div>
     );
@@ -134,7 +134,7 @@ const ListaDadosItens = ({ colunas = defaultColumns, itens }: ListaDadosItensPro
                                             link={`?modal=form&id=${v.id}`}
                                             icon={<UserRoundPen />}
                                         />
-                                        <BotaoAcoes acao="del" link={`?modal=del&id=${v.id}`} />
+                                        {!v.nivel && <BotaoAcoes acao="del" link={`?modal=del&id=${v.id}`} />}
                                     </div>
                                 </td>
                             </tr>

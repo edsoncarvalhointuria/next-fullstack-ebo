@@ -556,3 +556,25 @@ INNER JOIN facttransacao ft ON ft.id = dc.id_transacao
     INNER JOIN dimebo ebo ON ebo.id = ft.id_ebo
 INNER JOIN dimcargo carg ON carg.id = dc.id_cargo
 INNER JOIN dimcongregacao cong ON cong.id = dc.id_congregacao;
+
+CREATE OR REPLACE VIEW vw_checkin_response AS
+SELECT
+    dc.id AS "id",
+    dc.nome AS "nome",
+    dc.is_titular AS "is_titular",
+    carg.nome AS "cargo",
+    cong.nome AS "congregacao",
+    dc.is_outra_congregacao AS "is_outra_congregacao",
+    dc.nome_outra_congregacao AS "nome_outra_congregacao",
+    transacao.status_pagamento AS "status_pagamento",
+    transacao.id_comprador AS "cpf_comprador",
+    comp.email AS "email",
+    ing.nome_tipo AS "nome_tipo",
+    (SELECT COUNT(id) FROM factcheckin checkin WHERE DATE(checkin.data_hora_checkin AT TIME ZONE 'America/Sao_Paulo') = DATE(NOW() AT TIME ZONE 'America/Sao_Paulo')) as "quantidade_registros"
+FROM
+    dimcredencial dc
+INNER JOIN dimcongregacao cong ON cong.id = dc.id_congregacao
+INNER JOIN  dimcargo carg ON carg.id = dc.id_cargo
+INNER JOIN facttransacao transacao ON transacao.id = dc.id_transacao
+    INNER JOIN dimingresso ing ON ing.id = transacao.id_ingresso
+    INNER JOIN dimcomprador comp ON comp.cpf_cnpj = transacao.id_comprador

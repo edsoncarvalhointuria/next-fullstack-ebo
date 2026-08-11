@@ -94,6 +94,7 @@ export async function updateUsuario(id: string, isAtivo: boolean, email?: string
     if (password) objAuth.password = password;
 
     const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVER_API_KEY!);
+
     const { error } = await supabase.auth.admin.updateUserById(id, objAuth);
 
     if (error) return { success: false, message: "Houve um erro" };
@@ -102,6 +103,7 @@ export async function updateUsuario(id: string, isAtivo: boolean, email?: string
     if (e) return { success: false, message: "Houve um erro" };
 
     revalidateTag(TAGS_CACHE["dimusuario"], { expire: 0 });
+
     return { success: true, message: "Sucesso!" };
 }
 

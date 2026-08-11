@@ -23,16 +23,17 @@ import { mascaraCpfCnpj } from "@/lib/mascaras";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Search from "@/components/ui/Search";
-import { Suspense, useCallback, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useMemo, useState } from "react";
 import Modal from "@/components/ui/modal/Modal";
+import { fazerCheckin, searchCredenciais } from "@/actions/checkin";
+import { ListaVazia } from "@/components/pages/config-site/ListaVazia";
 
 const opcoes: ItemDropdownDefault[] = [
     { nome: "Todos", id: "todos" },
-    { nome: "CPF/CNPJ Comprador", id: "cpf-comprador" },
-    { nome: "Email Comprador", id: "email-comprador" },
-    { nome: "Código", id: "codigo" },
-    { nome: "Nome Completo", id: "nome-completo" },
+    { nome: "CPF/CNPJ Comprador", id: "cpf_comprador" },
+    { nome: "Email Comprador", id: "email" },
+    { nome: "Nome Completo", id: "nome" },
+    // { nome: "Código", id: "codigo" },
 ];
 
 const schema = z.object({
@@ -41,52 +42,32 @@ const schema = z.object({
 });
 type FormCheckin = z.infer<typeof schema>;
 
-const ModalCheckin = () => {
-    // const { addCheckin } = useDataContext();
-    const params = useSearchParams();
-    const id = params.get("id");
-    const modal = params.get("modal");
-    // const item = testeCheckinResponses.find(
-    //     (v) => String(v.dados.credencial.id) === id,
-    // );
-    // const credencial = item?.dados.credencial;
-    const isOpen = modal === "checkin" && id;
-
-    const closeModal = useCallback(() => {
-        const url = new URLSearchParams(params.toString());
-        url.delete("modal");
-        url.delete("id");
-
-        window.history.pushState(null, "", `?${url.toString()}`);
-    }, []);
+const ModalCheckin = ({ checkin, closeModal }: { checkin: CheckinResponse | null; closeModal: () => void }) => {
     return (
-        <Modal isOpen={!!isOpen} onClose={closeModal}>
-            <div></div>
-            {/* <div className={`checkin__modal ${credencial?.is_outra_congregacao ? "checkin__modal--visitante" : ""}`}>
+        <Modal isOpen={!!checkin} onClose={closeModal}>
+            <div className={`checkin__modal ${checkin?.is_outra_congregacao ? "checkin__modal--visitante" : ""}`}>
                 <button className="checkin__modal__close" title="Fechar Modal" type="button" onClick={closeModal}>
-                    <i>
-                        <X size={34} />
+                    <i aria-hidden="true">
+                        <X size={30} />
                     </i>
                 </button>
 
                 <div className="checkin__modal__conteudo">
-                    {(item?.dados.checkin_hoje.quantidade_registros || 0) > 0 && (
+                    {(checkin?.quantidade_registros || 0) > 0 && (
                         <div className="checkin__modal__aviso">
                             <p>Usuário já fez checkin hoje</p>
                         </div>
                     )}
 
-                    <h2
-                        className={`checkin__modal__title checkin__modal__title--${item?.dados.transacao.status_pagamento}`}
-                    >
+                    <h2 className={`checkin__modal__title checkin__modal__title--${checkin?.status_pagamento}`}>
                         <span>
                             Pagamento:
-                            <strong>{item?.dados.transacao.status_pagamento}</strong>
+                            <strong>{checkin?.status_pagamento}</strong>
                         </span>
-                        <i>
-                            {item?.dados.transacao.status_pagamento === "aprovado" ? (
+                        <i aria-hidden="true">
+                            {checkin?.status_pagamento === "aprovado" ? (
                                 <CircleCheck />
-                            ) : item?.dados.transacao.status_pagamento === "pendente" ? (
+                            ) : checkin?.status_pagamento === "pendente" ? (
                                 <Clock />
                             ) : (
                                 <CircleX />
@@ -96,51 +77,51 @@ const ModalCheckin = () => {
 
                     <div className="checkin__modal__credencial">
                         <h3 className="checkin__modal__nome">
-                            <i>
+                            <i aria-hidden="true">
                                 <SquareUserRound size={44} />
                             </i>
-                            <span>{credencial?.nome}</span>
+                            <span>{checkin?.nome}</span>
                         </h3>
 
-                        {credencial?.is_outra_congregacao ? (
+                        {checkin?.is_outra_congregacao ? (
                             <p className="checkin__modal__congregacao checkin__modal__outra-congregacao">
-                                <i>
+                                <i aria-hidden="true">
                                     <HousePlus />
                                 </i>
-                                {credencial?.nome_outra_congregacao}
+                                {checkin?.nome_outra_congregacao}
                             </p>
                         ) : (
                             <p className="checkin__modal__congregacao">
-                                <i>
+                                <i aria-hidden="true">
                                     <Church />
                                 </i>
-                                {credencial?.congregacao}
+                                {checkin?.congregacao}
                             </p>
                         )}
 
                         <p className="checkin__modal__cargo">
-                            <i>
+                            <i aria-hidden="true">
                                 <Scroll />
                             </i>
-                            {credencial?.cargo}
+                            {checkin?.cargo}
                         </p>
                     </div>
 
                     <div className="checkin__modal__infos">
                         <p className="checkin__modal__titular">
-                            <span>{item?.dados.credencial.is_titular ? "Titular" : "Não é titular"}</span>
+                            <span>{checkin?.is_titular ? "Titular" : "Não é titular"}</span>
                         </p>
                         <p className="checkin__modal__cpf">
                             <span>CPF PAGADOR: </span>
-                            <strong>{item?.dados.transacao.cpf_comprador}</strong>
+                            <strong>{checkin?.cpf_comprador}</strong>
                         </p>
 
                         <p className="checkin__modal__tipo-ingresso">
-                            <i>
+                            <i aria-hidden="true">
                                 <TicketCheck />
                             </i>
                             <span>Tipo Ingresso:</span>
-                            <strong>{item?.dados.ingresso.nome_tipo}</strong>
+                            <strong>{checkin?.nome_tipo}</strong>
                         </p>
                     </div>
                 </div>
@@ -150,25 +131,24 @@ const ModalCheckin = () => {
                         title="Fazer Checkin"
                         type="button"
                         onClick={() => {
-                            addCheckin({
-                                data_hora_checkin: new Date().toISOString(),
-                                id: Date.now(),
-                                id_credencial: credencial!.id,
-                                id_usuario: "dfsdfsd",
-                            });
-                            closeModal();
+                            if (checkin?.id) {
+                                fazerCheckin(checkin.id);
+                                closeModal();
+                            }
                         }}
                     >
                         FAZER CHECKIN
                     </button>
                 </div>
-            </div> */}
+            </div>
         </Modal>
     );
 };
 
 export default function Checkin() {
     const [_, setPesquisa] = useState("");
+    const [checkinResponse, setCheckinResponse] = useState<CheckinResponse[]>([]);
+    const [current, setCurrent] = useState<CheckinResponse | null>(null);
 
     const methods = useForm<FormCheckin>({ resolver: zodResolver(schema) });
     const {
@@ -176,37 +156,35 @@ export default function Checkin() {
         control,
         handleSubmit,
         setValue,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = methods;
 
-    const onSubmit = (v: FormCheckin) => {
+    const onSubmit = async (v: FormCheckin) => {
         console.log(v);
-    };
 
+        const data = await searchCredenciais(v.search, v.tipo?.id !== "todos" ? v.tipo?.id : undefined);
+
+        setCheckinResponse(data);
+    };
+    const closeModal = useCallback(() => {
+        setCurrent(null);
+    }, []);
     const tipo = useWatch({ control, name: "tipo" });
-    let mascara = undefined;
-    let inputMode = undefined;
-    let placeholder = undefined;
-    switch (tipo?.id) {
-        case "cpf-comprador":
-            mascara = mascaraCpfCnpj;
-            inputMode = "numeric";
-            placeholder = "000.000.000-00";
-            break;
-        case "email-comprador":
-            inputMode = "email";
-            placeholder = "email@email.com";
-            break;
-        case "codigo":
-            placeholder = "Código enviado por email";
-            break;
-        case "nome-completo":
-            placeholder = "Digite o nome completo";
-            break;
-        default:
-            placeholder = "Digite para pesquisar";
-            inputMode = "text";
-    }
+    const objSearch = useMemo((): { mascara?: (v: string) => any; inputMode?: InputModeType; placeholder?: string } => {
+        switch (tipo?.id) {
+            case "cpf_comprador":
+                return { mascara: mascaraCpfCnpj, inputMode: "numeric", placeholder: "000.000.000-00" };
+            case "email":
+                return { inputMode: "email", placeholder: "email@email.com" };
+            case "codigo":
+                return { placeholder: "Código enviado por email" };
+            case "nome":
+                return { placeholder: "Digite o nome completo" };
+            default:
+                return { placeholder: "Digite para pesquisar", inputMode: "text" };
+        }
+    }, [tipo]);
+
     return (
         <>
             <MotionMain className="checkin">
@@ -245,18 +223,18 @@ export default function Checkin() {
                                 register={register}
                                 isRequired
                                 nameForm="search"
-                                inputMode={inputMode as any}
-                                mascara={mascara}
+                                inputMode={objSearch.inputMode}
+                                mascara={objSearch.mascara}
                                 messageError={errors.search?.message}
-                                placeholder={placeholder}
+                                placeholder={objSearch.placeholder}
                             />
                         </div>
 
-                        <button className="checkin__pesquisar" type="submit" title="pesquisar">
-                            <i>
+                        <button className="checkin__pesquisar" type="submit" title="pesquisar" disabled={isSubmitting}>
+                            <i aria-label="true">
                                 <FolderSearch />
                             </i>
-                            <span>Consultar</span>
+                            <span>{!isSubmitting ? "Consultar" : "Procurando..."}</span>
                         </button>
                     </form>
 
@@ -266,44 +244,45 @@ export default function Checkin() {
                         </div>
 
                         <div className="checkin__lista__itens">
-                            {/* {testeCheckinResponses.map((v) => (
-                                <button
-                                    key={v.dados.credencial.id}
-                                    className="checkin__lista__item"
-                                    type="button"
-                                    title={`Selecionar ${v.dados.credencial.nome}`}
-                                    onClick={() =>
-                                        window.history.pushState(null, "", `?modal=checkin&id=${v.dados.credencial.id}`)
-                                    }
-                                >
-                                    <strong className="checkin__lista__item__nome">{v.dados.credencial.nome}</strong>
-                                    <span
-                                        className={`checkin__lista__item__pagamento checkin__lista__item__pagamento--${v.dados.transacao.status_pagamento}`}
+                            {checkinResponse.length ? (
+                                checkinResponse.map((v) => (
+                                    <button
+                                        key={v.id}
+                                        className="checkin__lista__item"
+                                        type="button"
+                                        title={`Selecionar ${v.nome}`}
+                                        onClick={() => setCurrent(v)}
                                     >
-                                        <span>Status Pagamento:</span>
-                                        <i>
-                                            {v.dados.transacao.status_pagamento === "aprovado" ? (
-                                                <CircleCheck size={34} />
-                                            ) : v.dados.transacao.status_pagamento === "pendente" ? (
-                                                <Clock size={34} />
-                                            ) : (
-                                                <CircleX />
-                                            )}
-                                        </i>
-                                    </span>
+                                        <strong className="checkin__lista__item__nome">{v.nome}</strong>
+                                        <span
+                                            className={`checkin__lista__item__pagamento checkin__lista__item__pagamento--${v.status_pagamento}`}
+                                        >
+                                            <span>Status Pagamento:</span>
+                                            <i>
+                                                {v.status_pagamento === "aprovado" ? (
+                                                    <CircleCheck size={34} />
+                                                ) : v.status_pagamento === "pendente" ? (
+                                                    <Clock size={34} />
+                                                ) : (
+                                                    <CircleX />
+                                                )}
+                                            </i>
+                                        </span>
 
-                                    <span className="checkin__lista__item__congregacao">
-                                        {v.dados.credencial.congregacao ||
-                                            `Visitante: ${v.dados.credencial.nome_outra_congregacao}`}
-                                    </span>
-                                </button>
-                            ))} */}
+                                        <span className="checkin__lista__item__congregacao">
+                                            {v.congregacao || `Visitante: ${v.nome_outra_congregacao}`}
+                                        </span>
+                                    </button>
+                                ))
+                            ) : (
+                                <ListaVazia />
+                            )}
                         </div>
                     </div>
                 </section>
             </MotionMain>
             <Suspense>
-                <ModalCheckin />
+                <ModalCheckin checkin={current} closeModal={closeModal} />
             </Suspense>
         </>
     );

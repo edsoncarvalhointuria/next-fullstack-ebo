@@ -30,7 +30,7 @@ export default async function Ingressos() {
                     ))}
             </section>
 
-            <BotaoWhatsapp />
+            {/* <BotaoWhatsapp /> */}
         </MotionMain>
     );
 }

@@ -75,7 +75,7 @@ export async function addItem(table: TableNames, values: { [key: string]: any })
 export async function addUsuario(email: string, password: string, cargo: string, isAtivo: boolean) {
     const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVER_API_KEY!);
     const { data, error } = await supabase.auth.admin.createUser({
-        email,
+        email: email.toLocaleLowerCase(),
         password,
         email_confirm: true,
         app_metadata: {
@@ -91,7 +91,7 @@ export async function addUsuario(email: string, password: string, cargo: string,
 
     await supabase.from("dimusuario").insert({
         id: data.user.id,
-        nome: email,
+        nome: email.toLocaleLowerCase(),
         nivel: cargo,
         is_ativo: isAtivo,
     });
@@ -107,8 +107,8 @@ export async function updateUsuario(id: string, isAtivo: boolean, email?: string
     const obj = { is_ativo: isAtivo } as any;
 
     if (email) {
-        objAuth.email = email;
-        obj.nome = email;
+        objAuth.email = email.toLocaleLowerCase();
+        obj.nome = email.toLocaleLowerCase();
     }
     if (cargo) obj.nivel = cargo;
     if (password) objAuth.password = password;

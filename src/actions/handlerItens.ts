@@ -47,6 +47,23 @@ export async function updateItem(table: TableNames, values: { [key: string]: any
     return { success, error };
 }
 
+export async function updateCapacidade(values: { [key: string]: any }, id: string | number) {
+    const table = "dimcapacidade";
+    const supabase = await createClientCookies();
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
+
+    const isPortaria = session?.user.app_metadata.cargo === "portaria";
+    if (isPortaria) throw new Error("Você não pode fazer isso");
+
+    const { success, error } = await supabase.from(table).update(values).eq("id", id);
+
+    if (success) revalidateTag(TAGS_CACHE[table]!, { expire: 0 });
+
+    return { success, error };
+}
+
 export async function addItem(table: TableNames, values: { [key: string]: any }) {
     const supabase = await createClientCookies();
     const { success, error } = await supabase.from(table).insert(values);

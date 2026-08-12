@@ -1,6 +1,6 @@
 "use client";
 
-import { updateItem } from "@/actions/handlerItens";
+import { updateCapacidade } from "@/actions/handlerItens";
 import { useRouter } from "next/navigation";
 import { useCallback, useRef } from "react";
 
@@ -8,7 +8,7 @@ export default function FormCapacidade({ capacidade, id }: { capacidade: number;
     const router = useRouter();
     const $input = useRef<HTMLInputElement>(null);
     const onUpdate = useCallback(async () => {
-        await updateItem("dimcapacidade", { quantidade: Number($input.current?.value || 0) }, id);
+        await updateCapacidade({ quantidade: Number($input.current?.value || 0) }, id);
         router.refresh();
     }, []);
 

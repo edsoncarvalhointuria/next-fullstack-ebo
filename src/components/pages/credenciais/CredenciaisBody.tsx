@@ -148,8 +148,6 @@ export function FiltrosCredenciais({
                     v.id === p,
             );
 
-        console.log(p);
-
         return Object.entries(Object.groupBy(c, (v) => v.id_transacao));
     }, [p, drops, credenciaisResponse]);
     const cards = useMemo(() => {

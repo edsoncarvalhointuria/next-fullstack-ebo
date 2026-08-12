@@ -7,24 +7,30 @@ import ModalBase from "@/components/ui/modal/ModalBase";
 import CardsAdmin from "@/components/pages/admin/CardsAdmin";
 import { getItens } from "@/actions/handlerItens";
 import WrapperForm from "@/components/pages/transacoes/WrapperForm";
+import { createClientCookies } from "@/supabase/server";
 
 export default async function AdminHome() {
+    const supabse = await createClientCookies();
+    const {
+        data: { session },
+    } = await supabse.auth.getSession();
+
+    const promises = [getItens("vw_transacoes_por_ingresso"), getItens("vw_credenciais_por_congregacao")];
+
+    if (session?.user.app_metadata.cargo !== "portaria")
+        promises.push(getItens("vw_transacoes_arrecadacao"), getItens("vw_transacoes_por_status"));
+
     const [
         transacoesPorIngressoData,
         credenciaisPorCongregacaoData,
         transacoesArrecadacaoData,
         transacoesPorStatusData,
-    ] = await Promise.all([
-        getItens("vw_transacoes_por_ingresso"),
-        getItens("vw_credenciais_por_congregacao"),
-        getItens("vw_transacoes_arrecadacao"),
-        getItens("vw_transacoes_por_status"),
-    ]);
+    ] = await Promise.all(promises);
 
     const transacoesPorIngresso = transacoesPorIngressoData.data![0];
-    const transacoesPorStatus = transacoesPorStatusData.data![0];
+    const transacoesPorStatus = transacoesPorStatusData ? transacoesPorStatusData.data![0] : undefined;
     const credenciaisPorCongregacao = credenciaisPorCongregacaoData.data!;
-    const transacoesArrecadacao = transacoesArrecadacaoData.data!;
+    const transacoesArrecadacao = transacoesArrecadacaoData ? transacoesArrecadacaoData.data! : undefined;
 
     return (
         <>

@@ -5,8 +5,9 @@ import BotaoHeaderContainer from "@/components/ui/btns/BotaoHeaderContainer";
 import HeaderButtonsTransacoes from "./HeaderButtonsTrasacoes";
 import "./header-transacoes.scss";
 import BotaoExportar from "@/components/ui/btns/BotaoExportar";
+import { createClientCookies } from "@/supabase/server";
 
-export default function HeaderTransacoes({
+export default async function HeaderTransacoes({
     icon,
     title,
     caminho,
@@ -19,6 +20,13 @@ export default function HeaderTransacoes({
     caminho: string;
     notAdd?: boolean;
 }) {
+    const supabase = await createClientCookies();
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
+
+    const isPortaria = session?.user.app_metadata.cargo === "portaria";
+
     return (
         <section className="transacoes__header">
             <div className="transacoes__infos">
@@ -30,12 +38,12 @@ export default function HeaderTransacoes({
                 <BotaoHeaderContainer>
                     {!notAdd && <BotaoAdd title="Nova Venda Manual" icon={<Banknote />} />}
 
-                    <BotaoExportar type={type} />
+                    {!isPortaria && <BotaoExportar type={type} />}
                 </BotaoHeaderContainer>
             </div>
 
             <Suspense>
-                <HeaderButtonsTransacoes caminho={caminho} />
+                <HeaderButtonsTransacoes caminho={caminho} isPortaria={isPortaria} />
             </Suspense>
         </section>
     );

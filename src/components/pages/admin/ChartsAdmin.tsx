@@ -160,42 +160,47 @@ export default function ChartsLista({
     transacoesArrecadacao,
     transacoesPorStatus,
 }: {
-    transacoesArrecadacao: TransacaoArrecadacao[];
-    transacoesPorStatus: CardsTransacaoStatus;
+    transacoesArrecadacao?: TransacaoArrecadacao[];
+    transacoesPorStatus?: CardsTransacaoStatus;
     credenciaisPorCongregacao: CredenciaisPorCongregacao[];
 }) {
     const transacoesStatus = useMemo(() => {
+        if (!transacoesPorStatus) return;
         const { totalArrecadado, totalTransacoes, ...values } = transacoesPorStatus;
         values.pendente.fill = "var(--brand-warning)";
         values.aprovado.fill = "var(--brand-success)";
         values.cancelado.fill = "var(--brand-danger)";
         return Object.values(values);
-    }, []);
+    }, [transacoesPorStatus]);
     return (
         <div className="admin__charts">
-            <div className="admin__chart">
-                <h2>
-                    <i>
-                        <ChartArea />
-                    </i>
-                    <span>Vendas X Arrecadação</span>
-                </h2>
+            {transacoesArrecadacao && (
+                <div className="admin__chart">
+                    <h2>
+                        <i aria-hidden="true">
+                            <ChartArea />
+                        </i>
+                        <span>Vendas X Arrecadação</span>
+                    </h2>
 
-                {transacoesArrecadacao.length ? <ChartArrecadacao data={transacoesArrecadacao} /> : <ListaVazia />}
-            </div>
-            <div className="admin__chart">
-                <h2>
-                    <i>
-                        <ChartPieIcon />
-                    </i>
-                    <span>Status Pagamentos</span>
-                </h2>
+                    {transacoesArrecadacao.length ? <ChartArrecadacao data={transacoesArrecadacao} /> : <ListaVazia />}
+                </div>
+            )}
+            {transacoesStatus && (
+                <div className="admin__chart">
+                    <h2>
+                        <i aria-hidden="true">
+                            <ChartPieIcon />
+                        </i>
+                        <span>Status Pagamentos</span>
+                    </h2>
 
-                <ChartPie dataKey="value" data={transacoesStatus} />
-            </div>
+                    <ChartPie dataKey="value" data={transacoesStatus} />
+                </div>
+            )}
             <div className="admin__chart">
                 <h2>
-                    <i>
+                    <i aria-hidden="true">
                         <UsersRound />
                     </i>
                     <span>Pessoas por Congregação</span>

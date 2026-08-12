@@ -203,7 +203,7 @@ const MenuDrop = ({ itens, title, icon, onClick }: OpcoesDropdown & { onClick: (
     );
 };
 
-export default function Menu() {
+export default function Menu({ isPortaria = false }: { isPortaria?: boolean }) {
     const [isOpen, setIsOpen] = useState(false);
     const closeMenu = useCallback(() => setIsOpen(false), []);
     return (
@@ -246,7 +246,7 @@ export default function Menu() {
                         >
                             <ul className="menu__lista">
                                 {OPCOES.map((v, i) =>
-                                    v.isDropDown ? (
+                                    v.title === "Gerenciar Ingressos" && isPortaria ? undefined : v.isDropDown ? (
                                         <MenuDrop onClick={closeMenu} {...v} key={i} />
                                     ) : (
                                         <MenuItem onClick={closeMenu} key={i} {...v} />

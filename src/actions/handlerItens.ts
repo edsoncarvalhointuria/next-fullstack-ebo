@@ -61,6 +61,9 @@ export async function addUsuario(email: string, password: string, cargo: string,
         email,
         password,
         email_confirm: true,
+        app_metadata: {
+            cargo,
+        },
         ban_duration: isAtivo ? "none" : "876000h",
     });
 

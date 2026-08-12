@@ -1,8 +1,18 @@
 import { GraficosTransacoes } from "@/components/pages/transacoes/ListaTransacoes";
 import "./transacoes-graficos.scss";
 import { getItens } from "@/actions/handlerItens";
+import { createClientCookies } from "@/supabase/server";
+import { redirect } from "next/navigation";
 
 export default async function TransacoesGraficos() {
+    const supabase = await createClientCookies();
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
+
+    const isPortaria = session?.user.app_metadata.cargo === "portaria";
+    if (isPortaria) redirect("/admin/transacoes/lista");
+
     const [listaGraficosTransacoesData, transacoesPorStatusData] = await Promise.all([
         getItens("vw_graficos_transacoes"),
         getItens("vw_transacoes_por_status"),

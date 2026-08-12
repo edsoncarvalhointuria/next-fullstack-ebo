@@ -12,9 +12,10 @@ import SelectInput from "@/components/forms/SelectInput";
 import { Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import PasswordInput from "@/components/forms/PasswordInput";
+import { ItemDropdownDefault } from "@/components/ui/Dropdown";
 
 const cargos = ["super_admin", "financeiro", "portaria"];
-const cargosDrop = cargos.map((v) => ({ id: v, nome: v }));
+// const cargosDrop = cargos.map((v) => ({ id: v, nome: v }));
 
 const schema = z.object({
     nome: z.email("O email é obrigatório"),
@@ -25,7 +26,7 @@ const schema = z.object({
 
 type FormDados = z.infer<typeof schema>;
 
-export default function FormUsuario() {
+export default function FormUsuario({ cargosDrop }: { cargosDrop: ItemDropdownDefault[] }) {
     const table = "dimusuario";
     const link = "/admin/usuarios";
     const [isLoading, setIsLoading] = useState(false);

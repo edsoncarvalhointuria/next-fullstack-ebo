@@ -5,7 +5,7 @@ export default function CardsAdmin({
     transacoesPorIngresso,
     transacoesPorStatus,
 }: {
-    transacoesPorStatus: CardsTransacaoStatus;
+    transacoesPorStatus?: CardsTransacaoStatus;
     transacoesPorIngresso: TransacaoPorIngresso;
 }) {
     const cards: (CardOpcaoProps | CardProps)[] = [
@@ -34,26 +34,29 @@ export default function CardsAdmin({
                 },
             ],
         },
-        {
-            icon: <UsersRound />,
-            title: "Total de Transações",
-            number: transacoesPorStatus.totalTransacoes,
-            className: "card--short",
-        },
-        {
-            icon: <Banknote />,
-            title: "Total Arrecadado",
-            number: transacoesPorStatus.totalArrecadado,
-            className: "card--financeiro card--short",
-            type: "currency",
-        },
-        {
-            icon: <HandCoins />,
-            title: "Pagamentos Pendentes",
-            number: transacoesPorStatus.pendente.value || 0,
-            className: "card--pendente card--short",
-        },
     ];
+    if (transacoesPorStatus)
+        cards.push(
+            {
+                icon: <UsersRound />,
+                title: "Total de Transações",
+                number: transacoesPorStatus.totalTransacoes,
+                className: "card--short",
+            },
+            {
+                icon: <Banknote />,
+                title: "Total Arrecadado",
+                number: transacoesPorStatus.totalArrecadado,
+                className: "card--financeiro card--short",
+                type: "currency",
+            },
+            {
+                icon: <HandCoins />,
+                title: "Pagamentos Pendentes",
+                number: transacoesPorStatus.pendente.value || 0,
+                className: "card--pendente card--short",
+            },
+        );
     return (
         <div className="admin__cards">
             {cards.map((v, i) =>

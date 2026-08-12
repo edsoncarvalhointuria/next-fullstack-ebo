@@ -38,7 +38,7 @@ export default async function AdminHome() {
                 <section className="admin__header">
                     <h1>Olá. Seja bem-vindo(a)!</h1>
 
-                    <BotaoAdd title="Adicionar Venda Manual" />
+                    <BotaoAdd title="Nova Venda Manual" />
                 </section>
                 <CardsAdmin transacoesPorIngresso={transacoesPorIngresso} transacoesPorStatus={transacoesPorStatus} />
                 <ChartsLista

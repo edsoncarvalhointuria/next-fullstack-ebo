@@ -5,7 +5,7 @@ import { createClient } from "@supabase/supabase-js";
 import { randomUUID } from "crypto";
 import MercadoPagoConfig, { Preference } from "mercadopago";
 
-const url = process.env.NODE_ENV === "production" ? "https://ebovv.vercel.app" : "https://localhost:3000";
+const url = process.env.NODE_ENV === "production" ? "https://ebo-vv.vercel.app" : "https://localhost:3000";
 
 export async function salvarMercadoPago(form: FormCheckout & { tipoIngresso: string | number }) {
     try {

@@ -19,12 +19,9 @@ const schema = z
             .string({ error: "Por favor, digite o nome." })
             .min(5, { error: "O nome precisa ter pelo menos 5 letras." }),
         email: z.email({ error: "Por favor, digite um e-mail válido." }),
-        whatsapp: z
-            .string()
-            .refine((v) => v === "" || v.replace(/\D/g, "").length > 10, {
-                error: "O número deve ter pelo menos 11 números.",
-            })
-            .optional(),
+        whatsapp: z.string().refine((v) => v.replace(/\D/g, "").length > 10, {
+            error: "O número deve ter pelo menos 11 números.",
+        }),
         congregacao: z.string({
             error: "Por favor, selecione a congregação.",
         }),

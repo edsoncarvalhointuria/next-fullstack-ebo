@@ -2,13 +2,7 @@
 
 import { animate, AnimatePresence, motion, Variants } from "framer-motion";
 import { CircleChevronDown, SearchX } from "lucide-react";
-import React, {
-    use,
-    useDeferredValue,
-    useEffect,
-    useMemo,
-    useState,
-} from "react";
+import React, { use, useDeferredValue, useEffect, useMemo, useState } from "react";
 import "./dropdown.scss";
 
 export interface ItemDropdownDefault {
@@ -57,8 +51,11 @@ function Dropdown<T extends ItemDropdownDefault>({
         if (pesquisa)
             return itens.filter(
                 (v) =>
-                    v.nome.toLocaleLowerCase().includes(p) ||
-                    String(v.id).toLocaleLowerCase() === p,
+                    v.nome
+                        .toLocaleLowerCase()
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "")
+                        .includes(p) || String(v.id).toLocaleLowerCase() === p,
             );
         return itens;
     }, [itens, p]);
@@ -71,13 +68,11 @@ function Dropdown<T extends ItemDropdownDefault>({
     useEffect(() => {
         if (!isOpen || !currentValue) return;
 
-        document
-            .getElementById(`${IDITEM}-${currentValue.id}`)
-            ?.scrollIntoView({
-                behavior: "smooth",
-                block: "center",
-                inline: "center",
-            });
+        document.getElementById(`${IDITEM}-${currentValue.id}`)?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+            inline: "center",
+        });
     }, [isOpen, currentValue]);
 
     return (
@@ -99,20 +94,19 @@ function Dropdown<T extends ItemDropdownDefault>({
                     title="selecione a congregação"
                     autoComplete="off"
                     value={isOpen ? pesquisa : currentValue?.nome || ""}
-                    onChange={(e) => setPesquisa(e.target.value.toLowerCase())}
+                    onChange={(e) =>
+                        setPesquisa(
+                            e.target.value
+                                .toLowerCase()
+                                .normalize("NFD")
+                                .replace(/[\u0300-\u036f]/g, ""),
+                        )
+                    }
                     onFocus={() => setIsOpen(true)}
                 />
 
-                <button
-                    title="Fechar Dropdown"
-                    type="button"
-                    onClick={() => (isOpen ? fechar() : setIsOpen(true))}
-                >
-                    <motion.i
-                        custom={isOpen}
-                        variants={variantsArrow}
-                        animate="animate"
-                    >
+                <button title="Fechar Dropdown" type="button" onClick={() => (isOpen ? fechar() : setIsOpen(true))}>
+                    <motion.i custom={isOpen} variants={variantsArrow} animate="animate">
                         <CircleChevronDown size={34} />
                     </motion.i>
                 </button>
@@ -128,9 +122,7 @@ function Dropdown<T extends ItemDropdownDefault>({
                             exit={"exit"}
                             className="dropdown__itens-container"
                         >
-                            <div
-                                className={`dropdown__itens ${pesquisa !== p ? "dropdown__itens--pesquisando" : ""}`}
-                            >
+                            <div className={`dropdown__itens ${pesquisa !== p ? "dropdown__itens--pesquisando" : ""}`}>
                                 {itensMemo.length > 0 ? (
                                     <>
                                         {itensMemo.map((v) => (
@@ -140,11 +132,7 @@ function Dropdown<T extends ItemDropdownDefault>({
                                                 type="button"
                                                 title={`Selecionar ${v.nome}`}
                                                 onClick={() => {
-                                                    if (idObj)
-                                                        onSelected(
-                                                            idObj as any,
-                                                            v,
-                                                        );
+                                                    if (idObj) onSelected(idObj as any, v);
                                                     else (onSelected as any)(v);
                                                     fechar();
                                                 }}

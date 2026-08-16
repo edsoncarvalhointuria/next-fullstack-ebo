@@ -102,6 +102,10 @@ export async function salvarMercadoPago(form: FormCheckout & { tipoIngresso: str
 
         const dataExpirar = new Date();
         dataExpirar.setMinutes(dataExpirar.getMinutes() + 10);
+
+        const ddd = whatsapp.replace(/\((.+)\).+/g, "$1");
+        const numero = whatsapp.replace(/[\s-]/g, "").replace(/\(.+\)(.+)/g, "$1");
+
         const resposta = await preference.create({
             body: {
                 items: [
@@ -122,9 +126,15 @@ export async function salvarMercadoPago(form: FormCheckout & { tipoIngresso: str
                 payer: {
                     name: comprador.nome,
                     email: comprador.email,
+                    phone: { area_code: ddd, number: numero },
                     identification: {
                         type: "CPF",
                         number: comprador.cpf_cnpj.replace(/[.-\s/]/g, ""),
+                    },
+                    address: {
+                        zip_code: "05796070",
+                        street_name: "R. José Ramos Fernandes",
+                        street_number: "420",
                     },
                 },
                 payment_methods: {

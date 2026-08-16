@@ -69,7 +69,6 @@ export const getInputsComprador = <T,>(
             type: "texto",
             label: "Seu Whatsapp",
             nameForm: "whatsapp" as keyof T,
-            isRequired: false,
             placeholder: "(11) 99999-9999",
             mascara: mascaraTelefone,
             inputMode: "tel",

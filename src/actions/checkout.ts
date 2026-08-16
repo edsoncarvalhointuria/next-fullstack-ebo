@@ -116,6 +116,8 @@ export async function salvarMercadoPago(form: FormCheckout & { tipoIngresso: str
                         unit_price: valorFinal,
                         currency_id: "BRL",
                         description: ingresso.descricao || "Ingresso EBO",
+                        category_id: "entertainment",
+                        category_descriptor: { event_date: new Date(2026, 9, 7, 12, 0, 0, 0).toISOString() },
                     },
                 ],
                 back_urls: {
@@ -131,12 +133,8 @@ export async function salvarMercadoPago(form: FormCheckout & { tipoIngresso: str
                         type: "CPF",
                         number: comprador.cpf_cnpj.replace(/[.-\s/]/g, ""),
                     },
-                    address: {
-                        zip_code: "05796070",
-                        street_name: "R. José Ramos Fernandes",
-                        street_number: "420",
-                    },
                 },
+
                 payment_methods: {
                     excluded_payment_types: [{ id: "ticket" }],
                 },

@@ -1,17 +1,19 @@
 import { Dia } from "@/components/pages/home/Dia";
 import { Hero } from "@/components/pages/home/Hero";
-import Acordeao from "@/components/ui/Acordeao";
 import { Map, MapPin } from "lucide-react";
 import "./home.scss";
 import Final from "@/components/pages/home/Final";
-import { createClient } from "@supabase/supabase-js";
 import FAQHome from "@/components/pages/home/FAQHome";
 import { Suspense } from "react";
 
 const dias = [
     { img: "/Altair_Germano.png", title: "PRELETOR", nome: "Altair Germano" },
-    { img: "/Carlos_Emael.png", title: "PRELETOR", nome: "Carlos Emael" },
-    { img: "/Cassandra_Albrecht.png", title: "PRELETORA", nome: "Cassandra Albrecht" },
+    { img: "/fernanda_souza_cunha.png", title: "PRELETORA", nome: "Fernanda Souza" },
+    { img: "/gilberto_resende.png", title: "PRELETOR", nome: "Gilberto Resende" },
+    // { img: "/Carlos_Emael.png", title: "PRELETOR", nome: "Carlos Emael" },
+    // { img: "/Cassandra_Albrecht.png", title: "PRELETORA", nome: "Cassandra Albrecht" },
+    { img: "/rosana.png", title: "PRELETORA", nome: "Rosana Garcia" },
+    { img: "/dia3ebo.png", title: "PRELETOR", nome: "Carlos Roberto" },
     { img: "/Nerildo_Accioly.png", title: "PRELETOR", nome: "Nerildo Accioly" },
     { img: "/dia4ebo.png", title: "PRELETOR", nome: "Sérgio Pereira" },
 ];
